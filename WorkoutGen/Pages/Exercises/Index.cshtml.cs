@@ -42,6 +42,7 @@ namespace WorkoutGen.Pages.Exercises
                                                 .ToList();
 
             int[] requiredIds = { };
+            bool hasRequirement = true;
 
             // Now that we have the potential exercise ids, we need to make sure the user selected all the required muscle groups for them
             // Loop each exercise id and figure out the requirements
@@ -55,9 +56,21 @@ namespace WorkoutGen.Pages.Exercises
                                 .Select(e => e.MuscleGroupId)
                                 .ToArray();
 
-                // If both arrays contain the same ids then the user meets the requirements
+
+                // Loop the required ids and make sure user has selected them all
+                hasRequirement = true;
+                foreach ( int id in requiredIds)
+                {
+                    // If they don't have a required id then they do not get the exercise
+                    if (!muscle_groups.Contains(id)) {
+                        hasRequirement = false;
+                        break;
+                    }
+                }
+
+                // If the user meets all the requirements
                 // This exercise should be added to the valid list
-                if (requiredIds.SequenceEqual(muscle_groups)) {
+                if (hasRequirement) {
                     validMuscleGroupExerciseIds.Add(muscleGroupExerciseIds[index]);
                 }
             }
@@ -76,9 +89,21 @@ namespace WorkoutGen.Pages.Exercises
                                     .Select(e => e.EquipmentId)
                                     .ToArray();
 
+                    // Loop the required ids and make sure user has selected them all
+                    hasRequirement = true;
+                    foreach (int id in requiredIds)
+                    {
+                        // If they don't have a required id then they do not get the exercise
+                        if (!equipment.Contains(id))
+                        {
+                            hasRequirement = false;
+                            break;
+                        }
+                    }
+
                     // If both arrays contain the same ids then the user meets the requirements
                     // This exercise should be added to the valid list
-                    if (requiredIds.SequenceEqual(equipment))
+                    if (hasRequirement)
                     {
                         validExerciseIds.Add(validMuscleGroupExerciseIds[index]);
                     }
