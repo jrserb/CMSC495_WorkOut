@@ -1,0 +1,54 @@
+﻿@page "{handler?}"
+@model IndexModel
+@{
+    ViewData["ApplicationName"] = "[ Insert catchy name here ]";
+    ViewData["Title"] = "Home page";
+}
+
+<div class="jumbotron jumbotron-fluid text-center">
+    <h1>Welcome to @ViewData["ApplicationName"] !</h1>
+</div>
+
+<form method="post" asp-page="/exercises/index">
+
+    <div class="row">
+
+        <div class="col-md-6 col-sm-12">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label class="font-weight-bold" for="select2_muscle_groups">Select muscle group(s)</label>
+                        <select id="select2_muscle_groups" name="muscle_groups[]" multiple="multiple" asp-items="Model.Options_MuscleGroups" class="form-control"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group d-none">
+                        <label class="font-weight-bold" for="select2_equipment">Select equipment</label>
+                        <select id="select2_equipment" name="equipment[]" multiple="multiple" class="form-control"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group d-none">
+                        <input id="btnGenerateExercise" type="submit" value="Generate exercise" class="btn btn-primary btn-lg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="card">
+                <img class="card-img-top" src="" alt="Card image">
+                <div class="card-body">
+                    <h4 class="card-title">Muscle Groups</h4>
+                    <p class="card-text">Visualize</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</form>

@@ -1,0 +1,26 @@
+﻿@page
+@model WorkoutGen.Pages.Exercises.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<h4>Exercises</h4>
+<hr />
+
+@if (Model.Exercises.Count > 0){
+
+    foreach (var e in Model.Exercises)
+    {   
+        @e.Name <br/>
+    }
+
+}else{ 
+    <div>Nothing was found</div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
