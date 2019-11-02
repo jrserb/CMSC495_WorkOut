@@ -76,3 +76,8 @@ body {
 .select2 {
     width:100% !important;
 }
+
+.exercise-image {
+    width:400px;
+    height:400px;
+}

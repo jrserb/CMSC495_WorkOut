@@ -15,6 +15,13 @@ namespace WorkoutGen.Models
         {
         }
 
+        public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Equipment> Equipment { get; set; }
         public virtual DbSet<Exercise> Exercise { get; set; }
         public virtual DbSet<ExerciseAlternateEquipment> ExerciseAlternateEquipment { get; set; }
@@ -22,8 +29,110 @@ namespace WorkoutGen.Models
         public virtual DbSet<ExerciseMuscleGroup> ExerciseMuscleGroup { get; set; }
         public virtual DbSet<MuscleGroup> MuscleGroup { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AspNetRoleClaims>(entity =>
+            {
+                entity.HasIndex(e => e.RoleId);
+
+                entity.Property(e => e.RoleId).IsRequired();
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetRoleClaims)
+                    .HasForeignKey(d => d.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetRoles>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedName)
+                    .HasName("RoleNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedName] IS NOT NULL)");
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<AspNetUserClaims>(entity =>
+            {
+                entity.HasIndex(e => e.UserId);
+
+                entity.Property(e => e.UserId).IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserClaims)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserLogins>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+                entity.HasIndex(e => e.UserId);
+
+                entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+                entity.Property(e => e.ProviderKey).HasMaxLength(128);
+
+                entity.Property(e => e.UserId).IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserLogins)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserRoles>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.RoleId);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserTokens>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+                entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+                entity.Property(e => e.Name).HasMaxLength(128);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserTokens)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUsers>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedEmail)
+                    .HasName("EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName)
+                    .HasName("UserNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+                entity.Property(e => e.Email).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
             modelBuilder.Entity<Equipment>(entity =>
             {
                 entity.ToTable("equipment");
@@ -61,6 +170,16 @@ namespace WorkoutGen.Models
                     .HasColumnName("date_deleted")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Image)
+                    .HasColumnName("image")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
@@ -91,13 +210,13 @@ namespace WorkoutGen.Models
                     .WithMany(p => p.ExerciseAlternateEquipment)
                     .HasForeignKey(d => d.AlternateEquipmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___alter__59063A47");
+                    .HasConstraintName("FK__exercise___alter__25518C17");
 
                 entity.HasOne(d => d.ExerciseEquipment)
                     .WithMany(p => p.ExerciseAlternateEquipment)
                     .HasForeignKey(d => d.ExerciseEquipmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___exerc__5812160E");
+                    .HasConstraintName("FK__exercise___exerc__245D67DE");
             });
 
             modelBuilder.Entity<ExerciseEquipment>(entity =>
@@ -123,13 +242,13 @@ namespace WorkoutGen.Models
                     .WithMany(p => p.ExerciseEquipment)
                     .HasForeignKey(d => d.EquipmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___equip__5441852A");
+                    .HasConstraintName("FK__exercise___equip__208CD6FA");
 
                 entity.HasOne(d => d.Exercise)
                     .WithMany(p => p.ExerciseEquipment)
                     .HasForeignKey(d => d.ExerciseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___exerc__534D60F1");
+                    .HasConstraintName("FK__exercise___exerc__1F98B2C1");
             });
 
             modelBuilder.Entity<ExerciseMuscleGroup>(entity =>
@@ -155,13 +274,13 @@ namespace WorkoutGen.Models
                     .WithMany(p => p.ExerciseMuscleGroup)
                     .HasForeignKey(d => d.ExerciseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___exerc__5CD6CB2B");
+                    .HasConstraintName("FK__exercise___exerc__29221CFB");
 
                 entity.HasOne(d => d.MuscleGroup)
                     .WithMany(p => p.ExerciseMuscleGroup)
                     .HasForeignKey(d => d.MuscleGroupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__exercise___muscl__5DCAEF64");
+                    .HasConstraintName("FK__exercise___muscl__2A164134");
             });
 
             modelBuilder.Entity<MuscleGroup>(entity =>
