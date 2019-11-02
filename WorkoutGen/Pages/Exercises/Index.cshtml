@@ -28,7 +28,7 @@
                         <div class="carousel-item @GetActiveClass(i)">
                             <img src="~/Images/Exercises/@Model.Exercises[i].Image" class="exercise-image d-block w-100" alt="Workout example">
                             <div class="carousel-caption d-none d-md-block text-white bg-dark rounded-pill">
-                                <h5>@Model.Exercises[i].Name</h5>
+                                <h5>@(Model.Exercises[i].Name + "(" + Model.Exercises[i].Id + ")")</h5>
                                 <p>Description goes here</p>
                             </div>
                         </div>

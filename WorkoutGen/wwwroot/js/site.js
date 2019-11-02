@@ -7,25 +7,25 @@
     // When we select a muscle group option, populate the equipment drop down accordingly
     $('#select2_muscle_groups').on('select2:select', function (e) {
  
-        const arrayMuscleGroupIds = $(this).val().join();
-        GetEquipmentFromMuscleGroups(arrayMuscleGroupIds);
+        //const arrayMuscleGroupIds = $(this).val().join();
+        //GetEquipmentFromMuscleGroups(arrayMuscleGroupIds);
 
     });
 
     // When we deselect a muscle group option, populate the equipment drop down accordingly
     $('#select2_muscle_groups').on('select2:unselect', function (e) {
 
-        $('#select2_equipment').html('');
+        //$('#select2_equipment').html('');
 
-        const arrayMuscleGroupIds = $(this).val().join();
+        //const arrayMuscleGroupIds = $(this).val().join();
 
-        if (!arrayMuscleGroupIds) {
-            $('#select2_equipment').parent().addClass('d-none');
-            $('#btnGenerateExercise').parent().addClass('d-none');
-            return;
-        }
+        //if (!arrayMuscleGroupIds) {
+            //$('#select2_equipment').parent().addClass('d-none');
+            //$('#btnGenerateExercise').parent().addClass('d-none');
+            //return;
+        //}
 
-        GetEquipmentFromMuscleGroups(arrayMuscleGroupIds);
+        //GetEquipmentFromMuscleGroups(arrayMuscleGroupIds);
 
     });
 
@@ -64,7 +64,7 @@
                         let id = responseData[key].id;
                         let text = responseData[key].name;
 
-                        let option = new Option(text, id, true, true);
+                        let option = new Option(text + ' (' + id + ')', id, true, true);
 
                         // Only add new items if they do not exist already
                         if ( $('#select2_equipment').find("option[value='" + id + "']").length === 0 )

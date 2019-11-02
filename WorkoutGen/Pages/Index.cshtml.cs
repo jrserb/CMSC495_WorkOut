@@ -22,6 +22,7 @@ namespace WorkoutGen.Pages
         // So we can access it during requests and responses
         [BindProperty]
         public List<SelectListItem> Options_MuscleGroups { get; set; }
+        public List<SelectListItem> Options_Equipment { get; set; }
 
 
         // Triggered on initial page load
@@ -30,7 +31,11 @@ namespace WorkoutGen.Pages
             // Easy way to render the drop down when page first loads
             // Populate binded property
             Options_MuscleGroups = _context.MuscleGroup
-                .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
+                .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name + " (" + a.Id + ")" })
+                .ToList();
+
+            Options_Equipment = _context.Equipment
+                .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name + " (" + a.Id + ")" })
                 .ToList();
         }
 
