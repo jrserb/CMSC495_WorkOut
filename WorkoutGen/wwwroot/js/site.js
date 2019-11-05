@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿//Kent's test comment for github pushing
+
+$(document).ready(function () {
 
     // Initialize the select 2 drop downs
     $('#select2_muscle_groups').select2();
