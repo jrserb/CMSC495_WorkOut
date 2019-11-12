@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿//Kent's test comment for github pushing
+
+$(document).ready(function () {
 
     // Gets the list of equipment records that match the selected muscle group ids
     // Populates equipment drop down
