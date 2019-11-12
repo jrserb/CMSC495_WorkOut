@@ -1,0 +1,4 @@
+﻿/* Set the width to be responsive */
+.select2 {
+    width: 100% !important;
+}
