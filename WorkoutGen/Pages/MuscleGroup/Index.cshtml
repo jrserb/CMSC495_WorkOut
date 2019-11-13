@@ -4,36 +4,46 @@
     ViewData["Title"] = "Muscle Groups";
 }
 
-<form method="post" asp-page="/equipment/index">
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-md-8">
 
-    <div class="row">
+        <form id="formMuscleGroups" method="post">
 
-        <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <label class="font-weight-bold" for="select2_muscle_groups">Select muscle group(s)</label>
-                <select id="select2_muscle_groups" name="muscle_groups[]" multiple="multiple" asp-items="Model.Options_MuscleGroups" class="form-control"></select>
-            </div>
-        </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="col-md-6 col-sm-12">
-            <div class="card">
-                <img class="card-img-top" src="" alt="Card image">
-                <div class="card-body">
-                    <h4 class="card-title">Muscle Groups</h4>
-                    <p class="card-text">Visualize</p>
+            <div class="row mb-2">
+
+                <div class="form-group col-md-6">
+                    <label class="font-weight-bold" for="select2_muscle_groups">Select muscle group(s)</label>
+                    <select id="select2_muscle_groups" asp-for="muscleGroupIds" name="muscleGroupIds[]" multiple="multiple" asp-items="Model.Options_MuscleGroups" class="form-control"></select>
+                    <button id="btnClearSelection" type="button" class="btn btn-danger btn-sm mt-1">Clear selection</button>
                 </div>
+
+                <div class="form-group col-md-6">
+                    <div class="card mt-4">
+                        <img class="card-img-top" src="" alt="Card image">
+                        <div class="card-body">
+                            <h4 class="card-title">Muscle Groups</h4>
+                            <p class="card-text">Visualize</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
+
+            <div class="form-group text-center">
+                <input id="btnContinue" type="submit" value="Continue to equipment" class="btn btn-primary btn-lg" />
+            </div>
+
+        </form>
 
     </div>
-
-    <div class="form-group d-none">
-        <input id="btnGenerateExercise" type="submit" value="Generate exercise" class="btn btn-primary btn-lg" />
-    </div>
-
-</form>
+    <div class="col-2"></div>
+</div>
 
 @section Scripts
 {
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/muscle_group.js"></script>
 }

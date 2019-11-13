@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using WorkoutGen.Data.Services;
+using System.ComponentModel.DataAnnotations;
 using WorkoutGen.Models;
 
 namespace WorkoutGen.Pages.MuscleGroup
@@ -21,18 +15,42 @@ namespace WorkoutGen.Pages.MuscleGroup
             _context = context;
         }
 
-        // Binding properties allows them to be passed to the razor page model
-        // So we can access it during requests and responses
         [BindProperty]
-        public List<SelectListItem> Options_MuscleGroups { get; set; }
+        [MustHaveOneItem(ErrorMessage = "You must select an option")]
+        public int[] muscleGroupIds { get; set; }
 
-        public async void OnGet()
+        public SelectList Options_MuscleGroups { get; set; }
+
+        public void OnGet()
         {
             // Easy way to render the drop down when page first loads
             // Populate binded property
-            Options_MuscleGroups = await _context.MuscleGroup
-                                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name + " (" + a.Id + ")" })
-                                        .ToListAsync();
+            Options_MuscleGroups = new SelectList(_context.MuscleGroup, "Id", "Name");
+        }
+
+        public IActionResult OnPost(int[] muscleGroupIds)
+        {        
+            if (!ModelState.IsValid) {
+
+                Options_MuscleGroups = new SelectList(_context.MuscleGroup, "Id", "Name");
+                return Page();
+            }
+
+            TempData["muscleGroupIds"] = muscleGroupIds;
+            return RedirectToPage("/Equipment/Index");
+        }
+
+        public class MustHaveOneItem : ValidationAttribute
+        {
+            public override bool IsValid(object value)
+            {
+                var list = value as int[];
+                if (list.Length > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

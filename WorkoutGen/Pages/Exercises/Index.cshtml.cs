@@ -25,7 +25,7 @@ namespace WorkoutGen.Pages.Exercises
         }
 
         // This is the code to get the correct exercises that match the users choices
-        public void OnPost(int[] muscle_groups, int[] equipment)
+        public void OnPost(int[] equipment)
         {
 
             int[] alternateEquipmentIds = { };
@@ -34,13 +34,19 @@ namespace WorkoutGen.Pages.Exercises
             // This list will hold the final list of valid exercise ids based on if the user had the required muscle groups and equipment selected
             List<int> validExerciseIds = new List<int>();
 
+            // First thing to do is select all the distinct exercise ids related to the muscle groups the user selected
+            //List<int> exerciseIds = _context.ExerciseMuscleGroup
+            //                                    .Where( e => muscle_groups.Contains(e.MuscleGroupId) )
+            //                                    .Select(r => r.ExerciseId)
+            //                                    .Distinct()
+            //                                    .ToList();     
 
             // First thing to do is select all the distinct exercise ids related to the muscle groups the user selected
-            List<int> exerciseIds = _context.ExerciseMuscleGroup
-                                                .Where( e => muscle_groups.Contains(e.MuscleGroupId) )
-                                                .Select(r => r.ExerciseId)
-                                                .Distinct()
-                                                .ToList();         
+            List<int> exerciseIds = _context.ExerciseEquipment
+                                    .Where(e => equipment.Contains(e.EquipmentId))
+                                    .Select(r => r.ExerciseId)
+                                    .Distinct()
+                                    .ToList();
 
             // We don't need this logic if the user does not need to have ALL the muscle groups selected for an exercise
             #region Muscle Group Validation code - not sure if needed
