@@ -33,7 +33,9 @@ namespace WorkoutGen
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = true;
-                options.SignIn.RequireConfirmedEmail = false;     
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using WorkoutGen.Models;
+using System.Text.RegularExpressions;
 
 namespace WorkoutGen.Areas.Identity.Pages.Account
 {
@@ -47,7 +48,7 @@ namespace WorkoutGen.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
+            [Display(Name = "Username/Email")]
             public string Email { get; set; }
 
             [Required]
@@ -62,7 +63,7 @@ namespace WorkoutGen.Areas.Identity.Pages.Account
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
+                ModelState.AddModelError("Input.Email", ErrorMessage);
             }
 
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -79,11 +80,52 @@ namespace WorkoutGen.Areas.Identity.Pages.Account
         {
             returnUrl = returnUrl ?? Url.Content("~/");
 
+            if (Input.Email.IndexOf('@') > -1)
+            {
+                //Validate email format
+                string emailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
+                                       @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
+                                          @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+
+                Regex re = new Regex(emailRegex);
+                if (!re.IsMatch(Input.Email))
+                {
+                    ModelState.AddModelError("Input.Email", "Email is not valid");
+                }
+            }
+            else
+            {
+                //validate Username format
+                string emailRegex = @"^[a-zA-Z0-9]*$";
+                Regex re = new Regex(emailRegex);
+                if (!re.IsMatch(Input.Email))
+                {
+                    ModelState.AddModelError("Input.Email", "Username is not valid");
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                var userName = Input.Email;
+
+                if (userName.IndexOf('@') > -1)
+                {
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        return Page();
+                    }
+                    else
+                    {
+                        userName = user.UserName;
+                    }
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

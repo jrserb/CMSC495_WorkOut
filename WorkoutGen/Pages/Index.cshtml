@@ -5,39 +5,33 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="row">
-    <div class="col-12">
+    <div class="row">
 
-        <div class="card align-items-center border-0 text-center">
+        <div class="col-12">
 
-            <div class="card-body">
+            <div class="card align-items-center border-0 text-center">
 
-                <h1 class="card-title">Welcome to @ViewData["ApplicationName"] !</h1>
+                <div class="card-body">
 
-                <ul class="list-group list-group-horizontal">
-                    <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
-                    <a asp-page="faq" class="list-group-item list-group-item-action border-0 border-right">FAQ</a>
-                    <a asp-page="contact" class="list-group-item list-group-item-action border-0">Contact Us</a>
-                </ul>
+                    <h1 class="card-title">Welcome to @ViewData["ApplicationName"]!</h1>
 
+                    <ul class="list-group list-group-horizontal-sm mb-5">
+                        <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
+                        <a asp-page="faq" class="list-group-item list-group-item-action border-0">FAQ</a>
+                        <a asp-page="contact" class="list-group-item list-group-item-action border-0">Contact Us</a>
+                    </ul>
+
+                    <p>Intro text</p>
+                    <div class="row mt-2">
+                        <div class="col-sm-12 col-md-6">
+                            <a asp-page="musclegroup/index" role="button" class="btn btn-primary btn-block m-1" aria-pressed="true">Get Started as a guest!</a>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <a asp-area="Identity" asp-page="/Account/Login" role="button" class="btn btn-primary btn-block m-1" aria-pressed="true">Login to your account!</a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-
-        <div class="card align-items-center border-0 text-center p-4">
-
-            <div class="card-body">
-
-                <p>Bunch o text</p>
-
-                <a asp-page="musclegroup/index" role="button" class="btn btn-primary" aria-pressed="true">Get Started as as guest!</a>
-                <a asp-area="Identity" asp-page="/Account/Login" role="button" class="btn btn-primary" aria-pressed="true">Login!</a>
-            </div>
-        </div>
-
-    </div>
 </div>
