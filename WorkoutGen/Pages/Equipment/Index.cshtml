@@ -35,6 +35,7 @@
                 <div class="form-group col-md-12">
                     <label class="font-weight-bold" for="select2_muscle_groups">Select equipment</label>
                     <select id="select2_equipment" name="equipment[]" multiple="multiple" asp-items="Model.Options_Equipment" class="form-control"></select>
+                    <p class="text-center"><span id="eCount" class="font-weight-bold">@Model.exerciseCount</span> exercises available with this set</p>
                 </div>
 
             </div>

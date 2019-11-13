@@ -21,8 +21,8 @@ namespace WorkoutGen.Pages.Equipment
         // Binding properties allows them to be passed to the razor page model
         // So we can access it during requests and responses
         [BindProperty]
-        public int[] muscleGroupIds { get; set; }
         public List<Models.MuscleGroup> muscleGroups { get; set; }
+        public int exerciseCount { get; set; }
         public SelectList Options_Equipment { get; set; }
 
         public IActionResult OnGet()
@@ -35,7 +35,8 @@ namespace WorkoutGen.Pages.Equipment
                 // If full body was selected then get all the equipment
                 if (muscleGroupIds[0] == 6)
                 {
-                    Options_Equipment = new SelectList(_context.Equipment, "Id", "Name");               
+                    Options_Equipment = new SelectList(_context.Equipment, "Id", "Name");
+                    exerciseCount = _context.Exercise.Count();
                 }
                 else
                 {
@@ -46,6 +47,9 @@ namespace WorkoutGen.Pages.Equipment
                                             .Distinct()
                                             .ToList();
 
+                    // Start with 0 because they have no equipment selected yet
+                    exerciseCount = 0;
+
                     var equipment = (from eq in _context.Equipment
                                     join ee in _context.ExerciseEquipment on eq.Id equals ee.EquipmentId
                                     where exerciseIds.Contains(ee.ExerciseId)
@@ -54,9 +58,10 @@ namespace WorkoutGen.Pages.Equipment
                     Options_Equipment = new SelectList(equipment, "Id", "Name");
                 }
 
+                // Return the selected muscle groups to display at the top
                 muscleGroups = _context.MuscleGroup
-                                .Where(m => muscleGroupIds.Contains(m.Id))
-                                .ToList();
+                               .Where(m => muscleGroupIds.Contains(m.Id))
+                               .ToList();
 
                 return Page();
             }
@@ -64,9 +69,15 @@ namespace WorkoutGen.Pages.Equipment
             return RedirectToPage("/MuscleGroup/Index");
         }
 
-        public void OnPost()
+        public JsonResult OnPostUpdateExerciseCount(int[] equipmentIds)
         {
-            
+            // Get distinct count of exercises associated with the selected equipment ids
+            int count = _context.ExerciseEquipment
+                        .Where(m => equipmentIds.Contains(m.EquipmentId))
+                        .Distinct()
+                        .Count();
+
+            return new JsonResult(count);
         }
     }
 }
