@@ -17,7 +17,9 @@ namespace WorkoutGen.Pages.Equipment
         private readonly IEquipmentService _equipmentDb;
         private readonly IMuscleGroupService _muscleGroupDb;
 
-        public IndexModel(IExerciseService exerciseDb, IEquipmentService equipmentDb, IMuscleGroupService muscleGroupDb)
+        public IndexModel(IExerciseService exerciseDb, 
+            IEquipmentService equipmentDb, 
+            IMuscleGroupService muscleGroupDb)
         {
             _exerciseDb = exerciseDb;
             _equipmentDb = equipmentDb;
@@ -89,7 +91,6 @@ namespace WorkoutGen.Pages.Equipment
 
                 return Page();
             }
-
 
             int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
             int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);

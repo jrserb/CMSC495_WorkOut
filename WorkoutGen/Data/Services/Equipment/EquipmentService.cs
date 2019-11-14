@@ -36,11 +36,35 @@ namespace WorkoutGen.Data.Services.Equipment
                         .ToListAsync();
         }
 
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromExercise(int id)
+        {
+
+            int[] equipmentIds = await GetEquipmentIdsFromExercise(id);
+            return await GetEquipment(equipmentIds);
+        }
+
+        public async Task<int[]> GetEquipmentIdsFromExercise(int id)
+        {
+            return await _context.ExerciseEquipment
+                        .Where(x => x.ExerciseId == id)
+                        .Select(x => x.EquipmentId)
+                        .ToArrayAsync();
+        }
+
         public async Task<int[]> GetEquipmentIdsFromExercises(int[] ids)
         {
             return await _context.ExerciseEquipment
                         .Where(x => ids.Contains(x.ExerciseId))
                         .Select(x => x.EquipmentId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        public async Task<int[]> GetAlternateEquipmentIdsFromEquipment(int id)
+        {
+            return await _context.ExerciseAlternateEquipment
+                        .Where(x => x.ExerciseEquipmentId == id)
+                        .Select(x => x.AlternateEquipmentId)
                         .Distinct()
                         .ToArrayAsync();
         }

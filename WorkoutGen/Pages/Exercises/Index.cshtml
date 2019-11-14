@@ -9,7 +9,7 @@
     <div class="col-2"></div>
     <div class="col-6">
 
-        @if (Model.Exercises.Count > 0)
+        @if (Model.Exercises.Count() > 0)
         {
 
             <div id="carouselExercises" class="carousel slide border-dark" data-ride="carousel">
@@ -26,9 +26,9 @@
                     @for (int i = 0; i < Model.Exercises.Count(); i++)
                     {
                         <div class="carousel-item @GetActiveClass(i)">
-                            <img src="~/Images/Exercises/@Model.Exercises[i].Image" class="exercise-image d-block w-100" alt="Workout example">
+                            <img src="~/Images/placeholder.jpg" class="exercise-image d-block w-100" alt="Workout example">
                             <div class="carousel-caption d-none d-md-block text-white bg-dark rounded-pill">
-                                <h5>@(Model.Exercises[i].Name + "(" + Model.Exercises[i].Id + ")")</h5>
+                                <h5>@(Model.Exercises.ElementAt(i).Name + "(" + Model.Exercises.ElementAt(i).Id + ")")</h5>
                                 <p>Description goes here</p>
                             </div>
                         </div>
