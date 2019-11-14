@@ -1,32 +1,40 @@
 ﻿$(document).ready(function () {
 
-    // Initialize the select 2 drop downs
+    // Initialize the select 2 drop down for equipment selection
     $('#select2_equipment').select2();
 
-    // When we select an equipment option, hide/show the exercise gen button accordingly
     $('#select2_equipment').on({
 
+        // Event trigger when option is selected from the drop down
         'select2:select': function () {
-            HideShowExerciseButton($(this));
+            HideShowExerciseButton();
             UpdateExerciseCount($(this));
         },
+
+        // Event trigger when option is unselected from the drop down
         'select2:unselect': function () {
-            HideShowExerciseButton($(this));
+            HideShowExerciseButton();
             UpdateExerciseCount($(this));
         }
 
     });
 });
 
-// Based on if any equipment is selected
-function HideShowExerciseButton(equipmentDropDown) {
+// Hide/Show continue button
+function HideShowExerciseButton() {
 
-    if (equipmentDropDown.val().join()) {
-        $('#btnGenerateExercise').parent().removeClass('d-none');
+    const selectedCount = $('#select2_equipment option:selected').length;
+
+    // If no options are selected then hide the button
+    // Else show
+    if (selectedCount === 0) {
+        $('#btnGenerateExercise').addClass('d-none');
     } else {
-        $('#btnGenerateExercise').parent().addClass('d-none');
+        $('#btnGenerateExercise').removeClass('d-none');
     }
 }
+
+// Updates exercise count based on equipment selected
 function UpdateExerciseCount(equipmentDropDown) {
 
     const objRequest = {

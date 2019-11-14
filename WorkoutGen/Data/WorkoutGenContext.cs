@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
+using WorkoutGen.Models;
 
-namespace WorkoutGen.Models
+namespace WorkoutGen.Data
 {
     public partial class WorkoutGenContext : DbContext
     {

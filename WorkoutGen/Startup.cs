@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WorkoutGen.Models;
+using WorkoutGen.Data.Services.MuscleGroup;
+using WorkoutGen.Data.Services.Exercise;
+using WorkoutGen.Data.Services.Equipment;
 
 namespace WorkoutGen
 {
@@ -39,7 +42,11 @@ namespace WorkoutGen
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/accounts/login");
+            services.AddScoped<IMuscleGroupService, MuscleGroupService>();
+            services.AddScoped<IEquipmentService, EquipmentService>();
+            services.AddScoped<IExerciseService, ExerciseService>();
+
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
             services.AddRazorPages();
         }

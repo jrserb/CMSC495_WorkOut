@@ -5,79 +5,110 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WorkoutGen.Models;
+using WorkoutGen.Data.Services.Equipment;
+using WorkoutGen.Data.Services.Exercise;
+using WorkoutGen.Data.Services.MuscleGroup;
 
 namespace WorkoutGen.Pages.Equipment
 {
     public class IndexModel : PageModel
     {
-        private readonly WorkoutGenContext _context;
+        private readonly IExerciseService _exerciseDb;
+        private readonly IEquipmentService _equipmentDb;
+        private readonly IMuscleGroupService _muscleGroupDb;
 
-        public IndexModel(WorkoutGenContext context)
+        public IndexModel(IExerciseService exerciseDb, IEquipmentService equipmentDb, IMuscleGroupService muscleGroupDb)
         {
-            _context = context;
+            _exerciseDb = exerciseDb;
+            _equipmentDb = equipmentDb;
+            _muscleGroupDb = muscleGroupDb;
         }
 
         // Binding properties allows them to be passed to the razor page model
         // So we can access it during requests and responses
         [BindProperty]
-        public List<Models.MuscleGroup> muscleGroups { get; set; }
-        public int exerciseCount { get; set; }
+        public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
+        public int ExerciseCount { get; set; }
+        public int[] equipmentIds { get; set; }
         public SelectList Options_Equipment { get; set; }
 
         public IActionResult OnGet()
         {
-            TempData.Keep("muscleGroupIds");
-            int[] muscleGroupIds = (int[])TempData["muscleGroupIds"];
+            //TempData.Keep("muscleGroupIds");
+            //int[] muscleGroupIds = (int[])TempData["muscleGroupIds"];
 
-            if (muscleGroupIds.Length > 0)
-            {
-                // If full body was selected then get all the equipment
-                if (muscleGroupIds[0] == 6)
-                {
-                    Options_Equipment = new SelectList(_context.Equipment, "Id", "Name");
-                    exerciseCount = _context.Exercise.Count();
-                }
-                else
-                {
-                    // First get distinct list of exercise ids associated with the muscle group ids
-                    List<int> exerciseIds = _context.ExerciseMuscleGroup
-                                            .Where(m => muscleGroupIds.Contains(m.MuscleGroupId))
-                                            .Select(r => r.ExerciseId)
-                                            .Distinct()
-                                            .ToList();
+            //if (muscleGroupIds.Length > 0)
+            //{
+            //    // If full body was selected then get all the equipment
+            //    if (muscleGroupIds[0] == 6)
+            //    {
+            //        Options_Equipment = new SelectList(_context.Equipment, "Id", "Name");
+            //        exerciseCount = _context.Exercise.Count();
+            //    }
+            //    else
+            //    {
+            //        // First get distinct list of exercise ids associated with the muscle group ids
+            //        List<int> exerciseIds = _context.ExerciseMuscleGroup
+            //                                .Where(m => muscleGroupIds.Contains(m.MuscleGroupId))
+            //                                .Select(r => r.ExerciseId)
+            //                                .Distinct()
+            //                                .ToList();
 
-                    // Start with 0 because they have no equipment selected yet
-                    exerciseCount = 0;
+            //        // Start with 0 because they have no equipment selected yet
+            //        exerciseCount = 0;
 
-                    var equipment = (from eq in _context.Equipment
-                                    join ee in _context.ExerciseEquipment on eq.Id equals ee.EquipmentId
-                                    where exerciseIds.Contains(ee.ExerciseId)
-                                    select eq).Distinct();
+            //        var equipment = (from eq in _context.Equipment
+            //                         join ee in _context.ExerciseEquipment on eq.Id equals ee.EquipmentId
+            //                         where exerciseIds.Contains(ee.ExerciseId)
+            //                         select eq).Distinct();
 
-                    Options_Equipment = new SelectList(equipment, "Id", "Name");
-                }
+            //        Options_Equipment = new SelectList(equipment, "Id", "Name");
+            //    }
 
-                // Return the selected muscle groups to display at the top
-                muscleGroups = _context.MuscleGroup
-                               .Where(m => muscleGroupIds.Contains(m.Id))
-                               .ToList();
+            //    // Return the selected muscle groups to display at the top
+            //    muscleGroups = _context.MuscleGroup
+            //                   .Where(m => muscleGroupIds.Contains(m.Id))
+            //                   .ToList();
 
-                return Page();
-            }
+            //return Page();
+            //}
 
             return RedirectToPage("/MuscleGroup/Index");
         }
 
-        public JsonResult OnPostUpdateExerciseCount(int[] equipmentIds)
+        public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds)
         {
-            // Get distinct count of exercises associated with the selected equipment ids
-            int count = _context.ExerciseEquipment
-                        .Where(m => equipmentIds.Contains(m.EquipmentId))
-                        .Distinct()
-                        .Count();
+            
+            if (muscleGroupIds[0] == 6)
+            {
+                var exercises = await _exerciseDb.GetExercises();
 
-            return new JsonResult(count);
+                Options_Equipment = new SelectList(exercises, "Id", "Name");
+
+                ExerciseCount = exercises.Count();
+
+                return Page();
+            }
+
+
+            int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
+            int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
+            int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(equipmentIds);
+            int[] fullEquipmentIds = equipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
+
+            var equipment = await _equipmentDb.GetEquipment(fullEquipmentIds);
+
+            Options_Equipment = new SelectList(equipment, "Id", "Name");
+            ExerciseCount = exerciseIds.Count();
+            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
+
+            return Page();
+        }
+
+        public async Task<JsonResult> OnPostUpdateExerciseCount(int[] equipmentIds)
+        {
+            int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromEquipment(equipmentIds);
+            return new JsonResult(exerciseIds.Count());
         }
     }
 }

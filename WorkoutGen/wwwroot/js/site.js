@@ -1,4 +1,6 @@
-﻿function CallController(objRequest, callback) {
+﻿// Global function that is called from other pages
+// Handles Ajax requests to the server and returns data result
+function CallController(objRequest, callback) {
 
     $.ajax({
 
