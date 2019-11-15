@@ -3,57 +3,103 @@
 
 @{
     ViewData["Title"] = "Index";
+
+    string exercise = "Nothing was found";
+    int exerciseId = 0;
+
+    if (Model.Exercises.Count() > 0)
+    {
+        exerciseId = Model.Exercises.First().Id;
+        exercise = Model.Exercises.First().Name;
+    }
+
 }
 
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-6">
+    <div class="col-md-12 text-center">
 
-        @if (Model.Exercises.Count() > 0)
-        {
+        <h1 id="exerciseName" data-exercise="@exerciseId">@exercise</h1>
+        <div class="row">
+            <div class="col-12 text-center">
 
-            <div id="carouselExercises" class="carousel slide border-dark" data-ride="carousel">
+                <div class="card">
+                    <div class="card-body">
 
-                <ol class="carousel-indicators">
-                    @for (int i = 0; i < Model.Exercises.Count(); i++)
-                    {
-                        <li data-target="#carouselExercises" data-slide-to="@i" class="@GetActiveClass(i)"></li>
-                    }
-                </ol>
+                        <button id="btnHowTo" type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#modalHowTo">How To</button>
 
-                <div class="carousel-inner">
+                        <form class="justify-content-center mb-5">
 
-                    @for (int i = 0; i < Model.Exercises.Count(); i++)
-                    {
-                        <div class="carousel-item @GetActiveClass(i)">
-                            <img src="~/Images/placeholder.jpg" class="exercise-image d-block w-100" alt="Workout example">
-                            <div class="carousel-caption d-none d-md-block text-white bg-dark rounded-pill">
-                                <h5>@(Model.Exercises.ElementAt(i).Name + "(" + Model.Exercises.ElementAt(i).Id + ")")</h5>
-                                <p>Description goes here</p>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-md-4">
+                                    <label for="weight" class="mr-2">Weight:</label>
+                                    <input type="number" class="form-control mb-2 d-inline-flex" id="weight">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="reps" class="mr-2">Reps:</label>
+                                    <input type="number" class="form-control" id="reps">
+                                </div>
+                                <div class="col-2"></div>
                             </div>
+
+                            <div class="row mb-4">
+                                <div class="col-2"></div>
+                                <div class="col-md-8">
+                                    <label for="txtSets">Sets</label>
+                                    <textarea class="form-control" id="txtSets" rows="5"></textarea>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+
+                            <button id="btnAddSet" type="button" class="btn btn-primary mb-4">Add Set</button>
+
+                        </form>
+
+                        <h4>Progress</h4>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
                         </div>
-                    }
 
+                    </div>
+                    <div class="card-footer">
+
+                        <button id="btnLeft" type="button" class="btn btn-primary float-left w-25">
+                            <span class="oi oi-arrow-thick-left"></span>
+                        </button>
+                        <button id="btnRight" type="button" class="btn btn-primary float-right w-25">
+                            <span class="oi oi-arrow-thick-right"></span>
+                        </button>
+
+                    </div>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExercises" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExercises" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
 
-        }
-        else
-        {
-            <div>Nothing was found</div>
-        }
+            </div>
+        </div>
 
     </div>
-    <div class="col-2"></div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalHowTo" tabindex="-1" role="dialog" aria-labelledby="modalHowToLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHowToLabel">How To</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @functions{
 
@@ -71,11 +117,12 @@
 
     <script>
 
-        $('.carousel').carousel({
-            interval: false
-        });
+         // Store globally
+        const exercises = @Json.Serialize(Model.Exercises);
 
     </script>
+
+    <script src="~/js/exercises.js"></script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

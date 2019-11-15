@@ -19,6 +19,6 @@ namespace WorkoutGen.Data.Services.Equipment
 
         public Task<int[]> GetAlternateEquipmentIdsFromEquipment(int id);
 
-        public Task<int[]> GetAlternateEquipmentIdsFromEquipment(int[] ids);
+        public Task<int[]> GetAlternateEquipmentIdsFromEquipment(int[] ids);    
     }
 }

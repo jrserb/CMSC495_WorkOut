@@ -46,8 +46,6 @@ function UpdateExerciseCount(equipmentDropDown) {
     };
 
     CallController(objRequest, function (responseData) {
-        if (responseData) {
-            $('#eCount').html(responseData);
-        }
+        $('#eCount').html(responseData);
     });
 }

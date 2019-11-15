@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -80,36 +79,35 @@ namespace WorkoutGen.Pages.Equipment
 
         public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds)
         {
-            
+            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
+            IEnumerable <Models.Equipment> equipment;
+            ExerciseCount = 0;
+
             if (muscleGroupIds[0] == 6)
             {
-                var exercises = await _exerciseDb.GetExercises();
-
-                Options_Equipment = new SelectList(exercises, "Id", "Name");
-
-                ExerciseCount = exercises.Count();
-
-                return Page();
+                equipment = await _equipmentDb.GetEquipment();
             }
+            else
+            {
+                int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
+                int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
+                int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(equipmentIds);
 
-            int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
-            int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
-            int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(equipmentIds);
-            int[] fullEquipmentIds = equipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
+                // Join the arrays of equipment and get distinct set
+                int[] fullEquipmentIds = equipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
 
-            var equipment = await _equipmentDb.GetEquipment(fullEquipmentIds);
-
-            Options_Equipment = new SelectList(equipment, "Id", "Name");
-            ExerciseCount = exerciseIds.Count();
-            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
-
+                // Get the equipment
+                equipment = await _equipmentDb.GetEquipment(fullEquipmentIds);
+            }
+        
+            Options_Equipment = new SelectList(equipment, "Id", "Name");  
             return Page();
         }
 
         public async Task<JsonResult> OnPostUpdateExerciseCount(int[] equipmentIds)
         {
-            int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromEquipment(equipmentIds);
-            return new JsonResult(exerciseIds.Count());
+            IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+            return new JsonResult(exercises.Count());
         }
     }
 }
