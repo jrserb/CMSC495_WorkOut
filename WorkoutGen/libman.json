@@ -9,6 +9,13 @@
         "js/select2.min.js",
         "css/select2.min.css"
       ]
+    },
+    {
+      "library": "jquery-cookie@1.4.1",
+      "destination": "wwwroot/lib/jquery/dist/jquery-cookie/",
+      "files": [
+        "jquery.cookie.min.js"
+      ]
     }
   ]
 }
