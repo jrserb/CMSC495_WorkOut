@@ -3,86 +3,87 @@
 
 @{
     ViewData["Title"] = "Index";
-
-    string exercise = "Nothing was found";
-    int exerciseId = 0;
-
-    if (Model.Exercises.Count() > 0)
-    {
-        exerciseId = Model.Exercises.First().Id;
-        exercise = Model.Exercises.First().Name;
-    }
-
 }
 
 <div class="row">
     <div class="col-md-12 text-center">
 
-        <h1 id="exerciseName" data-exercise="@exerciseId">@exercise</h1>
-        <div class="row">
-            <div class="col-12 text-center">
+        @if (Model.Exercises.Count() != 0)
+        {
+            @*<a class="btn btn-primary mb-1" asp-page="/equipment/index" role="button">Back to equipment selection</a>*@
+            <h1 id="exerciseName" data-exercise="@Model.Exercises.First().Id">@Model.Exercises.First().Name</h1>
 
-                <div class="card">
-                    <div class="card-body">
+            <div class="row">
+                <div class="col-12 text-center">
 
-                        <button id="btnHowTo" type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#modalHowTo">How To</button>
+                    <div class="card">
+                        <div class="card-body">
 
-                        <form class="justify-content-center mb-5">
+                            <button id="btnHowTo" type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#modalHowTo">How To</button>
 
-                            <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-md-4">
-                                    <label for="weight" class="mr-2">Weight:</label>
-                                    <input type="number" class="form-control mb-2 d-inline-flex" id="weight">
+                            <form class="justify-content-center mb-5">
+
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-md-4">
+                                        <label for="weight" class="mr-2">Weight:</label>
+                                        <input type="number" class="form-control mb-2 d-inline-flex" id="weight">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="reps" class="mr-2">Reps:</label>
+                                        <input type="number" class="form-control" id="reps">
+                                    </div>
+                                    <div class="col-2"></div>
                                 </div>
 
-                                <div class="col-md-4">
-                                    <label for="reps" class="mr-2">Reps:</label>
-                                    <input type="number" class="form-control" id="reps">
+                                <div class="row mb-4">
+                                    <div class="col-2"></div>
+                                    <div class="col-md-8">
+                                        <label for="txtSets">Sets</label>
+                                        <textarea class="form-control" id="txtSets" rows="5" readonly style="resize: none;"></textarea>
+                                    </div>
+                                    <div class="col-2"></div>
                                 </div>
-                                <div class="col-2"></div>
+
+                                <button id="btnAddSet" type="button" class="btn btn-primary mb-4">Add Set</button>
+
+                            </form>
+
+                            <h4>Progress</h4>
+                            <div class="progress" style="height:25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
+                            <p class="text-center"><span id="currentExerciseCount" class="font-weight-bold">0</span> exercises out of <span class="font-weight-bold">@Model.Exercises.Count()</span> completed</p>
 
-                            <div class="row mb-4">
-                                <div class="col-2"></div>
-                                <div class="col-md-8">
-                                    <label for="txtSets">Sets</label>
-                                    <textarea class="form-control" id="txtSets" rows="5" readonly style="resize: none;"></textarea>
-                                </div>
-                                <div class="col-2"></div>
-                            </div>
-
-                            <button id="btnAddSet" type="button" class="btn btn-primary mb-4">Add Set</button>
-
-                        </form>
-
-                        <h4>Progress</h4>
-                        <div class="progress" style="height: 25px;">
-                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
                         </div>
+                        <div class="card-footer">
 
+                            <button id="btnLeft" type="button" class="btn btn-primary float-left w-25">
+                                <span class="oi oi-arrow-thick-left"></span>
+                            </button>
+                            <button id="btnRight" type="button" class="btn btn-primary float-right w-25">
+                                <span class="oi oi-arrow-thick-right"></span>
+                            </button>
+
+                        </div>
                     </div>
-                    <div class="card-footer">
 
-                        <button id="btnLeft" type="button" class="btn btn-primary float-left w-25">
-                            <span class="oi oi-arrow-thick-left"></span>
-                        </button>
-                        <button id="btnRight" type="button" class="btn btn-primary float-right w-25">
-                            <span class="oi oi-arrow-thick-right"></span>
-                        </button>
-
-                    </div>
                 </div>
-
             </div>
-        </div>
+        }
+        else
+        {
+            <h1>Sorry!</h1>
+            <h1>Nothing was found!</h1>
+        }
 
     </div>
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="modalHowTo" tabindex="-1" role="dialog" aria-labelledby="modalHowToLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalHowToLabel">How To</h5>
@@ -95,6 +96,23 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEndOfExercise" tabindex="-1" role="dialog" aria-labelledby="modalEndOfExerciseLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header m-auto">
+                <h5 class="modal-title" id="modalEndOfExerciseLabel">End of workout!</h5>
+            </div>
+            <div class="modal-body">
+
+                <p>You have completed all the exercises available.</p>
+
+                <button id="btnStartOver" type="button" class="btn btn-primary">Start over</button>
+                <button id="btnEndWorkout" type="button" class="btn btn-danger">End workout</button>
+
             </div>
         </div>
     </div>
@@ -118,7 +136,11 @@
     <script>
 
          // Store globally
+        const usedExercises = [];
         const exercises = @Json.Serialize(Model.Exercises);
+
+        // Mark the first exercise as used
+        usedExercises.push(exercises[0].id);
 
     </script>
 

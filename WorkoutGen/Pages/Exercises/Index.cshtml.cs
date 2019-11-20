@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using WorkoutGen.Models;
 using WorkoutGen.Data.Services.Exercise;
 using System.Threading.Tasks;
+using WorkoutGen.Data.Session;
 
 namespace WorkoutGen.Pages.Exercises
 {
@@ -21,12 +22,13 @@ namespace WorkoutGen.Pages.Exercises
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Exercises = await _exerciseDb.GetExercises();
-            return Page();
+            //Exercises = await _exerciseDb.GetExercises();
+            return RedirectToPage("/Equipment/Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int[] equipmentIds)
         {
+            HttpContext.Session.Set<int[]>("equipment", equipmentIds);
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
             return Page();
         }

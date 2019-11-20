@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WorkoutGen.Data.Services.Equipment;
 using WorkoutGen.Data.Services.Exercise;
 using WorkoutGen.Data.Services.MuscleGroup;
+using WorkoutGen.Data.Session;
 
 namespace WorkoutGen.Pages.Equipment
 {
@@ -16,8 +19,8 @@ namespace WorkoutGen.Pages.Equipment
         private readonly IEquipmentService _equipmentDb;
         private readonly IMuscleGroupService _muscleGroupDb;
 
-        public IndexModel(IExerciseService exerciseDb, 
-            IEquipmentService equipmentDb, 
+        public IndexModel(IExerciseService exerciseDb,
+            IEquipmentService equipmentDb,
             IMuscleGroupService muscleGroupDb)
         {
             _exerciseDb = exerciseDb;
@@ -33,54 +36,33 @@ namespace WorkoutGen.Pages.Equipment
         public int[] equipmentIds { get; set; }
         public SelectList Options_Equipment { get; set; }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            //TempData.Keep("muscleGroupIds");
-            //int[] muscleGroupIds = (int[])TempData["muscleGroupIds"];
+            equipmentIds = HttpContext.Session.Get<int[]>("equipment");
+            int[] muscleGroupIds = HttpContext.Session.Get<int[]>("muscle_groups");
 
-            //if (muscleGroupIds.Length > 0)
-            //{
-            //    // If full body was selected then get all the equipment
-            //    if (muscleGroupIds[0] == 6)
-            //    {
-            //        Options_Equipment = new SelectList(_context.Equipment, "Id", "Name");
-            //        exerciseCount = _context.Exercise.Count();
-            //    }
-            //    else
-            //    {
-            //        // First get distinct list of exercise ids associated with the muscle group ids
-            //        List<int> exerciseIds = _context.ExerciseMuscleGroup
-            //                                .Where(m => muscleGroupIds.Contains(m.MuscleGroupId))
-            //                                .Select(r => r.ExerciseId)
-            //                                .Distinct()
-            //                                .ToList();
+            if (muscleGroupIds == null)
+            {
+                return RedirectToPage("/MuscleGroup/Index");
+            }
 
-            //        // Start with 0 because they have no equipment selected yet
-            //        exerciseCount = 0;
+            if (equipmentIds != null)
+            {
+                IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+                ExerciseCount = exercises.Count();
+            }
 
-            //        var equipment = (from eq in _context.Equipment
-            //                         join ee in _context.ExerciseEquipment on eq.Id equals ee.EquipmentId
-            //                         where exerciseIds.Contains(ee.ExerciseId)
-            //                         select eq).Distinct();
-
-            //        Options_Equipment = new SelectList(equipment, "Id", "Name");
-            //    }
-
-            //    // Return the selected muscle groups to display at the top
-            //    muscleGroups = _context.MuscleGroup
-            //                   .Where(m => muscleGroupIds.Contains(m.Id))
-            //                   .ToList();
-
-            //return Page();
-            //}
-
-            return RedirectToPage("/MuscleGroup/Index");
+            await SetEquipmentDropDown();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds)
         {
+            // Save the muscle groups into session
+            HttpContext.Session.Set<int[]>("muscle_groups", muscleGroupIds);
+
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
-            IEnumerable <Models.Equipment> equipment;
+            IEnumerable<Models.Equipment> equipment;
             ExerciseCount = 0;
 
             if (muscleGroupIds[0] == 6)
@@ -99,8 +81,8 @@ namespace WorkoutGen.Pages.Equipment
                 // Get the equipment
                 equipment = await _equipmentDb.GetEquipment(fullEquipmentIds);
             }
-        
-            Options_Equipment = new SelectList(equipment, "Id", "Name");  
+
+            await SetEquipmentDropDown();
             return Page();
         }
 
@@ -108,6 +90,14 @@ namespace WorkoutGen.Pages.Equipment
         {
             IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
             return new JsonResult(exercises.Count());
+        }
+
+        // Gets all the equipment records and binds it to the select list object
+        // The select list object gets binded to the select 2 drop down
+        public async Task SetEquipmentDropDown()
+        {
+            var equipment = await _equipmentDb.GetEquipment();
+            Options_Equipment = new SelectList(equipment, "Id", "Name");
         }
     }
 }

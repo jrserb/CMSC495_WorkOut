@@ -7,13 +7,11 @@
 
         // Event trigger when option is selected from the drop down
         'select2:select': function () {
-            HideShowExerciseButton();
             UpdateExerciseCount($(this));
         },
 
         // Event trigger when option is unselected from the drop down
         'select2:unselect': function () {
-            HideShowExerciseButton();
             UpdateExerciseCount($(this));
         }
 
@@ -21,13 +19,9 @@
 });
 
 // Hide/Show continue button
-function HideShowExerciseButton() {
+function HideShowExerciseButton(exerciseCount) {
 
-    const selectedCount = $('#select2_equipment option:selected').length;
-
-    // If no options are selected then hide the button
-    // Else show
-    if (selectedCount === 0) {
+    if (exerciseCount === 0) {
         $('#btnGenerateExercise').addClass('d-none');
     } else {
         $('#btnGenerateExercise').removeClass('d-none');
@@ -46,6 +40,7 @@ function UpdateExerciseCount(equipmentDropDown) {
     };
 
     CallController(objRequest, function (responseData) {
+        HideShowExerciseButton(parseInt(responseData));
         $('#eCount').html(responseData);
     });
 }

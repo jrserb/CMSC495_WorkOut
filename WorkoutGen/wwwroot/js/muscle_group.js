@@ -55,6 +55,8 @@
         // Clear out and enable all the selected options
         $('#select2_muscle_groups').val(null).trigger('change');
         $("#select2_muscle_groups option").prop('disabled', false);
+        $("#btnContinue").addClass("d-none");
+
     });
 
 });
