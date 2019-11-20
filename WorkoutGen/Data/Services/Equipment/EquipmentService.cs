@@ -9,9 +9,9 @@ namespace WorkoutGen.Data.Services.Equipment
 {
     public class EquipmentService : IEquipmentService
     {
-        private readonly WorkoutGenContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public EquipmentService(WorkoutGenContext context)
+        public EquipmentService(ApplicationDbContext context)
         {
             _context = context;
         }
