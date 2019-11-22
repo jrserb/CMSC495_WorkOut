@@ -10,7 +10,12 @@
 
         @if (Model.Exercises.Count() != 0)
         {
-            <input id="workout" type="hidden" value="@Model.WorkoutId" />
+
+            <form id="formEndWorkout" method="post" asp-page="/exercises/history">
+                <input id="workout" type="hidden" name="workoutId" value="@Model.WorkoutId" />
+                <input id="exerciseIds" type="hidden" name="exerciseIds" />
+            </form>
+
             @*<a class="btn btn-primary mb-1" asp-page="/equipment/index" role="button">Back to equipment selection</a>*@
             <h1 id="exerciseName" data-exercise="@Model.Exercises.First().Id">@Model.Exercises.First().Name</h1>
 

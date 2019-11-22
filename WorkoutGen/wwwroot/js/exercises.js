@@ -132,6 +132,16 @@
         GetSet(exercises[0].id);
     });
 
+    $('#btnEndWorkout').on('click', function () {
+
+        $('#modalEndOfExercise').modal('hide');
+
+        const ids = exercises.map(exercises => exercises.id);
+        $('#exerciseIds').val(ids);
+
+        $('#formEndWorkout').submit(); 
+    });
+
 });
 
 function UpdatePageFromSession() {

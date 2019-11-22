@@ -44,6 +44,13 @@ namespace WorkoutGen.Data.Services.UserSet
                         .ToListAsync();
         }
 
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
+        {
+            return await _context.UserSet
+                        .Where(x => x.WorkoutId == workoutId)
+                        .ToListAsync();
+        }
+
         public int AddUserSet(Models.UserSet userSet)
         {
             _context.UserSet.Add(userSet);
