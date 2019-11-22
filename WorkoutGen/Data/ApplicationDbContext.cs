@@ -203,9 +203,7 @@ namespace WorkoutGen.Data
             {
                 entity.ToTable("user_equipment_set");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DateAdded)
                     .HasColumnName("date_added")
@@ -222,15 +220,17 @@ namespace WorkoutGen.Data
                     .IsRequired()
                     .HasColumnName("name")
                     .HasMaxLength(100);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .HasMaxLength(450);
             });
 
             modelBuilder.Entity<UserEquipmentSetEquipment>(entity =>
             {
                 entity.ToTable("user_equipment_set_equipment");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DateAdded)
                     .HasColumnName("date_added")
@@ -337,9 +337,7 @@ namespace WorkoutGen.Data
             {
                 entity.ToTable("user_set");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DateAdded)
                     .HasColumnName("date_added")
@@ -356,20 +354,31 @@ namespace WorkoutGen.Data
                     .HasColumnName("repetitions")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.UserExerciseId).HasColumnName("user_exercise_id");
+
                 entity.Property(e => e.Weight)
                     .HasColumnName("weight")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.WorkoutId).HasColumnName("workout_id");
+
+                entity.HasOne(d => d.UserExercise)
+                    .WithMany(p => p.UserSet)
+                    .HasForeignKey(d => d.UserExerciseId)
+                    .HasConstraintName("FK_user_set_user_exercise");
+
+                entity.HasOne(d => d.Workout)
+                    .WithMany(p => p.UserSet)
+                    .HasForeignKey(d => d.WorkoutId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_set_user_workout");
             });
 
             modelBuilder.Entity<UserWorkout>(entity =>
             {
                 entity.ToTable("user_workout");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DateAdded)
                     .HasColumnName("date_added")

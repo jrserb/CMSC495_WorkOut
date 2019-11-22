@@ -10,8 +10,8 @@ using WorkoutGen.Data;
 namespace WorkoutGen.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191120145958_AddAllTables")]
-    partial class AddAllTables
+    [Migration("20191121021458_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -441,8 +441,10 @@ namespace WorkoutGen.Data.Migrations
             modelBuilder.Entity("WorkoutGen.Models.UserEquipmentSet", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateAdded")
                         .ValueGeneratedOnAdd()
@@ -464,6 +466,11 @@ namespace WorkoutGen.Data.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
+                    b.Property<string>("UserId")
+                        .HasColumnName("user_id")
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
                     b.HasKey("Id");
 
                     b.ToTable("user_equipment_set");
@@ -472,8 +479,10 @@ namespace WorkoutGen.Data.Migrations
             modelBuilder.Entity("WorkoutGen.Models.UserEquipmentSetEquipment", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateAdded")
                         .ValueGeneratedOnAdd()
@@ -623,8 +632,10 @@ namespace WorkoutGen.Data.Migrations
             modelBuilder.Entity("WorkoutGen.Models.UserSet", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateAdded")
                         .ValueGeneratedOnAdd()
@@ -636,7 +647,7 @@ namespace WorkoutGen.Data.Migrations
                         .HasColumnName("date_deleted")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("ExerciseId")
+                    b.Property<int?>("ExerciseId")
                         .HasColumnName("exercise_id")
                         .HasColumnType("int");
 
@@ -644,6 +655,10 @@ namespace WorkoutGen.Data.Migrations
                         .HasColumnName("repetitions")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int?>("UserExerciseId")
+                        .HasColumnName("user_exercise_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Weight")
                         .HasColumnName("weight")
@@ -656,14 +671,20 @@ namespace WorkoutGen.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserExerciseId");
+
+                    b.HasIndex("WorkoutId");
+
                     b.ToTable("user_set");
                 });
 
             modelBuilder.Entity("WorkoutGen.Models.UserWorkout", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateAdded")
                         .ValueGeneratedOnAdd()
@@ -778,6 +799,20 @@ namespace WorkoutGen.Data.Migrations
                         .WithMany("ExerciseMuscleGroup")
                         .HasForeignKey("MuscleGroupId")
                         .HasConstraintName("FK__exercise___muscl__2A164134")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutGen.Models.UserSet", b =>
+                {
+                    b.HasOne("WorkoutGen.Models.UserExercise", "UserExercise")
+                        .WithMany("UserSet")
+                        .HasForeignKey("UserExerciseId")
+                        .HasConstraintName("FK_user_set_user_exercise");
+
+                    b.HasOne("WorkoutGen.Models.UserWorkout", "Workout")
+                        .WithMany("UserSet")
+                        .HasForeignKey("WorkoutId")
+                        .HasConstraintName("FK_user_set_user_workout")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

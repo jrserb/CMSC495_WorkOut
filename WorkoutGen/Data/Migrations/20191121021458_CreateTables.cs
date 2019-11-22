@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkoutGen.Data.Migrations
 {
-    public partial class AddAllTables : Migration
+    public partial class CreateTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -72,7 +72,9 @@ namespace WorkoutGen.Data.Migrations
                 name: "user_equipment_set",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false),
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<string>(maxLength: 450, nullable: true),
                     name = table.Column<string>(maxLength: 100, nullable: false),
                     enabled = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
@@ -87,7 +89,8 @@ namespace WorkoutGen.Data.Migrations
                 name: "user_equipment_set_equipment",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false),
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     equipment_id = table.Column<int>(nullable: false),
                     user_equipment_set_id = table.Column<int>(nullable: false),
                     date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
@@ -151,27 +154,11 @@ namespace WorkoutGen.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_set",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false),
-                    exercise_id = table.Column<int>(nullable: false),
-                    workout_id = table.Column<int>(nullable: false),
-                    repetitions = table.Column<string>(maxLength: 50, nullable: true),
-                    weight = table.Column<string>(maxLength: 50, nullable: true),
-                    date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
-                    date_deleted = table.Column<DateTime>(type: "datetime", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_user_set", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "user_workout",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false),
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     user_id = table.Column<string>(maxLength: 450, nullable: true),
                     date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
                     date_deleted = table.Column<DateTime>(type: "datetime", nullable: true)
@@ -238,6 +225,37 @@ namespace WorkoutGen.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_set",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    exercise_id = table.Column<int>(nullable: true),
+                    user_exercise_id = table.Column<int>(nullable: true),
+                    workout_id = table.Column<int>(nullable: false),
+                    repetitions = table.Column<string>(maxLength: 50, nullable: true),
+                    weight = table.Column<string>(maxLength: 50, nullable: true),
+                    date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
+                    date_deleted = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_set", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_set_user_exercise",
+                        column: x => x.user_exercise_id,
+                        principalTable: "user_exercise",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_user_set_user_workout",
+                        column: x => x.workout_id,
+                        principalTable: "user_workout",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "exercise_alternate_equipment",
                 columns: table => new
                 {
@@ -294,6 +312,16 @@ namespace WorkoutGen.Data.Migrations
                 name: "IX_exercise_muscle_group_muscle_group_id",
                 table: "exercise_muscle_group",
                 column: "muscle_group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_set_user_exercise_id",
+                table: "user_set",
+                column: "user_exercise_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_set_workout_id",
+                table: "user_set",
+                column: "workout_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -311,9 +339,6 @@ namespace WorkoutGen.Data.Migrations
                 name: "user_equipment_set_equipment");
 
             migrationBuilder.DropTable(
-                name: "user_exercise");
-
-            migrationBuilder.DropTable(
                 name: "user_exercise_equipment");
 
             migrationBuilder.DropTable(
@@ -323,13 +348,16 @@ namespace WorkoutGen.Data.Migrations
                 name: "user_set");
 
             migrationBuilder.DropTable(
-                name: "user_workout");
-
-            migrationBuilder.DropTable(
                 name: "exercise_equipment");
 
             migrationBuilder.DropTable(
                 name: "muscle_group");
+
+            migrationBuilder.DropTable(
+                name: "user_exercise");
+
+            migrationBuilder.DropTable(
+                name: "user_workout");
 
             migrationBuilder.DropTable(
                 name: "equipment");

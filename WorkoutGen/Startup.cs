@@ -10,6 +10,9 @@ using WorkoutGen.Data.Services.MuscleGroup;
 using WorkoutGen.Data.Services.Exercise;
 using WorkoutGen.Data.Services.Equipment;
 using System;
+using WorkoutGen.Data.Services.UserWorkout;
+using WorkoutGen.Data.Services.UserSet;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WorkoutGen
 {
@@ -64,10 +67,17 @@ namespace WorkoutGen
             services.AddScoped<IMuscleGroupService, MuscleGroupService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
             services.AddScoped<IExerciseService, ExerciseService>();
+            services.AddScoped<IUserWorkoutService, UserWorkoutService>();
+            services.AddScoped<IUserSetService, UserSetService>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
             services.AddRazorPages();
+
+            services.AddMvc().AddRazorPagesOptions(o =>
+            {
+                o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
