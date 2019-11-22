@@ -14,6 +14,7 @@ namespace WorkoutGen.Models
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
 
+        public virtual Exercise Exercise { get; set; }
         public virtual UserExercise UserExercise { get; set; }
         public virtual UserWorkout Workout { get; set; }
     }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutGen.Data;
 
-namespace WorkoutGen.Data.Migrations
+namespace WorkoutGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191122082433_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,12 +281,11 @@ namespace WorkoutGen.Data.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnName("description")
-                        .HasColumnType("varchar(250)")
-                        .HasMaxLength(250)
+                        .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
                     b.Property<string>("Hyperlink")
-                        .HasColumnName("image")
+                        .HasColumnName("hyperlink")
                         .HasColumnType("varchar(250)")
                         .HasMaxLength(250)
                         .IsUnicode(false);
@@ -804,9 +805,10 @@ namespace WorkoutGen.Data.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserSet", b =>
                 {
-                    b.HasOne("WorkoutGen.Models.Exercise", null)
+                    b.HasOne("WorkoutGen.Models.Exercise", "Exercise")
                         .WithMany("UserSet")
-                        .HasForeignKey("ExerciseId");
+                        .HasForeignKey("ExerciseId")
+                        .HasConstraintName("FK_user_set_exercise");
 
                     b.HasOne("WorkoutGen.Models.UserExercise", "UserExercise")
                         .WithMany("UserSet")

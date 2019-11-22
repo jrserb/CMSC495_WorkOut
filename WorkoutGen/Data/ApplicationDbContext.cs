@@ -66,11 +66,10 @@ namespace WorkoutGen.Data
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
-                    .HasMaxLength(250)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Hyperlink)
-                    .HasColumnName("image")
+                    .HasColumnName("hyperlink")
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
@@ -361,6 +360,11 @@ namespace WorkoutGen.Data
                     .HasMaxLength(50);
 
                 entity.Property(e => e.WorkoutId).HasColumnName("workout_id");
+
+                entity.HasOne(d => d.Exercise)
+                    .WithMany(p => p.UserSet)
+                    .HasForeignKey(d => d.ExerciseId)
+                    .HasConstraintName("FK_user_set_exercise");
 
                 entity.HasOne(d => d.UserExercise)
                     .WithMany(p => p.UserSet)
