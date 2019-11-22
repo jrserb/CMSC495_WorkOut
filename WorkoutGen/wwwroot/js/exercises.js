@@ -24,17 +24,20 @@
         const nextIndex = (currentExerciseIndex + 1);
         const nextExercise = exercises[nextIndex];
 
-        // If exercises is exceeded then we end workout
-        if (nextIndex > exercises.length) {
+        UpdateExerciseProgressBar(nextIndex, exercises.length);
 
+        $('#currentExerciseCount').text(nextIndex);
+
+        // If exercises is exceeded then we end workout
+        if (nextIndex === exercises.length) {
             $('#modalEndOfExercise').modal({ backdrop: 'static', keyboard: false }, 'show');
             return;
         }
 
-        UpdateExerciseProgressBar(nextIndex, exercises.length);
         UpdateExerciseFields(nextExercise.id, nextExercise.name, nextIndex);
         UpdateExerciseSession(nextIndex);
-        GetSetFromSession(nextExercise.id);
+        GetSet(nextExercise.id);
+
     });
 
     $('#btnLeft').on('click', function () {
@@ -48,10 +51,12 @@
         if (currentExerciseIndex === 0)
             return;
 
+        $('#currentExerciseCount').text(prevIndex);
+
         UpdateExerciseProgressBar(prevIndex, exercises.length);
-        UpdateExerciseFields(prevExercise.id, prevExercise.name, prevIndex);
+        UpdateExerciseFields(prevExercise.id, prevExercise.name);
         UpdateExerciseSession(prevIndex);
-        GetSetFromSession(prevExercise.id);
+        GetSet(prevExercise.id);
 
     });
 
@@ -64,9 +69,16 @@
         const weight = $('#weight').val();
         const reps = $('#reps').val();
 
+
+        $('#weight').removeClass("border border-danger");
+        $('#reps').removeClass("border border-danger");
+
         // Error out if user did not specify weight or reps
-        if (!weight || !reps)
+        if (!weight || !reps) {
+            $('#weight').addClass("border border-danger");
+            $('#reps').addClass("border border-danger");
             return;
+        }
 
         const objRequest = {
             type: "POST",
@@ -87,11 +99,37 @@
         });
     });
 
+    $('#btnClearSet').on('click', function (e) {
+
+        e.preventDefault();
+
+        $('#weight').val('');
+        $('#reps').val('');
+        $('#txtSets').val('');
+
+        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
+
+        const objRequest = {
+            type: "POST",
+            url: "/Exercises/ClearSet",
+            data: {
+                exerciseId: currentExerciseId
+            }
+        };
+
+        CallController(objRequest, function () { });
+    });
+
     $('#btnStartOver').on('click', function () {
 
         $('#modalEndOfExercise').modal('hide');
-        location.reload();
 
+        $('#currentExerciseCount').text(0);
+
+        UpdateExerciseProgressBar(0, exercises.length);
+        UpdateExerciseFields(exercises[0].id, exercises[0].name);
+        UpdateExerciseSession(0);
+        GetSet(exercises[0].id);
     });
 
 });
@@ -125,13 +163,12 @@ function UpdateExerciseProgressBar(exerciseIndex, exercisesLength) {
 }
 
 // Updates exercise related info on the page
-function UpdateExerciseFields(exerciseId, exerciseName, exerciseIndex) {
+function UpdateExerciseFields(exerciseId, exerciseName) {
 
     $('#weight').val('');
     $('#reps').val('');
     $('#exerciseName').data("exercise", exerciseId);
     $('#exerciseName').html(exerciseName);
-    $('#currentExerciseCount').text(exerciseIndex);
 }
 
 function UpdateExerciseSession(exerciseIndex) {
@@ -149,11 +186,11 @@ function UpdateExerciseSession(exerciseIndex) {
     });
 }
 
-function GetSetFromSession(exerciseId) {
+function GetSet(exerciseId) {
 
     const objRequest = {
         type: "POST",
-        url: "/Exercises/GetSetFromSession",
+        url: "/Exercises/GetSet",
         data: {
             exerciseId: exerciseId
         }

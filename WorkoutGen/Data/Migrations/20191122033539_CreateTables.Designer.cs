@@ -10,7 +10,7 @@ using WorkoutGen.Data;
 namespace WorkoutGen.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191121021458_CreateTables")]
+    [Migration("20191122033539_CreateTables")]
     partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
