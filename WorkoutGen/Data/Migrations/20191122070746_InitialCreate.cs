@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkoutGen.Data.Migrations
 {
-    public partial class CreateTables : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -242,6 +242,12 @@ namespace WorkoutGen.Data.Migrations
                 {
                     table.PrimaryKey("PK_user_set", x => x.id);
                     table.ForeignKey(
+                        name: "FK_user_set_exercise_exercise_id",
+                        column: x => x.exercise_id,
+                        principalTable: "exercise",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_user_set_user_exercise",
                         column: x => x.user_exercise_id,
                         principalTable: "user_exercise",
@@ -312,6 +318,11 @@ namespace WorkoutGen.Data.Migrations
                 name: "IX_exercise_muscle_group_muscle_group_id",
                 table: "exercise_muscle_group",
                 column: "muscle_group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_set_exercise_id",
+                table: "user_set",
+                column: "exercise_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_set_user_exercise_id",

@@ -283,7 +283,7 @@ namespace WorkoutGen.Data.Migrations
                         .HasMaxLength(250)
                         .IsUnicode(false);
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Hyperlink")
                         .HasColumnName("image")
                         .HasColumnType("varchar(250)")
                         .HasMaxLength(250)
@@ -669,6 +669,8 @@ namespace WorkoutGen.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseId");
+
                     b.HasIndex("UserExerciseId");
 
                     b.HasIndex("WorkoutId");
@@ -802,6 +804,10 @@ namespace WorkoutGen.Data.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserSet", b =>
                 {
+                    b.HasOne("WorkoutGen.Models.Exercise", null)
+                        .WithMany("UserSet")
+                        .HasForeignKey("ExerciseId");
+
                     b.HasOne("WorkoutGen.Models.UserExercise", "UserExercise")
                         .WithMany("UserSet")
                         .HasForeignKey("UserExerciseId")

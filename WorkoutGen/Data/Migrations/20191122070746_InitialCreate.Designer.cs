@@ -10,8 +10,8 @@ using WorkoutGen.Data;
 namespace WorkoutGen.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191122033539_CreateTables")]
-    partial class CreateTables
+    [Migration("20191122070746_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -285,7 +285,7 @@ namespace WorkoutGen.Data.Migrations
                         .HasMaxLength(250)
                         .IsUnicode(false);
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Hyperlink")
                         .HasColumnName("image")
                         .HasColumnType("varchar(250)")
                         .HasMaxLength(250)
@@ -671,6 +671,8 @@ namespace WorkoutGen.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseId");
+
                     b.HasIndex("UserExerciseId");
 
                     b.HasIndex("WorkoutId");
@@ -804,6 +806,10 @@ namespace WorkoutGen.Data.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserSet", b =>
                 {
+                    b.HasOne("WorkoutGen.Models.Exercise", null)
+                        .WithMany("UserSet")
+                        .HasForeignKey("ExerciseId");
+
                     b.HasOne("WorkoutGen.Models.UserExercise", "UserExercise")
                         .WithMany("UserSet")
                         .HasForeignKey("UserExerciseId")
