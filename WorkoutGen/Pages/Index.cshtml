@@ -17,7 +17,15 @@
 
             <div class="card-body">
 
-                <h1 class="card-title">Welcome to @ViewData["ApplicationName"]!</h1>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <h1 class="card-title">Welcome back @UserManager.GetUserAsync(User).Result.FirstName!</h1>
+                }
+                else
+                {
+                    <h1 class="card-title">Welcome to @ViewData["ApplicationName"]!</h1>
+                }
+
 
                 <ul class="list-group list-group-horizontal-sm mb-5">
                     <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
