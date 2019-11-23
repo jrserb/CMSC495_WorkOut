@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace WorkoutGen.Models
 {
@@ -11,5 +10,7 @@ namespace WorkoutGen.Models
         public bool Enabled { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
+
+        public virtual AspNetUsers User { get; set; }
     }
 }

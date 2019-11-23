@@ -7,6 +7,8 @@ namespace WorkoutGen.Models
     {
         public UserExercise()
         {
+            UserExerciseEquipment = new HashSet<UserExerciseEquipment>();
+            UserExerciseMuscleGroup = new HashSet<UserExerciseMuscleGroup>();
             UserSet = new HashSet<UserSet>();
         }
 
@@ -18,6 +20,9 @@ namespace WorkoutGen.Models
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
 
+        public virtual AspNetUsers User { get; set; }
+        public virtual ICollection<UserExerciseEquipment> UserExerciseEquipment { get; set; }
+        public virtual ICollection<UserExerciseMuscleGroup> UserExerciseMuscleGroup { get; set; }
         public virtual ICollection<UserSet> UserSet { get; set; }
     }
 }

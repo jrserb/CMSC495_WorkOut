@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace WorkoutGen.Models
 {
@@ -10,5 +9,7 @@ namespace WorkoutGen.Models
         public int UserEquipmentSetId { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
+
+        public virtual Equipment Equipment { get; set; }
     }
 }

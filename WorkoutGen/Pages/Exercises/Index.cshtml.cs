@@ -88,7 +88,7 @@ namespace WorkoutGen.Pages.Exercises
             // Else store the set in session
             if (_signInManager.IsSignedIn(User))
             {
-                UserSet set = new UserSet { ExerciseId = exerciseId, WorkoutId = workoutId, Repetitions = reps, Weight = weight };
+                UserSet set = new UserSet { ExerciseId = exerciseId, UserWorkoutId = workoutId, Repetitions = reps, Weight = weight };
 
                 setId = _userSetDb.AddUserSet(set);
 

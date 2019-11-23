@@ -27,6 +27,7 @@ namespace WorkoutGen.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             modelBuilder.Entity<Equipment>(entity =>
             {
                 entity.ToTable("equipment");
@@ -221,8 +222,15 @@ namespace WorkoutGen.Data
                     .HasMaxLength(100);
 
                 entity.Property(e => e.UserId)
+                    .IsRequired()
                     .HasColumnName("user_id")
                     .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserEquipmentSet)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_equipment_set_AspNetUsers");
             });
 
             modelBuilder.Entity<UserEquipmentSetEquipment>(entity =>
@@ -243,6 +251,12 @@ namespace WorkoutGen.Data
                 entity.Property(e => e.EquipmentId).HasColumnName("equipment_id");
 
                 entity.Property(e => e.UserEquipmentSetId).HasColumnName("user_equipment_set_id");
+
+                entity.HasOne(d => d.Equipment)
+                    .WithMany(p => p.UserEquipmentSetEquipment)
+                    .HasForeignKey(d => d.EquipmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_equipment_set_equipment_equipment1");
             });
 
             modelBuilder.Entity<UserExercise>(entity =>
@@ -280,6 +294,12 @@ namespace WorkoutGen.Data
                     .IsRequired()
                     .HasColumnName("user_id")
                     .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserExercise)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_AspNetUsers");
             });
 
             modelBuilder.Entity<UserExerciseEquipment>(entity =>
@@ -299,12 +319,30 @@ namespace WorkoutGen.Data
 
                 entity.Property(e => e.EquipmentId).HasColumnName("equipment_id");
 
-                entity.Property(e => e.ExerciseId).HasColumnName("exercise_id");
+                entity.Property(e => e.UserExerciseId).HasColumnName("user_exercise_id");
 
                 entity.Property(e => e.UserId)
                     .IsRequired()
                     .HasColumnName("user_id")
                     .HasMaxLength(450);
+
+                entity.HasOne(d => d.Equipment)
+                    .WithMany(p => p.UserExerciseEquipment)
+                    .HasForeignKey(d => d.EquipmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_equipment_equipment");
+
+                entity.HasOne(d => d.UserExercise)
+                    .WithMany(p => p.UserExerciseEquipment)
+                    .HasForeignKey(d => d.UserExerciseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_equipment_user_exercise");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserExerciseEquipment)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_equipment_AspNetUsers");
             });
 
             modelBuilder.Entity<UserExerciseMuscleGroup>(entity =>
@@ -322,14 +360,32 @@ namespace WorkoutGen.Data
                     .HasColumnName("date_deleted")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.ExerciseId).HasColumnName("exercise_id");
-
                 entity.Property(e => e.MuscleGroupId).HasColumnName("muscle_group_id");
+
+                entity.Property(e => e.UserExerciseId).HasColumnName("user_exercise_id");
 
                 entity.Property(e => e.UserId)
                     .IsRequired()
                     .HasColumnName("user_id")
                     .HasMaxLength(450);
+
+                entity.HasOne(d => d.MuscleGroup)
+                    .WithMany(p => p.UserExerciseMuscleGroup)
+                    .HasForeignKey(d => d.MuscleGroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_muscle_group_muscle_group");
+
+                entity.HasOne(d => d.UserExercise)
+                    .WithMany(p => p.UserExerciseMuscleGroup)
+                    .HasForeignKey(d => d.UserExerciseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_muscle_group_user_exercise");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserExerciseMuscleGroup)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_user_exercise_muscle_group_AspNetUsers");
             });
 
             modelBuilder.Entity<UserSet>(entity =>
@@ -355,11 +411,11 @@ namespace WorkoutGen.Data
 
                 entity.Property(e => e.UserExerciseId).HasColumnName("user_exercise_id");
 
+                entity.Property(e => e.UserWorkoutId).HasColumnName("user_workout_id");
+
                 entity.Property(e => e.Weight)
                     .HasColumnName("weight")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.WorkoutId).HasColumnName("workout_id");
 
                 entity.HasOne(d => d.Exercise)
                     .WithMany(p => p.UserSet)
@@ -369,11 +425,11 @@ namespace WorkoutGen.Data
                 entity.HasOne(d => d.UserExercise)
                     .WithMany(p => p.UserSet)
                     .HasForeignKey(d => d.UserExerciseId)
-                    .HasConstraintName("FK_user_set_user_exercise");
+                    .HasConstraintName("FK_user_set_user_exercise1");
 
-                entity.HasOne(d => d.Workout)
+                entity.HasOne(d => d.UserWorkout)
                     .WithMany(p => p.UserSet)
-                    .HasForeignKey(d => d.WorkoutId)
+                    .HasForeignKey(d => d.UserWorkoutId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_user_set_user_workout");
             });
@@ -396,9 +452,16 @@ namespace WorkoutGen.Data
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserWorkout)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_user_workout_AspNetUsers");
             });
 
+            //  Explicitly call the OnModelCreating method of IdentityDbContext           
             base.OnModelCreating(modelBuilder);
+
             OnModelCreatingPartial(modelBuilder);
         }
 

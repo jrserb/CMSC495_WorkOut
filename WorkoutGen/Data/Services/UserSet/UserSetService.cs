@@ -25,7 +25,7 @@ namespace WorkoutGen.Data.Services.UserSet
         public async Task<Models.UserSet> GetLastUserSetForExercise(int exerciseId, int[] workoutIds)
         {
             return await _context.UserSet
-                        .Where(x => workoutIds.Contains(x.WorkoutId) && x.ExerciseId == exerciseId)
+                        .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId)
                         .OrderByDescending(x => x.DateAdded.Date)
                         .ThenBy(x => x.Weight)
                         .FirstOrDefaultAsync();
@@ -47,7 +47,7 @@ namespace WorkoutGen.Data.Services.UserSet
         public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
         {
             return await _context.UserSet
-                        .Where(x => x.WorkoutId == workoutId)
+                        .Where(x => x.UserWorkoutId == workoutId)
                         .ToListAsync();
         }
 
