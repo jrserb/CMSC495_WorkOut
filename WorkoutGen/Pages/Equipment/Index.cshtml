@@ -32,7 +32,7 @@
     <div class="col-2"></div>
     <div class="col-md-8">
 
-        <form method="post" asp-page="/exercises/index">
+        <form id="formEquipment" method="post" asp-page="/exercises/index">
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -58,8 +58,12 @@
 
 @section Scripts
 {
+
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/equipment.js"></script>
+    <script>
+        const muscleGroupIds = @Json.Serialize(Model.MuscleGroupIds);
+    </script>
 }
 @functions{
 

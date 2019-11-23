@@ -34,11 +34,12 @@ namespace WorkoutGen.Pages.Equipment
         public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
         public int ExerciseCount { get; set; }
         public int[] equipmentIds { get; set; }
+        public int[] MuscleGroupIds { get; set; }
         public SelectList Options_Equipment { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            equipmentIds = HttpContext.Session.Get<int[]>("equipment");
+            int[] equipmentIds = HttpContext.Session.Get<int[]>("equipment");
             int[] muscleGroupIds = HttpContext.Session.Get<int[]>("muscle_groups");
 
             if (muscleGroupIds == null)
@@ -48,11 +49,13 @@ namespace WorkoutGen.Pages.Equipment
 
             if (equipmentIds != null)
             {
-                IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+                IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
                 ExerciseCount = exercises.Count();
+
+                var equipment = await _equipmentDb.GetEquipment(equipmentIds);
+                SetEquipmentDropDown(equipment);
             }
 
-            await SetEquipmentDropDown();
             return Page();
         }
 
@@ -60,6 +63,8 @@ namespace WorkoutGen.Pages.Equipment
         {
             // Save the muscle groups into session
             HttpContext.Session.Set<int[]>("muscle_groups", muscleGroupIds);
+
+            MuscleGroupIds = muscleGroupIds;
 
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
             IEnumerable<Models.Equipment> equipment;
@@ -80,23 +85,25 @@ namespace WorkoutGen.Pages.Equipment
 
                 // Get the equipment
                 equipment = await _equipmentDb.GetEquipment(fullEquipmentIds);
+
+
+                HttpContext.Session.Set<int[]>("equipment", fullEquipmentIds);
             }
 
-            await SetEquipmentDropDown();
+            SetEquipmentDropDown(equipment);
             return Page();
         }
 
-        public async Task<JsonResult> OnPostUpdateExerciseCount(int[] equipmentIds)
+        public async Task<JsonResult> OnPostUpdateExerciseCount(int[] muscleGroupIds, int[] equipmentIds)
         {
-            IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+            IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
             return new JsonResult(exercises.Count());
         }
 
         // Gets all the equipment records and binds it to the select list object
         // The select list object gets binded to the select 2 drop down
-        public async Task SetEquipmentDropDown()
+        public void SetEquipmentDropDown(IEnumerable<Models.Equipment> equipment)
         {
-            var equipment = await _equipmentDb.GetEquipment();
             Options_Equipment = new SelectList(equipment, "Id", "Name");
         }
     }

@@ -45,6 +45,7 @@ namespace WorkoutGen.Pages.Exercises
         {
 
             int[] equipmentIds = GetSession<int[]>("equipment");
+            int[] muscleGroupIds = GetSession<int[]>("muscle_groups");
 
             // If there are no equipment ids in session that means that someone is trying to access this page directly and didnt come from equipment selection page
             // Redirect them to the equipment selection page
@@ -54,20 +55,20 @@ namespace WorkoutGen.Pages.Exercises
             }
 
             // Get our list of exercises
-            Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+            Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
 
             SetModelPropertiesFromSession();
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int[] equipmentIds)
+        public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds, int[] equipmentIds)
         {
             // Store the equipment ids in session
             SetSession("equipment", equipmentIds);
 
             // Get our list of exercises
-            Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(equipmentIds);
+            Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
 
             // Create a workout record for existing user when they hit this page
 

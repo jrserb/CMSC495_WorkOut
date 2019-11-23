@@ -58,7 +58,7 @@ namespace WorkoutGen.Data.Services.Exercise
                         .ToArrayAsync();
         }
 
-        public async Task<IEnumerable<Models.Exercise>> GetExercisesFromRequiredEquipment(int[] ids)
+        public async Task<IEnumerable<Models.Exercise>> GetExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds)
         {
             int[] alternateEquipmentIds = { };
             bool hasRequirement = true;
@@ -66,16 +66,18 @@ namespace WorkoutGen.Data.Services.Exercise
             // This list will hold the final list of valid exercise ids based on if the user had the required muscle groups and equipment selected
             List<int> validExerciseIds = new List<int>();
 
-            // First thing to do is select all the distinct exercise ids related to the muscle groups the user selected
-            int[] exerciseIds = await GetExerciseIdsFromEquipment(ids);
+            int[] mgExerciseIds = await GetExerciseIdsFromMuscleGroups(muscleGroupIds);
+            int[] exerciseIds = await GetExerciseIdsFromEquipment(equipmentIds);
+
+            int[] ids = mgExerciseIds.Intersect(exerciseIds).ToArray();
 
             // Loop each exercise id
-            for (int i = 0; i < exerciseIds.Count(); i++)
+            for (int i = 0; i < ids.Count(); i++)
             {
 
                 // Get the equipment objects related to the exercise
                 // This is essentially the requirement. The user has to have selected all of these to get the exercise
-                var requiredEquipment = await _equipmentDb.GetEquipmentFromExercise(exerciseIds[i]);
+                var requiredEquipment = await _equipmentDb.GetEquipmentFromExercise(ids[i]);
 
 
                 // Loop the equipment objects and make sure user has selected them all
@@ -83,7 +85,7 @@ namespace WorkoutGen.Data.Services.Exercise
                 foreach (var objEquipment in requiredEquipment)
                 {
                     // If they don't have a required equipment id then we check the alternate table for a matching equipment id
-                    if (!ids.Contains(objEquipment.Id))
+                    if (!equipmentIds.Contains(objEquipment.Id))
                     {
                         // Get the alternate equipment ids where the exercise equipment id matches
                         alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(objEquipment.Id);
@@ -94,7 +96,7 @@ namespace WorkoutGen.Data.Services.Exercise
                         foreach (int alternateEquipmentId in alternateEquipmentIds)
                         {
                             // If an alternate equipment id matches with what the user has then they get the exercise
-                            if (ids.Contains(alternateEquipmentId))
+                            if (equipmentIds.Contains(alternateEquipmentId))
                             {
                                 hasRequirement = true;
                             }
@@ -108,7 +110,7 @@ namespace WorkoutGen.Data.Services.Exercise
                 // This exercise should be added to the valid list
                 if (hasRequirement)
                 {
-                    validExerciseIds.Add(exerciseIds[i]);
+                    validExerciseIds.Add(ids[i]);
                 }
             }
 

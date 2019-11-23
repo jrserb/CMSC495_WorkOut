@@ -1,5 +1,9 @@
 ﻿$(document).ready(function () {
 
+    for (let i = 0; i < muscleGroupIds.length; i++) {
+        $('#formEquipment').append(`<input type='hidden' name=muscleGroupIds[] value=${muscleGroupIds[i]} />`);
+    }
+
     // Initialize the select 2 drop down for equipment selection
     $('#select2_equipment').select2();
 
@@ -16,6 +20,7 @@
         }
 
     });
+
 });
 
 // Hide/Show continue button
@@ -35,6 +40,7 @@ function UpdateExerciseCount(equipmentDropDown) {
         type: "POST",
         url: "Equipment/UpdateExerciseCount",
         data: {
+            muscleGroupIds: muscleGroupIds,
             equipmentIds: equipmentDropDown.val()
         }
     };

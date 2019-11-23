@@ -15,6 +15,6 @@ namespace WorkoutGen.Data.Services.Exercise
 
         public Task<int[]> GetExerciseIdsFromEquipment(int[] ids);
 
-        public Task<IEnumerable<Models.Exercise>> GetExercisesFromRequiredEquipment(int[] ids);
+        public Task<IEnumerable<Models.Exercise>> GetExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds);
     }
 }
