@@ -44,32 +44,11 @@ namespace WorkoutGen.Pages.Exercises
 
         }
 
-        public async Task<IActionResult> OnPost(int workoutId, string exerciseIds)
+        public async Task<IActionResult> OnPost(int workoutId, int[] exerciseIds)
         {
-            int[] ids = exerciseIds.Split(',').Select(n => int.Parse(n)).ToArray();
-            Exercises = await _exerciseDb.GetExercises(ids);
-
-            if (_signInManager.IsSignedIn(User))
-            {
-                var sets = await _userSetDb.GetUserSetsFromWorkout(workoutId);
-
-                Sets = new List<SessionSet>();
-                foreach (UserSet set in sets)
-                {
-                    Sets.Add(new SessionSet
-                    {
-                        exerciseId = (int)set.ExerciseId,
-                        set = $"{set.Weight}lbs x {set.Repetitions} reps\n"
-                    });
-                }
-            }
-            else
-            {
-
-                // Grab it all from session
-                Sets = GetSession<List<SessionSet>>("sets");
-            }
-
+            Exercises = await _exerciseDb.GetExercises(exerciseIds);
+            Sets = GetSession<List<SessionSet>>("Sets");  
+            
             HttpContext.Session.Clear();
 
             return Page();

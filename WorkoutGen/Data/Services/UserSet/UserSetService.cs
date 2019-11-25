@@ -28,6 +28,12 @@ namespace WorkoutGen.Data.Services.UserSet
                         .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId)
                         .OrderByDescending(x => x.DateAdded.Date)
                         .ThenBy(x => x.Weight)
+                        .Select( x => new Models.UserSet { Id = x.Id, 
+                            ExerciseId = x.ExerciseId,
+                            Repetitions = x.Repetitions,
+                            Weight = x.Weight, 
+                            DateAdded = x.DateAdded  
+                        })
                         .FirstOrDefaultAsync();
         }
 

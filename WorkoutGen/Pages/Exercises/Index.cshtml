@@ -13,7 +13,6 @@
 
             <form id="formEndWorkout" method="post" asp-page="/exercises/history">
                 <input id="workout" type="hidden" name="workoutId" value="@Model.WorkoutId" />
-                <input id="exerciseIds" type="hidden" name="exerciseIds" />
             </form>
 
             @*<a class="btn btn-primary mb-1" asp-page="/equipment/index" role="button">Back to equipment selection</a>*@
@@ -37,34 +36,26 @@
                         <div class="card-body justify-content-center">
 
                             <div class="row mb-4">
-                                <div class="col-2"></div>
+                                <div class="col-4"></div>
 
                                 <div class="col-4 text-center">
-                                    <a class="btn btn-lg btn-primary" asp-page="/equipment/index" role="button">Back to equipment</a>
+                                    <button id="btnHowTo" type="button" class="btn btn-lg btn-info" data-toggle="modal" data-target="#modalHowTo">How To</button>
                                 </div>
 
-                                <div class="col-4 text-center">
-                                    <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
-                                </div>
-
-                                <div class="col-2"></div>
+                                <div class="col-4"></div>
                             </div>
 
-
-                            @*<form class="justify-content-center mb-5">*@
-
                             <div class="row mb-1">
-                                <div class="col-2"></div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-2"></div>
+                                <div class="col-6 col-md-4">
                                     <label for="weight" class="mr-2">Weight:</label>
                                     <input type="number" class="form-control mb-2 d-inline-flex" id="weight" required>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-6 col-md-4">
                                     <label for="reps" class="mr-2">Reps:</label>
                                     <input type="number" class="form-control" id="reps" required>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-12 col-md-2"></div>
                             </div>
 
                             <div class="row mb-4">
@@ -78,8 +69,6 @@
 
                             <button id="btnAddSet" type="button" class="btn btn-lg btn-primary mb-4">Add Set</button>
                             <button id="btnClearSet" type="button" class="btn btn-lg btn-danger mb-4">Clear Set</button>
-
-                            @*</form>*@
 
                             <h4>Progress</h4>
                             <div class="progress" style="height:25px;">
@@ -105,8 +94,11 @@
 <div class="modal fade" id="modalHowTo" tabindex="-1" role="dialog" aria-labelledby="modalHowToLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalHowToLabel">How to perform <span id="howToExercise"></span></h5>
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="modalHowToLabel">How to perform <span id="howToExercise"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
 
@@ -125,6 +117,9 @@
                                         <span class="badge badge-dark p-2">@mg.Name</span>
                                     }
                                 }
+                                <div class="text-center mt-2">
+                                    <a class="btn btn-danger" asp-page="/musclegroup/index" role="button">Back to muscle groups</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -142,6 +137,9 @@
                                         <span class="badge badge-dark p-2">@mg.Name</span>
                                     }
                                 }
+                                <div class="text-center mt-2">
+                                    <a class="btn btn-danger" asp-page="/equipment/index" role="button">Back to equipment</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -178,8 +176,8 @@
 <div class="modal fade" id="modalEndOfExercise" tabindex="-1" role="dialog" aria-labelledby="modalEndOfExerciseLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content text-center">
-            <div class="modal-header m-auto">
-                <h5 class="modal-title" id="modalEndOfExerciseLabel">End of workout!</h5>
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="modalEndOfExerciseLabel">End of workout!</h5>
             </div>
             <div class="modal-body">
 

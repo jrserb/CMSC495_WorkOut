@@ -41,6 +41,7 @@ namespace WorkoutGen.Pages.Equipment
             // Grab currently selected ids from session
             EquipmentIds = HttpContext.Session.Get<int[]>("EquipmentIds");
             MuscleGroupIds = HttpContext.Session.Get<int[]>("MuscleGroupIds");
+            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(MuscleGroupIds);
 
             ClearExerciseSession();
 

@@ -44,11 +44,12 @@ namespace WorkoutGen.Data.Services.UserWorkout
                         .ToArrayAsync();
         }
 
-        public int AddUserWorkout(string userId)
+        public async Task<int> AddUserWorkout(string userId)
         {
             var UserWorkout = new Models.UserWorkout { UserId = userId };
-            _context.UserWorkout.Add(UserWorkout);
-            _context.SaveChanges();
+
+            await _context.UserWorkout.AddAsync(UserWorkout);
+            await _context.SaveChangesAsync();
 
             return UserWorkout.Id;
         }

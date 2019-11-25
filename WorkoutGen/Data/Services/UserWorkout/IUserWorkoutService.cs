@@ -15,6 +15,6 @@ namespace WorkoutGen.Data.Services.UserWorkout
 
         public Task<int[]> GetUserWorkoutsByUserId(string userId);
 
-        public int AddUserWorkout(string userId);
+        public Task<int> AddUserWorkout(string userId);
     }
 }
