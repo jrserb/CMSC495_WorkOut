@@ -25,17 +25,31 @@
                     <div class="card">
                         <div class="card-header">
 
-                            <button id="btnLeft" type="button" class="btn btn-primary float-left w-25">
+                            <button id="btnLeft" type="button" class="btn btn-lg btn-primary float-left w-25">
                                 <span class="oi oi-arrow-thick-left"></span>
                             </button>
-                            <button id="btnRight" type="button" class="btn btn-primary float-right w-25">
+
+                            <button id="btnRight" type="button" class="btn btn-lg btn-primary float-right w-25">
                                 <span class="oi oi-arrow-thick-right"></span>
                             </button>
 
                         </div>
                         <div class="card-body justify-content-center">
 
-                            <button id="btnHowTo" type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#modalHowTo">How To</button>
+                            <div class="row mb-4">
+                                <div class="col-2"></div>
+
+                                <div class="col-4 text-center">
+                                    <a class="btn btn-lg btn-primary" asp-page="/equipment/index" role="button">Back to equipment</a>
+                                </div>
+
+                                <div class="col-4 text-center">
+                                    <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
+                                </div>
+
+                                <div class="col-2"></div>
+                            </div>
+
 
                             @*<form class="justify-content-center mb-5">*@
 
@@ -62,8 +76,8 @@
                                 <div class="col-2"></div>
                             </div>
 
-                            <button id="btnAddSet" type="button" class="btn btn-primary mb-4">Add Set</button>
-                            <button id="btnClearSet" type="button" class="btn btn-danger mb-4">Clear Set</button>
+                            <button id="btnAddSet" type="button" class="btn btn-lg btn-primary mb-4">Add Set</button>
+                            <button id="btnClearSet" type="button" class="btn btn-lg btn-danger mb-4">Clear Set</button>
 
                             @*</form>*@
 
@@ -92,20 +106,75 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalHowToLabel">How To</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="modalHowToLabel">How to perform <span id="howToExercise"></span></h5>
             </div>
             <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <div class="row mb-3">
+
+                    <div class="col-md-6 text-center">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                Muscle Groups Selected
+                            </div>
+                            <div class="card-body">
+                                @if (Model.MuscleGroups != null)
+                                {
+                                    foreach (Models.MuscleGroup mg in Model.MuscleGroups)
+                                    {
+                                        <span class="badge badge-dark p-2">@mg.Name</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 text-center">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                Equipment Selected
+                            </div>
+                            <div class="card-body">
+                                @if (Model.Equipment != null)
+                                {
+                                    foreach (Models.Equipment mg in Model.Equipment)
+                                    {
+                                        <span class="badge badge-dark p-2">@mg.Name</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Instructions</h5>
+                        <p id="howToContent" class="mb-3">
+
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8 text-center">
+                        <a id="howToLink" href="#" target="_blank" class="btn btn-lg btn-primary mb-3" role="button">Click here to learn more</a>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="modalEndOfExercise" tabindex="-1" role="dialog" aria-labelledby="modalEndOfExerciseLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content text-center">
@@ -116,8 +185,8 @@
 
                 <p>You have completed all the exercises available.</p>
 
-                <button id="btnStartOver" type="button" class="btn btn-primary">Start over</button>
-                <button id="btnEndWorkout" type="button" class="btn btn-danger">End workout</button>
+                <button id="btnStartOver" type="button" class="btn btn-lg btn-primary">Start over</button>
+                <button id="btnEndWorkout" type="button" class="btn btn-lg btn-danger">End workout</button>
 
             </div>
         </div>
@@ -144,6 +213,8 @@
          // Store globally
         const usedExercises = [];
         const exercises = @Json.Serialize(Model.Exercises);
+        const muscleGroups = @Json.Serialize(Model.MuscleGroups);
+        const equipment = @Json.Serialize(Model.Equipment);
         const sets = @Json.Serialize(Model.Sets);
         const sessionExerciseIndex = @Model.ExerciseIndex;
 

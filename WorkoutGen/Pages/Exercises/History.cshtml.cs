@@ -37,7 +37,7 @@ namespace WorkoutGen.Pages.Exercises
 
         [BindProperty]
         public IEnumerable<Exercise> Exercises { get; set; }
-        public List<Set> Sets { get; set; }
+        public List<SessionSet> Sets { get; set; }
 
         public void OnGet()
         {
@@ -52,13 +52,14 @@ namespace WorkoutGen.Pages.Exercises
             if (_signInManager.IsSignedIn(User))
             {
                 var sets = await _userSetDb.GetUserSetsFromWorkout(workoutId);
-                Sets = new List<Set>();
 
+                Sets = new List<SessionSet>();
                 foreach (UserSet set in sets)
                 {
-                    Sets.Add(new Set { 
-                        exerciseId = (int)set.ExerciseId, 
-                        set = $"{set.Weight}lbs x {set.Repetitions} reps\n" 
+                    Sets.Add(new SessionSet
+                    {
+                        exerciseId = (int)set.ExerciseId,
+                        set = $"{set.Weight}lbs x {set.Repetitions} reps\n"
                     });
                 }
             }
@@ -66,7 +67,7 @@ namespace WorkoutGen.Pages.Exercises
             {
 
                 // Grab it all from session
-                Sets = GetSession<List<Set>>("sets");
+                Sets = GetSession<List<SessionSet>>("sets");
             }
 
             HttpContext.Session.Clear();

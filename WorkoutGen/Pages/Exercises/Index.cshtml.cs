@@ -6,10 +6,11 @@ using WorkoutGen.Data.Services.Exercise;
 using System.Threading.Tasks;
 using WorkoutGen.Data.Session;
 using WorkoutGen.Data.Services.UserWorkout;
+using WorkoutGen.Data.Services.Equipment;
+using WorkoutGen.Data.Services.MuscleGroup;
 using Microsoft.AspNetCore.Identity;
 using WorkoutGen.Data.Services.UserSet;
 using System.Linq;
-using System;
 
 namespace WorkoutGen.Pages.Exercises
 {
@@ -18,18 +19,24 @@ namespace WorkoutGen.Pages.Exercises
         private readonly IExerciseService _exerciseDb;
         private readonly IUserWorkoutService _userWorkoutDb;
         private readonly IUserSetService _userSetDb;
+        private readonly IEquipmentService _equipmentDb;
+        private readonly IMuscleGroupService _muscleGroupDb;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public IndexModel(IExerciseService exerciseDb,
             IUserWorkoutService userWorkoutDb,
             IUserSetService userSetDb,
+            IEquipmentService equipmentDb,
+            IMuscleGroupService muscleGroupDb,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager)
         {
             _exerciseDb = exerciseDb;
             _userWorkoutDb = userWorkoutDb;
             _userSetDb = userSetDb;
+            _equipmentDb = equipmentDb;
+            _muscleGroupDb = muscleGroupDb;
             _signInManager = signInManager;
             _userManager = userManager;
         }
@@ -38,14 +45,16 @@ namespace WorkoutGen.Pages.Exercises
         public IEnumerable<Exercise> Exercises { get; set; }
         public int? WorkoutId { get; set; }
         public int? ExerciseIndex { get; set; }
-        public List<Set> Sets { get; set; }
+        public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
+        public IEnumerable<Models.Equipment> Equipment { get; set; }
+        public List<SessionSet> Sets { get; set; }
 
         // This method can be triggered if a user tries to go to this page URL directly OR whenever they refresh the exercise page
         public async Task<IActionResult> OnGetAsync()
         {
 
-            int[] equipmentIds = GetSession<int[]>("equipment");
-            int[] muscleGroupIds = GetSession<int[]>("muscle_groups");
+            int[] equipmentIds = GetSession<int[]>("EquipmentIds");
+            int[] muscleGroupIds = GetSession<int[]>("MuscleGroupIds");         
 
             // If there are no equipment ids in session that means that someone is trying to access this page directly and didnt come from equipment selection page
             // Redirect them to the equipment selection page
@@ -53,6 +62,9 @@ namespace WorkoutGen.Pages.Exercises
             {
                 return RedirectToPage("/Equipment/Index");
             }
+
+            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
+            Equipment = await _equipmentDb.GetEquipment(equipmentIds);
 
             // Get our list of exercises
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
@@ -63,9 +75,12 @@ namespace WorkoutGen.Pages.Exercises
         }
 
         public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds, int[] equipmentIds)
-        {
+        {         
             // Store the equipment ids in session
-            SetSession("equipment", equipmentIds);
+            SetSession("EquipmentIds", equipmentIds);
+
+            MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
+            Equipment = await _equipmentDb.GetEquipment(equipmentIds);
 
             // Get our list of exercises
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
@@ -83,7 +98,7 @@ namespace WorkoutGen.Pages.Exercises
         public async Task<JsonResult> OnPostSaveSet(int workoutId, int exerciseId, string weight, string reps)
         {
             int setId = 0;
-            Sets = GetSession<List<Set>>("sets");
+            Sets = GetSession<List<SessionSet>>("sets");
 
             // If existing user then save the set to the database
             // Else store the set in session
@@ -93,7 +108,7 @@ namespace WorkoutGen.Pages.Exercises
 
                 setId = _userSetDb.AddUserSet(set);
 
-                Set s = new Set { exerciseId = (int)set.ExerciseId, set = $"{set.Weight}lbs x {set.Repetitions} reps\n" };
+                SessionSet s = new SessionSet { exerciseId = (int)set.ExerciseId, set = $"{set.Weight}lbs x {set.Repetitions} reps\n" };
                 Sets.Add(s);
 
                 SetSession("sets", Sets);
@@ -103,11 +118,11 @@ namespace WorkoutGen.Pages.Exercises
                 // If sets session is being created for the first time
                 if (Sets == null)
                 {
-                    Sets = new List<Set>();
+                    Sets = new List<SessionSet>();
                 }
 
                 // Add set information to the dictionary then save it in session
-                Sets.Add(new Set { exerciseId = exerciseId, set = $"{weight}lbs x {reps} reps\n" });
+                Sets.Add(new SessionSet { exerciseId = exerciseId, set = $"{weight}lbs x {reps} reps\n" });
                 SetSession("sets", Sets);
             }
 
@@ -141,11 +156,11 @@ namespace WorkoutGen.Pages.Exercises
             WorkoutId = GetSession<int>("workout");
 
             // See if there are any sets saved in session
-            Sets = GetSession<List<Set>>("sets");
+            Sets = GetSession<List<SessionSet>>("sets");
             if (Sets == null)
             {
                 // Set the model property to 0 initially if no workout exists yet in session
-                Sets = new List<Set>();
+                Sets = new List<SessionSet>();
                 SetSession("sets", Sets);
             }
         }
@@ -159,7 +174,7 @@ namespace WorkoutGen.Pages.Exercises
         {
             if (_signInManager.IsSignedIn(User))
             {
-                Sets = GetSession<List<Set>>("sets").Where(x => x.exerciseId == exerciseId).ToList();
+                Sets = GetSession<List<SessionSet>>("sets").Where(x => x.exerciseId == exerciseId).ToList();
 
                 // If there are not any sets in session
                 if (Sets.Count() == 0)
@@ -170,7 +185,7 @@ namespace WorkoutGen.Pages.Exercises
 
                     if (set != null)
                     {
-                        Sets.Add(new Set { exerciseId = (int)set.ExerciseId, set = $"{set.Weight}lbs x {set.Repetitions} reps\n" });
+                        Sets.Add(new SessionSet { exerciseId = (int)set.ExerciseId, set = $"{set.Weight}lbs x {set.Repetitions} reps\n" });
                         SetSession("sets", Sets);
                     }
                 }
@@ -179,14 +194,14 @@ namespace WorkoutGen.Pages.Exercises
             }
             else
             {
-                var sets = GetSession<List<Set>>("sets").Where(x => x.exerciseId == exerciseId);
+                var sets = GetSession<List<SessionSet>>("sets").Where(x => x.exerciseId == exerciseId);
                 return new JsonResult(sets);
             }
         }
 
         public void OnPostClearSet(int exerciseId)
         {
-            var sets = GetSession<List<Set>>("sets").Where(x => x.exerciseId != exerciseId);
+            var sets = GetSession<List<SessionSet>>("sets").Where(x => x.exerciseId != exerciseId);
             SetSession("sets", sets);
 
         }
@@ -201,11 +216,5 @@ namespace WorkoutGen.Pages.Exercises
             return HttpContext.Session.Get<T>(sessionName);
         }
 
-    }
-
-    public class Set
-    {
-        public int exerciseId { get; set; }
-        public string set { get; set; }
     }
 }

@@ -1,23 +1,54 @@
 ﻿@page
 @model WorkoutGen.Pages.Exercises.HistoryModel
+@using Models
+@using WorkoutGen.Data.Session;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "History";
 }
 
 <h1>History</h1>
 
-@foreach (Models.Exercise e in Model.Exercises)
-{
-    <div class="font-weight-bold">@e.Name</div>
-    @foreach (Set set in Model.Sets)
-    {
-        if (set.exerciseId == e.Id)
-        {
-            <div>@set.set</div>
-        }
-    }
-}
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-md-8 text-center">
 
-<form method="get" asp-page="/MuscleGroup/Index">
-    <button type="submit" class="btn btn-primary">Start a new workout</button>
-</form>
+        <a role="button" class="btn btn-primary mb-3" asp-page="/MuscleGroup/Index">Start a new workout</a>
+
+        <h2>@DateTime.Now.ToString("dddd, dd MMMM yyyy")</h2>
+        <div class="accordion" id="accordionWorkoutDates">
+
+            @foreach (Models.Exercise e in Model.Exercises)
+            {
+
+                <div class="card">
+                    <div class="card-header" id="exercise-@e.Id">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link font-weight-bold" type="button" data-toggle="collapse" data-target="#collapse-@e.Id" aria-expanded="true" aria-controls="collapse-@e.Id">
+                                @e.Name
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse-@e.Id" class="collapse multi-collapse show" aria-labelledby="headingOne" data-parent="#accordionWorkoutDates">
+                        <div class="card-body">
+
+                            @foreach (SessionSet set in Model.Sets)
+                            {
+                                if (set.exerciseId == e.Id)
+                                {
+                                    <div>@set.set</div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+    <div class="col-2"></div>
+</div>

@@ -17,6 +17,18 @@
     // First thing we do is update the page if needed form session values
     UpdatePageFromSession();
 
+    $('#btnHowTo').on('click', function () {
+
+        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
+        const currentExerciseIndex = exercises.findIndex(x => x.id === currentExerciseId);
+        const exercise = exercises[currentExerciseIndex];
+
+        $('#howToExercise').text(exercise.name);
+        $('#howToContent').html(exercise.description);
+        $('#howToLink').attr('href', exercise.hyperlink);
+        $('#modalHowTo').modal('show');
+    });
+
     $('#btnRight').on('click', function () {
 
         const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
@@ -34,8 +46,8 @@
             return;
         }
 
-        UpdateExerciseFields(nextExercise.id, nextExercise.name, nextIndex);
         UpdateExerciseSession(nextIndex);
+        UpdateExerciseFields(nextExercise.id, nextExercise.name, nextIndex);      
         GetSet(nextExercise.id);
 
     });
@@ -54,8 +66,8 @@
         $('#currentExerciseCount').text(prevIndex);
 
         UpdateExerciseProgressBar(prevIndex, exercises.length);
-        UpdateExerciseFields(prevExercise.id, prevExercise.name);
         UpdateExerciseSession(prevIndex);
+        UpdateExerciseFields(prevExercise.id, prevExercise.name);        
         GetSet(prevExercise.id);
 
     });
@@ -152,6 +164,8 @@ function UpdatePageFromSession() {
     UpdateExerciseProgressBar(sessionExerciseIndex, exercises.length);
     UpdateExerciseFields(exercise.id, exercise.name, sessionExerciseIndex);
 
+    $('#currentExerciseCount').text(sessionExerciseIndex);
+
     // Loop the sets object and populate the text area with the sets for the current exercise the user is on
     $("#txtSets").val("");
     for (var obj in sets) {
@@ -178,7 +192,7 @@ function UpdateExerciseFields(exerciseId, exerciseName) {
     $('#weight').val('');
     $('#reps').val('');
     $('#exerciseName').data("exercise", exerciseId);
-    $('#exerciseName').html(exerciseName);
+    $('#exerciseName').html(exerciseName);   
 }
 
 function UpdateExerciseSession(exerciseIndex) {

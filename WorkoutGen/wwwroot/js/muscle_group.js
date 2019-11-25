@@ -9,7 +9,7 @@
         'select2:select': function () {
 
             const s2 = $("#select2_muscle_groups");
-            const arrayMuscleGroupIds = $(this).val().join(); // Join the selected ids into an array
+            const arrayMuscleGroupIds = $(this).val(); // Join the selected ids into an array
 
             // If full body was selected ( 6 is the id )
             // Else something else was selected
@@ -31,12 +31,13 @@
             }
 
             HideShowContinueButton();
+            UpdateMuscleGroupSession(arrayMuscleGroupIds);
         },
 
         // Event trigger when option is unselected from the drop down
         'select2:unselect': function () {
 
-            const arrayMuscleGroupIds = $(this).val().join(); // Join the selected ids into an array
+            const arrayMuscleGroupIds = $(this).val(); // Join the selected ids into an array
 
             // If there are no items selected
             if (!arrayMuscleGroupIds) {
@@ -46,6 +47,7 @@
             }
 
             HideShowContinueButton();
+            UpdateMuscleGroupSession(arrayMuscleGroupIds);
         }
     });
 
@@ -56,6 +58,8 @@
         $('#select2_muscle_groups').val(null).trigger('change');
         $("#select2_muscle_groups option").prop('disabled', false);
         $("#btnContinue").addClass("d-none");
+
+        UpdateMuscleGroupSession($('#select2_muscle_groups').val());
 
     });
 
@@ -73,4 +77,18 @@ function HideShowContinueButton() {
     } else {
         $('#btnContinue').removeClass('d-none');
     }
+}
+
+// Updates exercise count based on equipment selected
+function UpdateMuscleGroupSession(arrayMuscleGroupIds) {
+
+    const objRequest = {
+        type: "POST",
+        url: "MuscleGroup/UpdateMuscleGroupSession",
+        data: {
+            muscleGroupIds: arrayMuscleGroupIds
+        }
+    };
+
+    CallController(objRequest, function () {});
 }

@@ -8,7 +8,7 @@
     <div class="col-2"></div>
     <div class="col-md-8">
 
-        <a class="btn btn-primary mb-1" asp-page="/musclegroup/index" role="button">Back to muscle group selection</a>
+        <a class="btn btn-lg btn-primary mb-1" asp-page="/musclegroup/index" role="button">Back to muscle group selection</a>
         <div class="card text-center">
             <div class="card-header">
                 Muscle Groups Selected
@@ -40,14 +40,14 @@
 
                 <div class="form-group col-md-12">
                     <label class="font-weight-bold" for="select2_muscle_groups">Select equipment</label>
-                    <select id="select2_equipment" asp-for="equipmentIds" name="equipmentIds[]" multiple="multiple" asp-items="Model.Options_Equipment" class="form-control"></select>
+                    <select id="select2_equipment" asp-for="EquipmentIds" name="equipmentIds[]" multiple="multiple" asp-items="Model.Options_Equipment" class="form-control"></select>
                     <p class="text-center"><span id="eCount" class="font-weight-bold">@Model.ExerciseCount</span> exercises available with this set</p>
                 </div>
 
             </div>
 
             <div class="form-group text-center">
-                <input id="btnGenerateExercise" type="submit" value="Generate exercise" class="btn btn-primary btn-lg @ClassDisplay()" />
+                <input id="btnGenerateExercise" type="submit" value="Generate exercise" class="btn btn-lg btn-primary btn-lg @ClassDisplay()" />
             </div>
 
         </form>
@@ -60,10 +60,10 @@
 {
 
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/equipment.js"></script>
     <script>
         const muscleGroupIds = @Json.Serialize(Model.MuscleGroupIds);
     </script>
+    <script src="~/js/equipment.js"></script>   
 }
 @functions{
 
@@ -71,10 +71,9 @@
     {
         string className = "";
 
-        if (Model.equipmentIds == null)
+        if (Model.ExerciseCount == 0)
             className = "d-none";
 
         return className;
     }
-
 }
