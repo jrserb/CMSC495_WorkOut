@@ -80,7 +80,10 @@ namespace WorkoutGen.Pages.Exercises
         }
 
         public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds, int[] equipmentIds)
-        {         
+        {
+            HttpContext.Session.Set("EquipmentIds", equipmentIds);
+            HttpContext.Session.Set("MuscleGroupIds", muscleGroupIds);
+
             await SetModelProperties(muscleGroupIds, equipmentIds);
             SetSessionVariables();
             return Page();
@@ -133,8 +136,7 @@ namespace WorkoutGen.Pages.Exercises
         }
 
         public void SetSessionVariables()
-        {
-
+        {          
             HttpContext.Session.Set("ExerciseIndex", ExerciseIndex);
             HttpContext.Session.Set("WorkoutId", WorkoutId);
             HttpContext.Session.Set("Sets", Sets);
