@@ -33,7 +33,7 @@ namespace WorkoutGen
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
                 options.Cookie.HttpOnly = true;
                 // Make the session cookie essential
                 options.Cookie.IsEssential = true;
@@ -49,7 +49,6 @@ namespace WorkoutGen
 
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
-                options.SignIn.RequireConfirmedAccount = true;
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
