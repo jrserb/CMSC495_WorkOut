@@ -7,8 +7,6 @@
 <div class="row mb-3">
     <div class="col-2"></div>
     <div class="col-md-8">
-
-        <a class="btn btn-lg btn-primary mb-1" asp-page="/musclegroup/index" role="button">Back to muscle group selection</a>
         <div class="card text-center">
             <div class="card-header">
                 Muscle Groups Selected
@@ -21,6 +19,9 @@
                         <span class="badge badge-dark p-2">@mg.Name</span>
                     }
                 }
+                <div class="text-center mt-2">
+                    <a class="btn btn-danger" asp-page="/musclegroup/index" role="button">Back to muscle groups</a>
+                </div>
             </div>
         </div>
 
@@ -63,7 +64,7 @@
     <script>
         const muscleGroupIds = @Json.Serialize(Model.MuscleGroupIds);
     </script>
-    <script src="~/js/equipment.js"></script>   
+    <script src="~/js/equipment.js"></script>
 }
 @functions{
 
