@@ -4,5 +4,63 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1>Contact</h1>
+<!--kent contact form-->
+<div class="row">
+    <div class="col-md-12">
+        <h1>Contact us</h1>
+    </div>
+</div>
+<form class="form form-horizontal" method="post">
+    <div asp-validation-summary="All"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Contact.FirstName" class="col-md-3 right">Name:</label>
+                <div class="col-md-9">
+                    <input asp-for="Contact.FirstName" class="form-control" />
+                    <span asp-validation-for="Contact.FirstName"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Contact.LastName" class="col-md-3 right">Last name:</label>
+                <div class="col-md-9">
+                    <input asp-for="Contact.LastName" class="form-control" />
+                    <span asp-validation-for="Contact.LastName"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Contact.Email" class="col-md-3 right">Email:</label>
+                <div class="col-md-9">
+                    <input asp-for="Contact.Email" class="form-control" />
+                    <span asp-validation-for="Contact.Email"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Contact.Message" class="col-md-3 right">Your Message:</label>
+                <div class="col-md-9">
+                    <textarea asp-for="Contact.Message" rows="6" class="form-control"></textarea>
+                    <span asp-validation-for="Contact.Message"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button type="submit">Send</button>
+        </div>
+    </div>
+</form>
+
 
