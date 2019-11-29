@@ -67,5 +67,26 @@ namespace WorkoutGen.Pages.Exercises
 
             return RedirectToPage("/Account/Manage/MyAccount", new { area = "Identity" });
         }
+
+        public async Task<IActionResult> OnPostDeleteExercise()
+        {
+            try
+            {
+                _userExerciseDb.DeleteUserExercise(UserExercise);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _userExerciseDb.UserExerciseExists(UserExercise.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToPage("/Account/Manage/MyAccount", new { area = "Identity" });
+        }
     }
 }

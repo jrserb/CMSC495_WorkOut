@@ -21,6 +21,8 @@ namespace WorkoutGen.Data.Services.UserExercise
 
         public void UpdateUserExercise(Models.UserExercise userExercise);
 
+        public void DeleteUserExercise(Models.UserExercise userExercise);
+
         public Task<bool> UserExerciseExists(int id);
     }
 }

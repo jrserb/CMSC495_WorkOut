@@ -134,6 +134,12 @@ namespace WorkoutGen.Data.Services.UserExercise
             _context.SaveChanges();
         }
 
+        public void DeleteUserExercise(Models.UserExercise userExercise)
+        {
+            _context.UserExercise.Remove(userExercise);
+            _context.SaveChanges();
+        }
+
         public async Task<bool> UserExerciseExists(int id) {
             return await _context.UserExercise.AnyAsync(e => e.Id == id);
         }
