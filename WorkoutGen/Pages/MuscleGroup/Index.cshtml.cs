@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using WorkoutGen.Data.Services.MuscleGroup;
+using WorkoutGen.Data.Session;
 
 namespace WorkoutGen.Pages.MuscleGroup
 {
@@ -11,33 +12,39 @@ namespace WorkoutGen.Pages.MuscleGroup
     {
         private readonly IMuscleGroupService _muscleGroupDb;
 
+        // Inject muscle group db context
         public IndexModel(IMuscleGroupService muscleGroupDb)
         {
             _muscleGroupDb = muscleGroupDb;
         }
 
         [BindProperty]
-        [MustHaveItems(ErrorMessage = "You must select an option")]
-        public int[] muscleGroupIds { get; set; }
-
+        public int[] MuscleGroupIds { get; set; }
         public SelectList Options_MuscleGroups { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
+            GetSessionProperties();
+
+            // Get muscle group list from DB and bind it to the drop down property
             await SetMuscleGroupsDropDown();
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds)
-        {        
-            if (!ModelState.IsValid) {
+        public void OnPost()
+        {
+        }
 
-                await SetMuscleGroupsDropDown();
-                return Page();
+        public void GetSessionProperties() {
+
+            // Attempt to get session variable
+            MuscleGroupIds = HttpContext.Session.Get<int[]>("MuscleGroupIds");
+
+            // If session does not yet exist, create it and set default
+            if (MuscleGroupIds == null) {
+                MuscleGroupIds = new int[0];
+                HttpContext.Session.Set<int[]>("MuscleGroupIds", MuscleGroupIds);
             }
-
-            TempData["muscleGroupIds"] = muscleGroupIds;
-            return RedirectToPage("/Equipment/Index");
         }
 
         // Gets all the muscle group records and binds it to the select list object
@@ -48,20 +55,10 @@ namespace WorkoutGen.Pages.MuscleGroup
             Options_MuscleGroups = new SelectList(muscleGroups, "Id", "Name");
         }
 
-
-        // Custom validation class
-        // int array must have a value
-        public class MustHaveItems : ValidationAttribute
+        // Updates the session object for selected muscle groups
+        public void OnPostUpdateMuscleGroupSession(int[] muscleGroupIds)
         {
-            public override bool IsValid(object value)
-            {
-                var list = value as int[];
-                if (list.Length > 0)
-                {
-                    return true;
-                }
-                return false;
-            }
+            HttpContext.Session.Set("MuscleGroupIds", muscleGroupIds);
         }
     }
 }

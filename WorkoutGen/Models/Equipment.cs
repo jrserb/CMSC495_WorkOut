@@ -9,6 +9,8 @@ namespace WorkoutGen.Models
         {
             ExerciseAlternateEquipment = new HashSet<ExerciseAlternateEquipment>();
             ExerciseEquipment = new HashSet<ExerciseEquipment>();
+            UserEquipmentSetEquipment = new HashSet<UserEquipmentSetEquipment>();
+            UserExerciseEquipment = new HashSet<UserExerciseEquipment>();
         }
 
         public int Id { get; set; }
@@ -18,5 +20,7 @@ namespace WorkoutGen.Models
 
         public virtual ICollection<ExerciseAlternateEquipment> ExerciseAlternateEquipment { get; set; }
         public virtual ICollection<ExerciseEquipment> ExerciseEquipment { get; set; }
+        public virtual ICollection<UserEquipmentSetEquipment> UserEquipmentSetEquipment { get; set; }
+        public virtual ICollection<UserExerciseEquipment> UserExerciseEquipment { get; set; }
     }
 }

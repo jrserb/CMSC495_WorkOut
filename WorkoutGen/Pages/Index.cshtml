@@ -1,37 +1,58 @@
 ﻿@page "{handler?}"
+@using Models
+@using Microsoft.AspNetCore.Identity
 @model IndexModel
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["ApplicationName"] = "Workout Buddy";
     ViewData["Title"] = "Home page";
 }
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-12">
+    <div class="col-12">
 
-            <div class="card align-items-center border-0 text-center">
+        <div class="card align-items-center border-0 text-center">
 
-                <div class="card-body">
+            <div class="card-body">
 
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <h1 class="card-title">Welcome back @UserManager.GetUserAsync(User).Result.FirstName!</h1>
+                }
+                else
+                {
                     <h1 class="card-title">Welcome to @ViewData["ApplicationName"]!</h1>
+                }
 
-                    <ul class="list-group list-group-horizontal-sm mb-5">
-                        <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
-                        <a asp-page="faq" class="list-group-item list-group-item-action border-0">FAQ</a>
-                        <a asp-page="contact" class="list-group-item list-group-item-action border-0">Contact Us</a>
-                    </ul>
 
-                    <p>Intro text</p>
-                    <div class="row mt-2">
+                <ul class="list-group list-group-horizontal-sm mb-5">
+                    <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
+                    <a asp-page="faq" class="list-group-item list-group-item-action border-0">FAQ</a>
+                    <a asp-page="contact" class="list-group-item list-group-item-action border-0">Contact Us</a>
+                </ul>
+
+                <p>Intro text</p>
+                <div class="row mt-2">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="col-sm-12 col-md-12">
+                            <a asp-page="musclegroup/index" role="button" class="btn btn-lg btn-primary" aria-pressed="true">Start your workout</a>
+                        </div>
+                    }
+                    else
+                    {
                         <div class="col-sm-12 col-md-6">
-                            <a asp-page="musclegroup/index" role="button" class="btn btn-primary btn-block m-1" aria-pressed="true">Get Started as a guest!</a>
+                            <a asp-page="musclegroup/index" role="button" class="btn btn-lg btn-primary btn-block m-1" aria-pressed="true">Get Started as a guest!</a>
                         </div>
                         <div class="col-sm-12 col-md-6">
-                            <a asp-area="Identity" asp-page="/Account/Login" role="button" class="btn btn-primary btn-block m-1" aria-pressed="true">Login to your account!</a>
+                            <a asp-area="Identity" asp-page="/Account/Login" role="button" class="btn btn-lg btn-primary btn-block m-1" aria-pressed="true">Login to your account!</a>
                         </div>
-                    </div>
-
+                    }
                 </div>
+
             </div>
         </div>
+    </div>
 </div>

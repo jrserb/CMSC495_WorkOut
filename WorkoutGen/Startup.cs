@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using WorkoutGen.Data;
@@ -10,6 +9,10 @@ using WorkoutGen.Models;
 using WorkoutGen.Data.Services.MuscleGroup;
 using WorkoutGen.Data.Services.Exercise;
 using WorkoutGen.Data.Services.Equipment;
+using System;
+using WorkoutGen.Data.Services.UserWorkout;
+using WorkoutGen.Data.Services.UserSet;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WorkoutGen
 {
@@ -25,30 +28,55 @@ namespace WorkoutGen
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                // Set a short timeout for easy testing.
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.Cookie.HttpOnly = true;
+                // Make the session cookie essential
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<WorkoutGenContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<WorkoutGenContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
-                options.SignIn.RequireConfirmedAccount = true;
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            //    options.LoginPath = "/Account/Login";
+            //    options.SlidingExpiration = true;
+            //});
+
             services.AddScoped<IMuscleGroupService, MuscleGroupService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
             services.AddScoped<IExerciseService, ExerciseService>();
+            services.AddScoped<IUserWorkoutService, UserWorkoutService>();
+            services.AddScoped<IUserSetService, UserSetService>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
             services.AddRazorPages();
+
+            services.AddMvc().AddRazorPagesOptions(o =>
+            {
+                o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,9 +96,8 @@ namespace WorkoutGen
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

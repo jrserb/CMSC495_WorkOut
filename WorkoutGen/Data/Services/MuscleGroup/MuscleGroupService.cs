@@ -8,9 +8,9 @@ namespace WorkoutGen.Data.Services.MuscleGroup
 {
     public class MuscleGroupService : IMuscleGroupService
     {
-        private readonly WorkoutGenContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public MuscleGroupService(WorkoutGenContext context)
+        public MuscleGroupService(ApplicationDbContext context)
         {
             _context = context;
         }
