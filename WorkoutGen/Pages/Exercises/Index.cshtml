@@ -11,7 +11,7 @@
         @if (Model.Exercises.Count() != 0)
         {
 
-            <form id="formEndWorkout" method="post" asp-page="/exercises/history">
+            <form id="formEndWorkout" method="post" asp-page="/exercises/summary">
                 <input id="workout" type="hidden" name="workoutId" value="@Model.WorkoutId" />
             </form>
 
