@@ -36,11 +36,10 @@ namespace WorkoutGen.Data.Services.UserWorkout
                         .ToListAsync();
         }
 
-        public async Task<int[]> GetUserWorkoutsByUserId(string userId)
+        public async Task<IEnumerable<Models.UserWorkout>> GetUserWorkoutsByUserId(string userId)
         {
             return await _context.UserWorkout
                         .Where(x => x.UserId == userId)
-                        .Select(x => x.Id)
                         .ToArrayAsync();
         }
 

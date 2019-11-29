@@ -13,7 +13,7 @@ namespace WorkoutGen.Data.Services.UserWorkout
 
         public Task<IEnumerable<Models.UserWorkout>> GetUserWorkouts(int[] ids);
 
-        public Task<int[]> GetUserWorkoutsByUserId(string userId);
+        public Task<IEnumerable<Models.UserWorkout>> GetUserWorkoutsByUserId(string userId);
 
         public Task<int> AddUserWorkout(string userId);
     }

@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WorkoutGen.Areas.Identity.Pages.Account.Manage
 {
     public static class ManageNavPages
     {
-        public static string Index => "Index";
+        public static string MyAccount => "MyAccount";
+
+        public static string Profile => "Profile";       
 
         public static string Email => "Email";
 
@@ -20,7 +19,9 @@ namespace WorkoutGen.Areas.Identity.Pages.Account.Manage
 
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
-        public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
+        public static string MyAccountNavClass(ViewContext viewContext) => PageNavClass(viewContext, MyAccount);
+
+        public static string ProfileNavClass(ViewContext viewContext) => PageNavClass(viewContext, Profile);     
 
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
 

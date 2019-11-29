@@ -6,13 +6,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WorkoutGen.Models;
+using System;
+using Microsoft.AspNetCore.Mvc;
 using WorkoutGen.Data.Services.MuscleGroup;
 using WorkoutGen.Data.Services.Exercise;
 using WorkoutGen.Data.Services.Equipment;
-using System;
 using WorkoutGen.Data.Services.UserWorkout;
 using WorkoutGen.Data.Services.UserSet;
-using Microsoft.AspNetCore.Mvc;
+using WorkoutGen.Data.Services.UserExercise;
 
 namespace WorkoutGen
 {
@@ -68,6 +69,7 @@ namespace WorkoutGen
             services.AddScoped<IExerciseService, ExerciseService>();
             services.AddScoped<IUserWorkoutService, UserWorkoutService>();
             services.AddScoped<IUserSetService, UserSetService>();
+            services.AddScoped<IUserExerciseService, UserExerciseService>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
@@ -77,6 +79,8 @@ namespace WorkoutGen
             {
                 o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
             });
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

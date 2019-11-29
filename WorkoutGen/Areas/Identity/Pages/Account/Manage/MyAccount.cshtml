@@ -1,0 +1,112 @@
+﻿@page "/Account/MyAccount"
+@model WorkoutGen.Areas.Identity.Pages.Account.Manage.MyAccountModel
+@using WorkoutGen.Models;
+@using WorkoutGen.Data.Services.UserExercise;
+@using WorkoutGen.Data.Services.Exercise;
+@inject IUserExerciseService userExerciseDb
+@inject IExerciseService exerciseDb
+
+<div class="row mb-4">
+
+    <div class="col-12 col-md-8 pr-md-0">
+        <label class="font-weight-bold" for="selectUserExercises">Exercises</label>
+        <select id="selectUserExercises" name="userExerciseIds" asp-items="Model.Options_UserExercises"></select>
+    </div>
+    <div class="col-6 col-md-2 align-self-end mt-1 pr-1">
+        <a id="btnEditExercise" class="btn btn-block btn-warning" role="button" asp-page="/Exercises/Edit">Edit</a>
+    </div>
+    <div class="col-6 col-md-2 align-self-end mt-1 pl-1">
+        <a class="btn btn-block btn-success" role="button" asp-page="/Exercises/Create">New</a>
+    </div>
+
+</div>
+
+
+
+<!--HISTORY-->
+<h1>Workout History</h1>
+<div class="card">
+    <div class="card-body overflow-auto" style="height:350px;">
+
+        @foreach (UserWorkout workout in Model.UserWorkouts)
+        {
+            // Grab sets for the workout
+            var sets = Model.UserSets
+                        .Where(x => x.UserWorkoutId == workout.Id)
+                        .OrderBy(x => x.DateAdded);
+
+            if (sets.Count() != 0)
+            {
+                <h1>@workout.DateAdded.ToString("MM/dd/yyyy hh:mm tt")</h1>
+
+                // Get exercises used for sets
+                var userExercises = await GetUserExercises(sets);
+                var exercises = await GetExercises(sets);
+
+                // For each exercise list the sets
+                @foreach (Exercise exercise in exercises)
+                {
+
+                    <h3 style="margin-left:30px;">@exercise.Name</h3>
+
+                    var exerciseSets = sets.Where(x => x.ExerciseId == exercise.Id);
+
+                    @foreach (UserSet set in exerciseSets)
+                    {
+                        <h5 style="margin-left:60px;">@set.Weight x @set.Repetitions</h5>
+                    }
+                }
+
+                // For each user exercise list the sets
+                @foreach (UserExercise userExercise in userExercises)
+                {
+
+                    <h3 style="margin-left:30px;">@userExercise.Name</h3>
+
+                    var userExerciseSets = sets.Where(x => x.UserExerciseId == userExercise.Id);
+
+                    @foreach (UserSet set in userExerciseSets)
+                    {
+                        <h5 style="margin-left:60px;">@set.Weight x @set.Repetitions</h5>
+                    }
+                }
+            }
+
+        }
+
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/my_account.js"></script>
+}
+@functions{
+
+    public async Task<IEnumerable<UserExercise>> GetUserExercises(IEnumerable<UserSet> sets)
+    {
+
+        int[] userExerciseIds = sets
+                                .Where(x => x.UserExerciseId != null)
+                                .Select(x => (int)x.UserExerciseId)
+                                .Distinct()
+                                .ToArray();
+
+        return await userExerciseDb.GetUserExercises(userExerciseIds);
+    }
+
+    public async Task<IEnumerable<Exercise>> GetExercises(IEnumerable<UserSet> sets)
+    {
+
+        int[] exerciseIds = sets
+                            .Where(x => x.ExerciseId != null)
+                            .Select(x => (int)x.ExerciseId)
+                            .Distinct()
+                            .ToArray();
+
+        return await exerciseDb.GetExercises(exerciseIds);
+    }
+
+}

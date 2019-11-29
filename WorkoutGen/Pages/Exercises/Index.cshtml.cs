@@ -113,7 +113,8 @@ namespace WorkoutGen.Pages.Exercises
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
-                int[] workoutIds = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                int[] workoutIds = userWorkouts.Select( x => x.Id ).ToArray();
                 
                 var userSet = await _userSetDb.GetLastUserSetForExercise(firstExerciseId, workoutIds);
 
@@ -159,7 +160,8 @@ namespace WorkoutGen.Pages.Exercises
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
-                int[] workoutIds = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
                 var userSet = await _userSetDb.GetLastUserSetForExercise(exerciseId, workoutIds);
 
                 if (userSet != null)

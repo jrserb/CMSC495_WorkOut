@@ -17,6 +17,8 @@ namespace WorkoutGen.Data.Services.UserSet
 
         public Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId);
 
+        public Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkouts(int[] workoutIds);
+
         public int AddUserSet(Models.UserSet userSet);
     }
 }
