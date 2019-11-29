@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -58,20 +59,18 @@ The websites contact form";
                 }
             }
         }
-
     }
 
     //kent contact form code
     public class ContactFormModel
     {
-        //[Required]
+        [Required]
         public string FirstName { get; set; }
-        //[Required]
+        [Required]
         public string LastName { get; set; }
-        //[Required]
+        [Required]
         public string Email { get; set; }
-        //[Required]
+        [Required]
         public string Message { get; set; }
     }
-
 }
