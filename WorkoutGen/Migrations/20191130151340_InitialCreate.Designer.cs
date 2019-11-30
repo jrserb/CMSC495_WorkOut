@@ -10,7 +10,7 @@ using WorkoutGen.Data;
 namespace WorkoutGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191123195554_InitialCreate")]
+    [Migration("20191130151340_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -732,8 +732,8 @@ namespace WorkoutGen.Migrations
                         .HasMaxLength(250)
                         .IsUnicode(false);
 
-                    b.Property<string>("Image")
-                        .HasColumnName("image")
+                    b.Property<string>("Hyperlink")
+                        .HasColumnName("hyperlink")
                         .HasColumnType("varchar(250)")
                         .HasMaxLength(250)
                         .IsUnicode(false);

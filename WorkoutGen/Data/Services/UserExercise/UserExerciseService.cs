@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkoutGen.Data.Services.Equipment;
+using WorkoutGen.Models;
 
 namespace WorkoutGen.Data.Services.UserExercise
 {
@@ -12,7 +14,8 @@ namespace WorkoutGen.Data.Services.UserExercise
         private readonly ApplicationDbContext _context;
         private readonly IEquipmentService _equipmentDb;
 
-        public UserExerciseService(ApplicationDbContext context, IEquipmentService equipmentDb)
+        public UserExerciseService(ApplicationDbContext context, 
+            IEquipmentService equipmentDb)
         {
             _context = context;
             _equipmentDb = equipmentDb;
@@ -47,10 +50,10 @@ namespace WorkoutGen.Data.Services.UserExercise
 
         }
 
-        public async Task<int[]> GetUserExerciseIdsFromMuscleGroups(int[] ids)
+        public async Task<int[]> GetUserExerciseIdsFromMuscleGroups(string userId, int[] ids)
         {
             return await _context.UserExerciseMuscleGroup
-                        .Where(x => ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
+                        .Where(x => x.UserId == userId && ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
                         .Select(x => x.UserExerciseId)
                         .Distinct()
                         .ToArrayAsync();
@@ -63,10 +66,10 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToListAsync();
         }
 
-        public async Task<int[]> GetUserExerciseIdsFromEquipment(int[] ids)
+        public async Task<int[]> GetUserExerciseIdsFromEquipment(string userId, int[] ids)
         {
             return await _context.UserExerciseEquipment
-                        .Where(x => ids.Contains(x.EquipmentId) && x.DateDeleted == null)
+                        .Where(x => x.UserId == userId && ids.Contains(x.EquipmentId) && x.DateDeleted == null)
                         .Select(x => x.UserExerciseId)
                         .Distinct()
                         .ToArrayAsync();
@@ -79,7 +82,24 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToListAsync();
         }
 
-        public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds)
+
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(string userId, int id)
+        {
+            int[] equipmentIds = await GetEquipmentIdsFromUserExercise(userId, id);
+            return await _equipmentDb.GetEquipment(equipmentIds);
+        }
+
+        public async Task<int[]> GetEquipmentIdsFromUserExercise(string userId, int id)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserId == userId && x.UserExerciseId == id && x.DateDeleted == null)
+                        .Select(x => x.EquipmentId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+
+        public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(string userId, int[] muscleGroupIds, int[] equipmentIds)
         {
             int[] alternateEquipmentIds = { };
             bool hasRequirement = true;
@@ -87,8 +107,8 @@ namespace WorkoutGen.Data.Services.UserExercise
             // This list will hold the final list of valid exercise ids based on if the user had the required muscle groups and equipment selected
             List<int> validExerciseIds = new List<int>();
 
-            int[] mgExerciseIds = await GetUserExerciseIdsFromMuscleGroups(muscleGroupIds);
-            int[] exerciseIds = await GetUserExerciseIdsFromEquipment(equipmentIds);
+            int[] mgExerciseIds = await GetUserExerciseIdsFromMuscleGroups(userId, muscleGroupIds);
+            int[] exerciseIds = await GetUserExerciseIdsFromEquipment(userId, equipmentIds);
 
             int[] ids = mgExerciseIds.Intersect(exerciseIds).ToArray();
 
@@ -98,7 +118,7 @@ namespace WorkoutGen.Data.Services.UserExercise
 
                 // Get the equipment objects related to the exercise
                 // This is essentially the requirement. The user has to have selected all of these to get the exercise
-                var requiredEquipment = await _equipmentDb.GetEquipmentFromExercise(ids[i]);
+                var requiredEquipment = await GetEquipmentFromUserExercise(userId, ids[i]);
 
 
                 // Loop the equipment objects and make sure user has selected them all

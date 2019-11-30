@@ -3,12 +3,28 @@
 
 @{
     ViewData["Title"] = "Index";
+
+
+    int exerciseCount = Model.Exercises.Count() + Model.UserExercises.Count();
+    int firstExerciseId;
+    string firstExerciseName;
+
+    if (Model.IsUserExercise)
+    {
+        firstExerciseId = Model.UserExercises.First().Id;
+        firstExerciseName = Model.UserExercises.First().Name;
+    }
+    else
+    {
+        firstExerciseId = Model.Exercises.First().Id;
+        firstExerciseName = Model.Exercises.First().Name;
+    }
 }
 
 <div class="row">
     <div class="col-md-12 text-center">
 
-        @if (Model.Exercises.Count() != 0)
+        @if (exerciseCount != 0)
         {
 
             <form id="formEndWorkout" method="post" asp-page="/exercises/summary">
@@ -31,7 +47,7 @@
                                 </div>
 
                                 <div class="col-6 text-center">
-                                    <h1 id="exerciseName" data-exercise="@Model.Exercises.First().Id">@Model.Exercises.First().Name</h1>
+                                    <h1 id="exerciseName" data-exercise="@firstExerciseId" data-user="@Model.IsUserExercise">@firstExerciseName</h1>
                                 </div>
 
                                 <div class="col-3">
@@ -83,7 +99,7 @@
                             <div class="progress" style="height:25px;">
                                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <p class="text-center"><span id="currentExerciseCount" class="font-weight-bold">0</span> exercises out of <span class="font-weight-bold">@Model.Exercises.Count()</span> completed</p>
+                            <p class="text-center"><span id="currentExerciseCount" class="font-weight-bold">0</span> exercises out of <span class="font-weight-bold">@exerciseCount</span> completed</p>
 
                         </div>
                     </div>
@@ -218,15 +234,13 @@
     <script>
 
          // Store globally
-        const usedExercises = [];
-        const exercises = @Json.Serialize(Model.Exercises);
+        let exercises = @Json.Serialize(Model.Exercises);
+        let userExercises = @Json.Serialize(Model.UserExercises);
+        const mergedExercises = $.merge($.merge([], exercises), userExercises);
         const muscleGroups = @Json.Serialize(Model.MuscleGroups);
         const equipment = @Json.Serialize(Model.Equipment);
         const sets = @Json.Serialize(Model.Sets);
-        const sessionExerciseIndex = @Model.ExerciseIndex;
-
-        // Mark the first exercise as used
-        usedExercises.push(exercises[0].id);
+        let sessionExerciseIndex = @Model.ExerciseIndex;
 
     </script>
 

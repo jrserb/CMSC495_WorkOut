@@ -31,12 +31,38 @@
                             </button>
                         </h2>
                     </div>
-                    <div id="collapse-@e.Id" class="collapse multi-collapse show" aria-labelledby="headingOne" data-parent="#accordionWorkoutDates">
+                    <div id="collapse-@e.Id" class="collapse multi-collapse show" aria-labelledby="headingOne">
                         <div class="card-body">
 
                             @foreach (SessionSet set in Model.Sets)
                             {
                                 if (set.exerciseId == e.Id)
+                                {
+                                    <div>@set.set</div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+            @foreach (Models.UserExercise e in Model.UserExercises)
+            {
+
+                <div class="card">
+                    <div class="card-header" id="exercise-user-@e.Id">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link font-weight-bold" type="button" data-toggle="collapse" data-target="#collapse-user-@e.Id" aria-expanded="true" aria-controls="collapse-user-@e.Id">
+                                @e.Name
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse-user-@e.Id" class="collapse multi-collapse show" aria-labelledby="headingOne">
+                        <div class="card-body">
+
+                            @foreach (SessionSet set in Model.Sets)
+                            {
+                                if (set.userExerciseId == e.Id)
                                 {
                                     <div>@set.set</div>
                                 }

@@ -1,38 +1,44 @@
 ﻿$(document).ready(function () {
 
-    // First thing we do is update the page if needed form session values
+    // First thing we do is update the page if needed form session values  
     UpdatePageFromSession();
 
     $('#btnRight').on('click', function () {
 
-        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
-        const currentExerciseIndex = exercises.findIndex(x => x.id === currentExerciseId);
+        //const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
+        //const currentExerciseIndex = exercises.findIndex(x => x.id === currentExerciseId);
+        const currentExerciseIndex = sessionExerciseIndex;
+
         const nextIndex = (currentExerciseIndex + 1);
-        const nextExercise = exercises[nextIndex];
+        sessionExerciseIndex = nextIndex;
+        const nextExercise = mergedExercises[nextIndex];
 
         $('#currentExerciseCount').text(nextIndex);
         UpdateExerciseProgressBar(nextIndex);
         ClearSetFields();
 
         // If exercises are completed then we end workout
-        if (nextIndex === exercises.length) {
+        if (nextIndex === mergedExercises.length) {
             $('#modalEndOfExercise').modal({ backdrop: 'static', keyboard: false }, 'show');
             return;
         }
 
         //Update page with the details for next exercise       
-        SetExerciseFields(nextExercise);
+        SetExerciseFields(nextExercise);     
         SetSetsFromSession(nextExercise.id);
         UpdateHowTo(nextIndex);
-        UpdateExerciseIndexSession(nextIndex);
+        UpdateExerciseSessions(nextIndex);
     });
 
     $('#btnLeft').on('click', function () {
 
-        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
-        const currentExerciseIndex = exercises.findIndex(x => x.id === currentExerciseId);
+        //const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
+        //const currentExerciseIndex = exercises.findIndex(x => x.id === currentExerciseId);
+        const currentExerciseIndex = sessionExerciseIndex;
+
         const prevIndex = (currentExerciseIndex - 1);
-        const prevExercise = exercises[prevIndex];
+        sessionExerciseIndex = prevIndex;
+        const prevExercise = mergedExercises[prevIndex];
 
         // If user is at the beginning then do nothing
         if (currentExerciseIndex === 0)
@@ -45,7 +51,7 @@
         SetExerciseFields(prevExercise);         
         SetSetsFromSession(prevExercise.id);
         UpdateHowTo(prevIndex);
-        UpdateExerciseIndexSession(prevIndex);
+        UpdateExerciseSessions(prevIndex);
     });
 
     $('#btnAddSet').on('click', function (e) {
@@ -69,6 +75,7 @@
             type: "POST",
             url: "/Exercises/SaveSet",
             data: {
+                isUserExercise: $('#exerciseName').data("user"),
                 workoutId: workoutId,
                 exerciseId: exerciseId,
                 weight: weight,
@@ -96,6 +103,7 @@
             type: "POST",
             url: "/Exercises/ClearSet",
             data: {
+                isUserExercise: $('#exerciseName').data("user"),
                 exerciseId: currentExerciseId
             }
         };
@@ -110,15 +118,19 @@
 
         UpdateExerciseProgressBar(0);
         ClearSetFields();
-        SetExerciseFields(exercises[0]);      
-        SetSetsFromSession(exercises[0].id);
+        SetExerciseFields(mergedExercises[0]);      
+        SetSetsFromSession(mergedExercises[0].id);
         UpdateHowTo(0);
-        UpdateExerciseIndexSession(0);  
+        sessionExerciseIndex = 0;
+        UpdateExerciseSessions(0);  
     });
 
     $('#btnEndWorkout').on('click', function () {
    
         // Get all the ids of all the exercises for the workout and stick them in the form element
+        for (let i = 0; i < userExercises.length; i++) {
+            $('#formEndWorkout').append(`<input type='hidden' name=userExerciseIds[] value=${userExercises[i].id} />`);
+        }
         for (let i = 0; i < exercises.length; i++) {
             $('#formEndWorkout').append(`<input type='hidden' name=exerciseIds[] value=${exercises[i].id} />`);
         }
@@ -132,7 +144,7 @@
 function UpdatePageFromSession() {
 
     // Get the index of the exercise in session
-    const exercise = exercises[sessionExerciseIndex];
+    const exercise = mergedExercises[sessionExerciseIndex];
 
     // Update progress bar
     UpdateExerciseProgressBar(sessionExerciseIndex);
@@ -149,7 +161,7 @@ function UpdatePageFromSession() {
     // Loop the sets object and populate the text area with the sets for the current exercise the user is on
     $("#txtSets").val("");
     for (var obj in sets) {
-        if (parseInt(sets[obj].exerciseId) === parseInt(exercise.id)) {
+        if (parseInt(sets[obj].exerciseId) === parseInt(exercise.id) || parseInt(sets[obj].userExerciseId) === parseInt(exercise.id)) {
             const box = $("#txtSets");
             box.val(box.val() + sets[obj].set);
         }
@@ -161,7 +173,7 @@ function UpdatePageFromSession() {
 // Updates the exercise progress bar
 function UpdateExerciseProgressBar(exerciseIndex) {
 
-    const progress = Math.round((exerciseIndex / exercises.length) * 100);
+    const progress = Math.round((exerciseIndex / mergedExercises.length) * 100);
     $('.progress-bar').css('width', `${progress}%`);
     $('.progress-bar').text(`${progress}%`);
 
@@ -179,12 +191,17 @@ function SetExerciseFields(exercise) {
 
     $('#exerciseName').data("exercise", exercise.id);
     $('#exerciseName').html(exercise.name); 
+
+    $('#exerciseName').data("user", false);
+    if (exercise.hasOwnProperty('userId')) {
+        $('#exerciseName').data("user", true);
+    }
 }
 
 // Updates how to modal popup with current exercise data
 function UpdateHowTo(exeriseIndex) {
 
-    const exercise = exercises[exeriseIndex];
+    const exercise = mergedExercises[exeriseIndex];
 
     $('#howToExercise').text(exercise.name);
     $('#howToContent').html(exercise.description);
@@ -192,19 +209,18 @@ function UpdateHowTo(exeriseIndex) {
 }
 
 // Updates the session variable for keeping track of the current exercise the user is on
-function UpdateExerciseIndexSession(exerciseIndex) {
+function UpdateExerciseSessions(exerciseIndex) {
 
     const objRequest = {
         type: "POST",
-        url: "/Exercises/UpdateExerciseSession",
+        url: "/Exercises/UpdateExerciseSessions",
         data: {
+            isUserExercise: $('#exerciseName').data("user"),
             exerciseIndex: exerciseIndex
         }
     };
 
-    CallController(objRequest, function () {
-
-    });
+    CallController(objRequest, function () {});
 }
 
 // Updates set fields from session variable
@@ -214,7 +230,8 @@ function SetSetsFromSession(exerciseId) {
         type: "POST",
         url: "/Exercises/GetSets",
         data: {
-            exerciseId: exerciseId
+            isUserExercise: $('#exerciseName').data("user"),
+            exerciseId: exerciseId    
         }
     };
 

@@ -279,8 +279,8 @@ namespace WorkoutGen.Data
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Image)
-                    .HasColumnName("image")
+                entity.Property(e => e.Hyperlink)
+                    .HasColumnName("hyperlink")
                     .HasMaxLength(250)
                     .IsUnicode(false);
 

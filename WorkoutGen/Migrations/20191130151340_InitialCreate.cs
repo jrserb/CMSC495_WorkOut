@@ -8,7 +8,6 @@ namespace WorkoutGen.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             return;
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -388,7 +387,7 @@ namespace WorkoutGen.Migrations
                     user_id = table.Column<string>(maxLength: 450, nullable: false),
                     name = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
                     description = table.Column<string>(unicode: false, maxLength: 250, nullable: true),
-                    image = table.Column<string>(unicode: false, maxLength: 250, nullable: true),
+                    hyperlink = table.Column<string>(unicode: false, maxLength: 250, nullable: true),
                     date_added = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
                     date_deleted = table.Column<DateTime>(type: "datetime", nullable: true)
                 },

@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WorkoutGen.Data.Services.Equipment;
 using WorkoutGen.Data.Services.Exercise;
 using WorkoutGen.Data.Services.MuscleGroup;
+using WorkoutGen.Data.Services.UserExercise;
 using WorkoutGen.Data.Session;
+using WorkoutGen.Models;
 
 namespace WorkoutGen.Pages.Equipment
 {
@@ -17,14 +21,23 @@ namespace WorkoutGen.Pages.Equipment
         private readonly IExerciseService _exerciseDb;
         private readonly IEquipmentService _equipmentDb;
         private readonly IMuscleGroupService _muscleGroupDb;
+        private readonly IUserExerciseService _userExerciseDb;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public IndexModel(IExerciseService exerciseDb,
             IEquipmentService equipmentDb,
-            IMuscleGroupService muscleGroupDb)
+            IMuscleGroupService muscleGroupDb,
+            IUserExerciseService userExerciseDb,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _exerciseDb = exerciseDb;
             _equipmentDb = equipmentDb;
             _muscleGroupDb = muscleGroupDb;
+            _userExerciseDb = userExerciseDb;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         // Binding properties allows them to be passed to the razor page model
@@ -51,13 +64,20 @@ namespace WorkoutGen.Pages.Equipment
             {
                 return RedirectToPage("/MuscleGroup/Index");
             }
- 
+
             var exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(MuscleGroupIds, EquipmentIds);
-            ExerciseCount = exercises.Count();
+            var userExercises = Enumerable.Empty<UserExercise>();
+
+            if (_signInManager.IsSignedIn(User))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, MuscleGroupIds, EquipmentIds);
+            }
+            ExerciseCount = exercises.Count() + userExercises.Count();
 
             var equipment = await GetEquipmentFromMuscleGroupIds(MuscleGroupIds);
             SetEquipmentDropDown(equipment);
-           
+
             return Page();
         }
 
@@ -79,7 +99,14 @@ namespace WorkoutGen.Pages.Equipment
             if (EquipmentIds.Length > 0)
             {
                 var exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(MuscleGroupIds, EquipmentIds);
-                ExerciseCount = exercises.Count();
+                var userExercises = Enumerable.Empty<UserExercise>();
+
+                if (_signInManager.IsSignedIn(User))
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, MuscleGroupIds, EquipmentIds);
+                }
+                ExerciseCount = exercises.Count() + userExercises.Count();
             }
 
             // This was the full body muscle group option
@@ -97,7 +124,8 @@ namespace WorkoutGen.Pages.Equipment
             return Page();
         }
 
-        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromMuscleGroupIds(int[] muscleGroupIds) {
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromMuscleGroupIds(int[] muscleGroupIds)
+        {
 
             int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
             int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
@@ -125,8 +153,16 @@ namespace WorkoutGen.Pages.Equipment
 
         public async Task<JsonResult> OnPostUpdateExerciseCount(int[] muscleGroupIds, int[] equipmentIds)
         {
-            IEnumerable<Models.Exercise> exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
-            return new JsonResult(exercises.Count());
+            var exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
+            var userExercises = Enumerable.Empty<UserExercise>();
+
+            if (_signInManager.IsSignedIn(User))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, muscleGroupIds, equipmentIds);
+            }
+
+            return new JsonResult(exercises.Count() + userExercises.Count());
         }
 
         // Gets all the equipment records and binds it to the select list object
@@ -142,8 +178,9 @@ namespace WorkoutGen.Pages.Equipment
             HttpContext.Session.Set("EquipmentIds", equipmentIds);
         }
 
-        
-        public void ClearExerciseSession() {
+
+        public void ClearExerciseSession()
+        {
             HttpContext.Session.Remove("sets");
             HttpContext.Session.Remove("exercise");
             HttpContext.Session.Remove("workout");

@@ -9,7 +9,7 @@ namespace WorkoutGen.Data.Services.UserSet
     {
         public Task<Models.UserSet> GetUserSet(int id);
 
-        public Task<Models.UserSet> GetLastUserSetForExercise(int exerciseId, int[] workoutIds);
+        public Task<Models.UserSet> GetLastUserSetForExercise(bool isUserExercise, int exerciseId, int[] workoutIds);
 
         public Task<IEnumerable<Models.UserSet>> GetUserSets();
 

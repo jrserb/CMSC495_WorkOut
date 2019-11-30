@@ -730,8 +730,8 @@ namespace WorkoutGen.Migrations
                         .HasMaxLength(250)
                         .IsUnicode(false);
 
-                    b.Property<string>("Image")
-                        .HasColumnName("image")
+                    b.Property<string>("Hyperlink")
+                        .HasColumnName("hyperlink")
                         .HasColumnType("varchar(250)")
                         .HasMaxLength(250)
                         .IsUnicode(false);

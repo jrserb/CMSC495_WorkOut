@@ -22,19 +22,41 @@ namespace WorkoutGen.Data.Services.UserSet
                         .SingleAsync();
         }
 
-        public async Task<Models.UserSet> GetLastUserSetForExercise(int exerciseId, int[] workoutIds)
+        public async Task<Models.UserSet> GetLastUserSetForExercise(bool isUserExercise, int exerciseId, int[] workoutIds)
         {
-            return await _context.UserSet
-                        .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId)
-                        .OrderByDescending(x => x.DateAdded.Date)
-                        .ThenBy(x => x.Weight)
-                        .Select( x => new Models.UserSet { Id = x.Id, 
-                            ExerciseId = x.ExerciseId,
-                            Repetitions = x.Repetitions,
-                            Weight = x.Weight, 
-                            DateAdded = x.DateAdded  
-                        })
-                        .FirstOrDefaultAsync();
+            if (isUserExercise)
+            {
+                return await _context.UserSet
+                            .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.UserExerciseId == exerciseId)
+                            .OrderByDescending(x => x.DateAdded.Date)
+                            .ThenBy(x => x.Weight)
+                            .Select(x => new Models.UserSet
+                            {
+                                Id = x.Id,
+                                ExerciseId = x.ExerciseId,
+                                UserExerciseId = x.UserExerciseId,
+                                Repetitions = x.Repetitions,
+                                Weight = x.Weight,
+                                DateAdded = x.DateAdded
+                            })
+                            .FirstOrDefaultAsync();
+            }
+            else
+            {
+                return await _context.UserSet
+                                .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId)
+                                .OrderByDescending(x => x.DateAdded.Date)
+                                .ThenBy(x => x.Weight)
+                                .Select(x => new Models.UserSet
+                                {
+                                    Id = x.Id,
+                                    ExerciseId = x.ExerciseId,
+                                    Repetitions = x.Repetitions,
+                                    Weight = x.Weight,
+                                    DateAdded = x.DateAdded
+                                })
+                                .FirstOrDefaultAsync();
+            }
         }
 
         public async Task<IEnumerable<Models.UserSet>> GetUserSets()
