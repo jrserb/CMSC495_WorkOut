@@ -21,28 +21,28 @@ namespace WorkoutGen.Data.Services.UserExercise
         public async Task<Models.UserExercise> GetUserExercise(int id)
         {
             return await _context.UserExercise
-                        .Where(x => x.Id == id)
+                        .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercises()
         {
             return await _context.UserExercise
-                        .OrderBy(x => x.Name)
+                        .Where( x => x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercises(int[] ids)
         {
             return await _context.UserExercise
-                        .Where(x => ids.Contains(x.Id))
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromUserId(string userId) {
 
             return await _context.UserExercise
-                        .Where(x => x.UserId == userId)
+                        .Where(x => x.UserId == userId && x.DateDeleted == null)
                         .ToListAsync();
 
         }
@@ -50,19 +50,33 @@ namespace WorkoutGen.Data.Services.UserExercise
         public async Task<int[]> GetUserExerciseIdsFromMuscleGroups(int[] ids)
         {
             return await _context.UserExerciseMuscleGroup
-                        .Where(x => ids.Contains(x.MuscleGroupId))
+                        .Where(x => ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
                         .Select(x => x.UserExerciseId)
                         .Distinct()
                         .ToArrayAsync();
         }
 
+        public async Task<IEnumerable<Models.UserExerciseMuscleGroup>> GetUserExerciseMuscleGroupsFromExercise(int exerciseId)
+        {
+            return await _context.UserExerciseMuscleGroup
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
         public async Task<int[]> GetUserExerciseIdsFromEquipment(int[] ids)
         {
             return await _context.UserExerciseEquipment
-                        .Where(x => ids.Contains(x.EquipmentId))
+                        .Where(x => ids.Contains(x.EquipmentId) && x.DateDeleted == null)
                         .Select(x => x.UserExerciseId)
                         .Distinct()
                         .ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<Models.UserExerciseEquipment>> GetUserExerciseEquipmentFromExercise(int exerciseId)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds)
@@ -126,18 +140,53 @@ namespace WorkoutGen.Data.Services.UserExercise
             return await GetUserExercises(validExerciseIds.ToArray());
         }
 
-        public void UpdateUserExercise(Models.UserExercise userExercise)
+        public async Task<int> AddUserExercise(Models.UserExercise userExercise)
+        {
+            await _context.UserExercise.AddAsync(userExercise);
+            await _context.SaveChangesAsync();
+
+            return userExercise.Id;
+        }
+
+        public async Task UpdateUserExercise(Models.UserExercise userExercise)
         {
 
             //_context.UserExercise.Attach(userExercise).State = EntityState.Modified;
+         
+            var exerciseMuscleGroups = await GetUserExerciseMuscleGroupsFromExercise(userExercise.Id);
+            var exerciseEquipment = await GetUserExerciseEquipmentFromExercise(userExercise.Id);
+
+            foreach (Models.UserExerciseMuscleGroup muscleGroup in exerciseMuscleGroups)
+            {
+                muscleGroup.DateDeleted = DateTime.Now;
+            }
+            foreach (Models.UserExerciseEquipment equipment in exerciseEquipment)
+            {
+                equipment.DateDeleted = DateTime.Now;
+            }
+
             _context.UserExercise.Update(userExercise);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteUserExercise(Models.UserExercise userExercise)
+        public async Task DeleteUserExercise(Models.UserExercise userExercise)
         {
-            _context.UserExercise.Remove(userExercise);
-            _context.SaveChanges();
+            var exerciseMuscleGroups = await GetUserExerciseMuscleGroupsFromExercise(userExercise.Id);
+            var exerciseEquipment = await GetUserExerciseEquipmentFromExercise(userExercise.Id);
+
+            foreach (Models.UserExerciseMuscleGroup muscleGroup in exerciseMuscleGroups)
+            {
+                muscleGroup.DateDeleted = DateTime.Now;
+            }
+            foreach (Models.UserExerciseEquipment equipment in exerciseEquipment)
+            {
+                equipment.DateDeleted = DateTime.Now;
+            }
+
+            userExercise.DateDeleted = DateTime.Now;
+
+            _context.UserExercise.Update(userExercise);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UserExerciseExists(int id) {

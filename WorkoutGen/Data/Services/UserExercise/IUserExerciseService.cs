@@ -15,13 +15,19 @@ namespace WorkoutGen.Data.Services.UserExercise
 
         public Task<int[]> GetUserExerciseIdsFromMuscleGroups(int[] ids);
 
+        public Task<IEnumerable<Models.UserExerciseMuscleGroup>> GetUserExerciseMuscleGroupsFromExercise(int exerciseId);
+
         public Task<int[]> GetUserExerciseIdsFromEquipment(int[] ids);
+
+        public Task<IEnumerable<Models.UserExerciseEquipment>> GetUserExerciseEquipmentFromExercise(int exerciseId);
 
         public Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds);
 
-        public void UpdateUserExercise(Models.UserExercise userExercise);
+        public Task<int> AddUserExercise(Models.UserExercise userExercise);
 
-        public void DeleteUserExercise(Models.UserExercise userExercise);
+        public Task UpdateUserExercise(Models.UserExercise userExercise);
+
+        public Task DeleteUserExercise(Models.UserExercise userExercise);
 
         public Task<bool> UserExerciseExists(int id);
     }
