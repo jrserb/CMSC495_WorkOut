@@ -37,6 +37,15 @@ namespace WorkoutGen.Data.Services.Exercise
         {
             return await _context.Exercise
                         .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
+                        .Select(x => new Models.Exercise
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Description = x.Description,
+                            Hyperlink = x.Hyperlink,
+                            DateAdded = x.DateAdded,
+                            DateDeleted = x.DateDeleted
+                        })
                         .ToListAsync();
         }
 
