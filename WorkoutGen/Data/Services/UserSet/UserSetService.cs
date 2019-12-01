@@ -51,6 +51,7 @@ namespace WorkoutGen.Data.Services.UserSet
                                 {
                                     Id = x.Id,
                                     ExerciseId = x.ExerciseId,
+                                    UserExerciseId = x.UserExerciseId,
                                     Repetitions = x.Repetitions,
                                     Weight = x.Weight,
                                     DateAdded = x.DateAdded
@@ -93,6 +94,36 @@ namespace WorkoutGen.Data.Services.UserSet
             _context.SaveChanges();
 
             return userSet.Id;
+        }
+
+        public async Task DeleteUserSetsFromExercise(int workoutId, int exerciseId)
+        {
+            var exerciseSets = await _context.UserSet
+                                             .Where(x => x.UserWorkoutId == workoutId && x.ExerciseId == exerciseId && x.DateDeleted == null)
+                                             .ToListAsync();
+
+            foreach (Models.UserSet set in exerciseSets)
+            {
+                set.DateDeleted = DateTime.Now;
+            }
+
+            _context.UserSet.UpdateRange(exerciseSets);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserSetsFromUserExercise(int workoutId, int exerciseId)
+        {
+            var exerciseSets = await _context.UserSet
+                                             .Where(x => x.UserWorkoutId == workoutId && x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                                             .ToListAsync();
+
+            foreach (Models.UserSet set in exerciseSets)
+            {
+                set.DateDeleted = DateTime.Now;
+            }
+
+            _context.UserSet.UpdateRange(exerciseSets);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -146,17 +146,21 @@ namespace WorkoutGen.Pages.Exercises
                 var userSet = await _userSetDb.GetLastUserSetForExercise(IsUserExercise, firstExerciseId, workoutIds);
 
                 if (userSet != null)
-                {
+                {                   
+                    UserSet set = new UserSet();
+                            set.UserWorkoutId = WorkoutId;
+                            set.Repetitions = userSet.Repetitions;
+                            set.Weight = userSet.Weight;
+                            set.UserExerciseId = userSet.UserExerciseId;
+                            set.ExerciseId = userSet.ExerciseId;
+
+                    int setId = _userSetDb.AddUserSet(set);
+
+
                     var s = new SessionSet();
-
-                    s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
-
-                    if (IsUserExercise) {
-                        s.userExerciseId = (int)userSet.ExerciseId;
-                    }
-                    else{
-                        s.exerciseId = (int)userSet.ExerciseId;
-                    }                  
+                        s.userExerciseId = userSet.UserExerciseId;
+                        s.exerciseId = userSet.ExerciseId;
+                        s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
 
                     Sets.Add(s);
                 }
@@ -183,6 +187,7 @@ namespace WorkoutGen.Pages.Exercises
         {
             // Grab current sets in the session that are tied to the exercise
             Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");
+            WorkoutId = HttpContext.Session.Get<int>("WorkoutId");
 
             var exerciseSets = Sets.Where(x => x.exerciseId == exerciseId)
                                    .ToList();
@@ -208,16 +213,20 @@ namespace WorkoutGen.Pages.Exercises
 
                 if (userSet != null)
                 {
-                    var s = new SessionSet();                  
 
-                    s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
+                    UserSet set = new UserSet();
+                            set.UserWorkoutId = WorkoutId;
+                            set.Repetitions = userSet.Repetitions;
+                            set.Weight = userSet.Weight;
+                            set.UserExerciseId = userSet.UserExerciseId;
+                            set.ExerciseId = userSet.ExerciseId;
 
-                    if (isUserExercise){
-                        s.userExerciseId = (int)userSet.UserExerciseId;
-                    }
-                    else {
-                        s.exerciseId = (int)userSet.ExerciseId;
-                    }
+                    int setId = _userSetDb.AddUserSet(set);
+
+                    var s = new SessionSet();
+                        s.userExerciseId = userSet.UserExerciseId;
+                        s.exerciseId = userSet.ExerciseId;
+                        s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
 
                     exerciseSets.Add(s);
                     Sets.Add(s);
@@ -261,8 +270,10 @@ namespace WorkoutGen.Pages.Exercises
             return new JsonResult("{}");
         }
 
-        public JsonResult OnPostClearSet(bool isUserExercise, int exerciseId)
+        public async Task<JsonResult> OnPostClearSet(bool isUserExercise, int exerciseId)
         {
+            WorkoutId = HttpContext.Session.Get<int>("WorkoutId");
+
             // Get a new list of sets that are not tied to the exercise we are clearing sets for
             // This removes the sets we are clearing
             var sets = HttpContext.Session.Get<List<SessionSet>>("Sets")
@@ -272,6 +283,19 @@ namespace WorkoutGen.Pages.Exercises
 
                 sets = HttpContext.Session.Get<List<SessionSet>>("Sets")
                                           .Where(x => x.userExerciseId != exerciseId);
+            }
+        
+            // If user is logged in then delete from db
+            if (_signInManager.IsSignedIn(User))
+            {
+                if (isUserExercise)
+                {
+                    await _userSetDb.DeleteUserSetsFromUserExercise(WorkoutId, exerciseId);
+                }
+                else 
+                {
+                    await _userSetDb.DeleteUserSetsFromExercise(WorkoutId, exerciseId);
+                }
             }
 
             // Set session with new set list
