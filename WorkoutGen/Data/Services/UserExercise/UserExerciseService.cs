@@ -29,7 +29,7 @@ namespace WorkoutGen.Data.Services.UserExercise
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercises()
         {
             return await _context.UserExercise
-                        .Where( x => x.DateDeleted == null)
+                        .Where(x => x.DateDeleted == null)
                         .ToListAsync();
         }
 

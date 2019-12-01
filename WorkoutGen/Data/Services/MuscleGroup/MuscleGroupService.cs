@@ -18,21 +18,21 @@ namespace WorkoutGen.Data.Services.MuscleGroup
         public async Task<Models.MuscleGroup> GetMuscleGroup(int id)
         {
             return await _context.MuscleGroup
-                        .Where(x => x.Id == id)
+                        .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleAsync();
         }
 
         public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroups()
         {
             return await _context.MuscleGroup
-                        .OrderBy(x => x.Name)
+                        .Where(x => x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroups(int[] ids)
         {
             return await _context.MuscleGroup
-                        .Where(x => ids.Contains(x.Id))
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
     }

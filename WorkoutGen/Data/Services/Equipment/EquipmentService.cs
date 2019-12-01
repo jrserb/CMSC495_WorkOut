@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WorkoutGen.Models;
 
 namespace WorkoutGen.Data.Services.Equipment
 {
@@ -15,27 +14,32 @@ namespace WorkoutGen.Data.Services.Equipment
         {
             _context = context;
         }
+
+        // Returns all active equipment objects
         public async Task<IEnumerable<Models.Equipment>> GetEquipment()
         {
             return await _context.Equipment
-                        .OrderBy(x => x.Name)
+                        .Where(x => x.DateDeleted == null)
                         .ToListAsync();
         }
 
+        // Returns single active equipment object that matches the id
         public async Task<Models.Equipment> GetEquipment(int id)
         {
             return await _context.Equipment
-                        .Where(x => x.Id == id)
+                        .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleAsync();
         }
 
+        // Returns active equipment objects that match the ids
         public async Task<IEnumerable<Models.Equipment>> GetEquipment(int[] ids)
         {
             return await _context.Equipment
-                        .Where(x => ids.Contains(x.Id))
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
 
+        // Returns active equipment objects that are related to an exercise
         public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromExercise(int id)
         {
 
@@ -43,36 +47,40 @@ namespace WorkoutGen.Data.Services.Equipment
             return await GetEquipment(equipmentIds);
         }
 
+        // Returns an array of ids of active equipment objects that are related to an exercise
         public async Task<int[]> GetEquipmentIdsFromExercise(int id)
         {
             return await _context.ExerciseEquipment
-                        .Where(x => x.ExerciseId == id)
+                        .Where(x => x.ExerciseId == id && x.DateDeleted == null)
                         .Select(x => x.EquipmentId)
                         .ToArrayAsync();
         }
 
+        // Returns an array of ids of active equipment objects that are related to exercises
         public async Task<int[]> GetEquipmentIdsFromExercises(int[] ids)
         {
             return await _context.ExerciseEquipment
-                        .Where(x => ids.Contains(x.ExerciseId))
+                        .Where(x => ids.Contains(x.ExerciseId) && x.DateDeleted == null)
                         .Select(x => x.EquipmentId)
                         .Distinct()
                         .ToArrayAsync();
         }
 
+        // Returns active alternate equipment objects related to an equipment id
         public async Task<int[]> GetAlternateEquipmentIdsFromEquipment(int id)
         {
             return await _context.ExerciseAlternateEquipment
-                        .Where(x => x.ExerciseEquipmentId == id)
+                        .Where(x => x.ExerciseEquipmentId == id && x.DateDeleted == null)
                         .Select(x => x.AlternateEquipmentId)
                         .Distinct()
                         .ToArrayAsync();
         }
 
+        // Returns active alternate equipment objects related to equipment ids
         public async Task<int[]> GetAlternateEquipmentIdsFromEquipment(int[] ids)
         {
             return await _context.ExerciseAlternateEquipment
-                        .Where(x => ids.Contains(x.ExerciseEquipmentId))
+                        .Where(x => ids.Contains(x.ExerciseEquipmentId) && x.DateDeleted == null)
                         .Select(x => x.AlternateEquipmentId)
                         .Distinct()
                         .ToArrayAsync();

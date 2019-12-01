@@ -79,7 +79,7 @@ namespace WorkoutGen.Pages.Exercises
             Equipment = await _equipmentDb.GetEquipment(equipmentIds);
 
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
-
+            UserExercises = Enumerable.Empty<UserExercise>();
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -110,6 +110,7 @@ namespace WorkoutGen.Pages.Exercises
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
             Equipment = await _equipmentDb.GetEquipment(equipmentIds);
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
+            UserExercises = Enumerable.Empty<UserExercise>();
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);

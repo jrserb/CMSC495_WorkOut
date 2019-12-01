@@ -29,11 +29,11 @@
 
                 <ul class="list-group list-group-horizontal-sm mb-5">
                     <a asp-page="tutorial" class="list-group-item list-group-item-action border-0">Tutorial</a>
-                    <a asp-page="faq" class="list-group-item list-group-item-action border-0">FAQ</a>
+                    @*<a asp-page="faq" class="list-group-item list-group-item-action border-0">FAQ</a>*@
                     <a asp-page="contact" class="list-group-item list-group-item-action border-0">Contact Us</a>
                 </ul>
 
-                <p>Intro text</p>
+                <p class="font-weight-bold">"Tired of the same old you? Being out of shape and overweight? Well we're here to pump you up!</p>
                 <div class="row mt-2">
                     @if (SignInManager.IsSignedIn(User))
                     {
