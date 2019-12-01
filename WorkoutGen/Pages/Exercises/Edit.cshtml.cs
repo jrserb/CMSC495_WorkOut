@@ -50,8 +50,11 @@ namespace WorkoutGen.Pages.Exercises
             }
 
             UserExercise = await _userExerciseDb.GetUserExercise((int)id);
-            UserExercise.Description = UserExercise.Description.Replace("<br/>", Environment.NewLine);
-
+            if (UserExercise.Description != null)
+            {
+                UserExercise.Description = UserExercise.Description.Replace("<br/>", Environment.NewLine);
+            }
+            
             if (UserExercise == null)
             {
                 return NotFound();
