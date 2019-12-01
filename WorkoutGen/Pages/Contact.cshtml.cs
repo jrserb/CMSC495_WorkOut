@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +27,8 @@ namespace WorkoutGen.Pages
                 return Page();
             }
 
-            var mailbody = $@"Hello website owner, 
-This is a new contact request from your website:
+            var mailbody = $@"Hello, 
+This is a new contact request from Workout Buddy:
 
 Name: {Contact.FirstName}
 LastName: {Contact.LastName}
@@ -36,7 +37,7 @@ Message: ""{Contact.Message}""
 
 
 Cheers,
-The websites contact form";
+Workout Buddy";
 
             SendMail(mailbody);
 
@@ -44,18 +45,28 @@ The websites contact form";
             return RedirectToPage("Index");
         }
 
-        private void SendMail(string mailbody)
+        private async void SendMail(string mailbody)
         {
-            using (var message = new System.Net.Mail.MailMessage(Contact.Email, "me@mydomain.com"))
+            using (var message = new System.Net.Mail.MailMessage(Contact.Email, "workoutbuddycmsc495@gmail.com"))
             {
-                message.To.Add(new MailAddress("me@mydomain.com"));
+                message.To.Add(new MailAddress("workoutbuddycmsc495@gmail.com"));
                 message.From = new MailAddress(Contact.Email);
-                message.Subject = "New E-Mail from my website";
+                message.Subject = "New Contact Request from Workout Buddy";
                 message.Body = mailbody;
 
-                using (var smtpClient = new SmtpClient("mail.mydomain.com"))
+                using (var smtpClient = new SmtpClient())
                 {
-                    smtpClient.Send(message);
+                    var credential = new NetworkCredential
+                    {
+                        UserName = "workoutbuddycmsc495@gmail.com",
+                        Password = "cmsc495muscles"
+                    };
+                    smtpClient.Credentials = credential;
+                    smtpClient.Host = "smtp.gmail.com";
+                    smtpClient.Port = 587;
+                    smtpClient.EnableSsl = true;
+                    message.From = new MailAddress("example@gmail.com");
+                    await smtpClient.SendMailAsync(message);
                 }
             }
         }
