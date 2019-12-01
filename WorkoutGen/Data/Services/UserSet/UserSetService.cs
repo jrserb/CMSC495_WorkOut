@@ -18,7 +18,7 @@ namespace WorkoutGen.Data.Services.UserSet
         public async Task<Models.UserSet> GetUserSet(int id)
         {
             return await _context.UserSet
-                        .Where(x => x.Id == id)
+                        .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleAsync();
         }
 
@@ -27,7 +27,7 @@ namespace WorkoutGen.Data.Services.UserSet
             if (isUserExercise)
             {
                 return await _context.UserSet
-                            .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.UserExerciseId == exerciseId)
+                            .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.UserExerciseId == exerciseId && x.DateDeleted == null)
                             .OrderByDescending(x => x.DateAdded.Date)
                             .ThenBy(x => x.Weight)
                             .Select(x => new Models.UserSet
@@ -44,7 +44,7 @@ namespace WorkoutGen.Data.Services.UserSet
             else
             {
                 return await _context.UserSet
-                                .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId)
+                                .Where(x => workoutIds.Contains(x.UserWorkoutId) && x.ExerciseId == exerciseId && x.DateDeleted == null)
                                 .OrderByDescending(x => x.DateAdded.Date)
                                 .ThenBy(x => x.Weight)
                                 .Select(x => new Models.UserSet
@@ -62,27 +62,28 @@ namespace WorkoutGen.Data.Services.UserSet
         public async Task<IEnumerable<Models.UserSet>> GetUserSets()
         {
             return await _context.UserSet
+                        .Where(x => x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserSet>> GetUserSets(int[] ids)
         {
             return await _context.UserSet
-                        .Where(x => ids.Contains(x.Id))
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
         {
             return await _context.UserSet
-                        .Where(x => x.UserWorkoutId == workoutId)
+                        .Where(x => x.UserWorkoutId == workoutId && x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkouts(int[] workoutIds)
         {
             return await _context.UserSet
-                        .Where(x => workoutIds.Contains( x.UserWorkoutId ))
+                        .Where(x => workoutIds.Contains( x.UserWorkoutId ) && x.DateDeleted == null)
                         .ToListAsync();
         }
 

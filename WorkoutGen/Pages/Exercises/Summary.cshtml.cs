@@ -44,9 +44,9 @@ namespace WorkoutGen.Pages.Exercises
         public IEnumerable<UserExercise> UserExercises { get; set; }
         public List<SessionSet> Sets { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-
+            return RedirectToPage("Index");
         }
 
         public async Task<IActionResult> OnPost(int workoutId, int[] exerciseIds, int[] userExerciseIds)

@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkoutGen.Data.Services.Equipment;
-using WorkoutGen.Models;
 
 namespace WorkoutGen.Data.Services.UserExercise
 {
@@ -82,7 +80,6 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToListAsync();
         }
 
-
         public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(string userId, int id)
         {
             int[] equipmentIds = await GetEquipmentIdsFromUserExercise(userId, id);
@@ -98,6 +95,12 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToArrayAsync();
         }
 
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int exerciseId)
+        {
+            return await _context.UserSet
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .ToListAsync();
+        }
 
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(string userId, int[] muscleGroupIds, int[] equipmentIds)
         {
@@ -193,6 +196,7 @@ namespace WorkoutGen.Data.Services.UserExercise
         {
             var exerciseMuscleGroups = await GetUserExerciseMuscleGroupsFromExercise(userExercise.Id);
             var exerciseEquipment = await GetUserExerciseEquipmentFromExercise(userExercise.Id);
+            var exerciseSets = await GetUserSetsFromExercise(userExercise.Id);
 
             foreach (Models.UserExerciseMuscleGroup muscleGroup in exerciseMuscleGroups)
             {
@@ -201,6 +205,10 @@ namespace WorkoutGen.Data.Services.UserExercise
             foreach (Models.UserExerciseEquipment equipment in exerciseEquipment)
             {
                 equipment.DateDeleted = DateTime.Now;
+            }
+            foreach (Models.UserSet set in exerciseSets)
+            {
+                set.DateDeleted = DateTime.Now;
             }
 
             userExercise.DateDeleted = DateTime.Now;

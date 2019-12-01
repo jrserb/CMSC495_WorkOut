@@ -16,19 +16,16 @@ namespace WorkoutGen.Areas.Identity.Pages.Account.Manage
 {
     public class MyAccountModel : PageModel
     {
-        private readonly IExerciseService _exerciseDb;
         private readonly IUserExerciseService _userExerciseDb;
         private readonly IUserWorkoutService _userWorkoutDb;
         private readonly IUserSetService _userSetDb;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public MyAccountModel(IExerciseService exerciseDb,
-            IUserExerciseService userExerciseDb,
+        public MyAccountModel(IUserExerciseService userExerciseDb,
             IUserWorkoutService userWorkoutDb,
             IUserSetService userSetDb,
             UserManager<ApplicationUser> userManager)
         {
-            _exerciseDb = exerciseDb;
             _userExerciseDb = userExerciseDb;
             _userWorkoutDb = userWorkoutDb;
             _userSetDb = userSetDb;
@@ -40,7 +37,6 @@ namespace WorkoutGen.Areas.Identity.Pages.Account.Manage
         public IEnumerable<UserWorkout> UserWorkouts { get; set; }
         public IEnumerable<UserSet> UserSets { get; set; }
         public IEnumerable<UserExercise> UserExercises { get; set; }
-        public IEnumerable<Exercise> Exercises { get; set; }
         public SelectList Options_UserExercises { get; set; }
 
 

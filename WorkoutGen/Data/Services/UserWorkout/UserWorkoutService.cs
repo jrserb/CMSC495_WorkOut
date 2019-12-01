@@ -19,27 +19,28 @@ namespace WorkoutGen.Data.Services.UserWorkout
         public async Task<Models.UserWorkout> GetUserWorkout(int id)
         {
             return await _context.UserWorkout
-                        .Where(x => x.Id == id)
+                        .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleAsync();
         }
 
         public async Task<IEnumerable<Models.UserWorkout>> GetUserWorkouts()
         {
             return await _context.UserWorkout
+                        .Where(x => x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserWorkout>> GetUserWorkouts(int[] ids)
         {
             return await _context.UserWorkout
-                        .Where(x => ids.Contains(x.Id))
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
 
         public async Task<IEnumerable<Models.UserWorkout>> GetUserWorkoutsByUserId(string userId)
         {
             return await _context.UserWorkout
-                        .Where(x => x.UserId == userId)
+                        .Where(x => x.UserId == userId && x.DateDeleted == null)
                         .ToArrayAsync();
         }
 
