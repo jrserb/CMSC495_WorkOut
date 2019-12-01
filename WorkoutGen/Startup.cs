@@ -78,9 +78,8 @@ namespace WorkoutGen
             services.AddMvc().AddRazorPagesOptions(o =>
             {
                 o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-            });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
