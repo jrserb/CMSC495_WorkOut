@@ -80,7 +80,10 @@ namespace WorkoutGen.Pages.Exercises
                 });
             }
 
-            UserExercise.Description = UserExercise.Description.Replace(Environment.NewLine, "<br/>");
+            if (UserExercise.Description != null)
+            {
+                UserExercise.Description = UserExercise.Description.Replace(Environment.NewLine, "<br/>");
+            }
 
             await _userExerciseDb.AddUserExercise(UserExercise);
 
