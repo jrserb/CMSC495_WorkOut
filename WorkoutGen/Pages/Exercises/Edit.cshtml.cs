@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WorkoutGen.Data;
 using WorkoutGen.Data.Services.Equipment;
 using WorkoutGen.Data.Services.MuscleGroup;
 using WorkoutGen.Data.Services.UserExercise;
@@ -53,6 +50,7 @@ namespace WorkoutGen.Pages.Exercises
             }
 
             UserExercise = await _userExerciseDb.GetUserExercise((int)id);
+            UserExercise.Description = UserExercise.Description.Replace("<br/>", Environment.NewLine);
 
             if (UserExercise == null)
             {
@@ -103,6 +101,8 @@ namespace WorkoutGen.Pages.Exercises
                         UserExerciseId = UserExercise.Id
                     });
                 }
+
+                UserExercise.Description = UserExercise.Description.Replace(Environment.NewLine, "<br/>");
 
                 await _userExerciseDb.UpdateUserExercise(UserExercise);
             }

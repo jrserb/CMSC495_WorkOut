@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WorkoutGen.Data;
 using WorkoutGen.Data.Services.Equipment;
 using WorkoutGen.Data.Services.MuscleGroup;
 using WorkoutGen.Data.Services.UserExercise;
@@ -80,6 +79,8 @@ namespace WorkoutGen.Pages.Exercises
                     UserExerciseId = UserExercise.Id
                 });
             }
+
+            UserExercise.Description = UserExercise.Description.Replace(Environment.NewLine, "<br/>");
 
             await _userExerciseDb.AddUserExercise(UserExercise);
 

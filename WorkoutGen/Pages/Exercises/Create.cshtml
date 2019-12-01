@@ -6,11 +6,13 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>UserExercise</h4>
+<div class="text-center">
+    <h1>Create an exercise</h1>
+    <a asp-page="/Account/Manage/MyAccount" asp-area="Identity">Back to My Account</a>
+</div>
 <hr />
 <div class="row">
+    <div class="col-md-4"></div>
     <div class="col-md-4">
         <form method="post">
 
@@ -26,7 +28,7 @@
 
             <div class="form-group">
                 <label asp-for="UserExercise.Description" class="control-label"></label>
-                <textarea asp-for="UserExercise.Description" class="form-control"></textarea>
+                <textarea asp-for="UserExercise.Description" class="form-control" rows="5" style="resize: none;"></textarea>
             </div>
 
             <div class="form-group">
@@ -43,16 +45,13 @@
                 <button id="btnClearEquipmentSelection" type="button" class="btn btn-lg btn-danger mt-1">Clear selection</button>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-lg btn-primary" />
+            <div class="form-group mt-2 text-center">
+                <input type="submit" value="Save" class="btn btn-lg btn-primary" />
             </div>
 
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="/Account/Manage/MyAccount" asp-area="Identity">Back to My Account</a>
+    <div class="col-md-4"></div>
 </div>
 
 @section Scripts {

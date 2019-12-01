@@ -21,14 +21,6 @@ a {
     border-color: #1861ac;
 }
 
-.nav-item {
-    border-bottom: 1px solid transparent;
-}
-
-.nav-item:hover {
-    border-bottom: 1px solid #333;
-}
-
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

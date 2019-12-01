@@ -152,11 +152,11 @@ namespace WorkoutGen.Pages.Exercises
                     s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
 
                     if (IsUserExercise) {
-                        s.userExerciseId = (int)userSet.ExerciseId;                    
+                        s.userExerciseId = (int)userSet.ExerciseId;
                     }
                     else{
                         s.exerciseId = (int)userSet.ExerciseId;
-                    }
+                    }                  
 
                     Sets.Add(s);
                 }

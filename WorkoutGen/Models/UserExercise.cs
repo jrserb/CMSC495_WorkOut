@@ -17,8 +17,10 @@ namespace WorkoutGen.Models
         public string UserId { get; set; }
 
         [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
 
+        [MaxLength(250)]
         public string Description { get; set; }
         public string Hyperlink { get; set; }
         public DateTime DateAdded { get; set; }
