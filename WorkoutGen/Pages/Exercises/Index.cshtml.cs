@@ -240,21 +240,33 @@ namespace WorkoutGen.Pages.Exercises
         // Responsible for creating sets and saving them in session
         public JsonResult OnPostSaveSet(bool isUserExercise, int workoutId, int exerciseId, string weight, string reps)
         {
-            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");         
+            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");                  
+            
+            if (_signInManager.IsSignedIn(User))
+            {
+                UserSet set = new UserSet();
+                set.UserWorkoutId = workoutId;
+                set.Repetitions = reps;
+                set.Weight = weight;
+
+                // If existing user then save the set to the database
+                if (isUserExercise)
+                {
+                    set.UserExerciseId = exerciseId;
+                }
+                else
+                {
+                    set.ExerciseId = exerciseId;
+                }
+                int setId = _userSetDb.AddUserSet(set);
+            }
+
 
             SessionSet s = new SessionSet();
 
             // If existing user then save the set to the database
             if (isUserExercise)
             {
-                UserSet set = new UserSet();
-                        set.UserWorkoutId = workoutId;
-                        set.Repetitions = reps;
-                        set.Weight = weight;
-                        set.UserExerciseId = exerciseId;
-
-                int setId = _userSetDb.AddUserSet(set);
-
                 s.userExerciseId = exerciseId;
             }
             else
@@ -262,7 +274,7 @@ namespace WorkoutGen.Pages.Exercises
                 s.exerciseId = exerciseId;
             }
 
-            s.set = $"{weight}lbs x {reps} reps\n";
+            s.set = $"{weight}lbs x {reps} reps\n";         
 
             Sets.Add(s);
             HttpContext.Session.Set("Sets", Sets);
