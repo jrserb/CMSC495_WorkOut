@@ -19,14 +19,13 @@ namespace WorkoutGen.Models
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
-
-        [MaxLength(250)]
         public string Description { get; set; }
+        [MaxLength(250)]
         public string Hyperlink { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
 
-        public virtual AspNetUsers User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         public virtual ICollection<UserExerciseEquipment> UserExerciseEquipment { get; set; }
         public virtual ICollection<UserExerciseMuscleGroup> UserExerciseMuscleGroup { get; set; }
         public virtual ICollection<UserSet> UserSet { get; set; }

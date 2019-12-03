@@ -10,7 +10,7 @@ using WorkoutGen.Data;
 namespace WorkoutGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191130151340_InitialCreate")]
+    [Migration("20191203024140_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,203 +229,6 @@ namespace WorkoutGen.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetRoleClaims", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetRoles", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AspNetRoles1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserClaims", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserLogins", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserRoles", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserRoles1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserTokens", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserTokens1");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUsers", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AspNetUsers1");
                 });
 
             modelBuilder.Entity("WorkoutGen.Models.Equipment", b =>
@@ -976,45 +779,6 @@ namespace WorkoutGen.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WorkoutGen.Models.AspNetRoleClaims", b =>
-                {
-                    b.HasOne("WorkoutGen.Models.AspNetRoles", "Role")
-                        .WithMany("AspNetRoleClaims")
-                        .HasForeignKey("RoleId");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserClaims", b =>
-                {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
-                        .WithMany("AspNetUserClaims")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserLogins", b =>
-                {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
-                        .WithMany("AspNetUserLogins")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserRoles", b =>
-                {
-                    b.HasOne("WorkoutGen.Models.AspNetRoles", "Role")
-                        .WithMany("AspNetUserRoles")
-                        .HasForeignKey("RoleId");
-
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
-                        .WithMany("AspNetUserRoles")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WorkoutGen.Models.AspNetUserTokens", b =>
-                {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
-                        .WithMany("AspNetUserTokens")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("WorkoutGen.Models.ExerciseAlternateEquipment", b =>
                 {
                     b.HasOne("WorkoutGen.Models.Equipment", "AlternateEquipment")
@@ -1062,7 +826,7 @@ namespace WorkoutGen.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserEquipmentSet", b =>
                 {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
+                    b.HasOne("WorkoutGen.Models.ApplicationUser", "User")
                         .WithMany("UserEquipmentSet")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_user_equipment_set_AspNetUsers")
@@ -1080,7 +844,7 @@ namespace WorkoutGen.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserExercise", b =>
                 {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
+                    b.HasOne("WorkoutGen.Models.ApplicationUser", "User")
                         .WithMany("UserExercise")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_user_exercise_AspNetUsers")
@@ -1101,7 +865,7 @@ namespace WorkoutGen.Migrations
                         .HasConstraintName("FK_user_exercise_equipment_user_exercise")
                         .IsRequired();
 
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
+                    b.HasOne("WorkoutGen.Models.ApplicationUser", "User")
                         .WithMany("UserExerciseEquipment")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_user_exercise_equipment_AspNetUsers")
@@ -1122,7 +886,7 @@ namespace WorkoutGen.Migrations
                         .HasConstraintName("FK_user_exercise_muscle_group_user_exercise")
                         .IsRequired();
 
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
+                    b.HasOne("WorkoutGen.Models.ApplicationUser", "User")
                         .WithMany("UserExerciseMuscleGroup")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_user_exercise_muscle_group_AspNetUsers")
@@ -1150,7 +914,7 @@ namespace WorkoutGen.Migrations
 
             modelBuilder.Entity("WorkoutGen.Models.UserWorkout", b =>
                 {
-                    b.HasOne("WorkoutGen.Models.AspNetUsers", "User")
+                    b.HasOne("WorkoutGen.Models.ApplicationUser", "User")
                         .WithMany("UserWorkout")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_user_workout_AspNetUsers");

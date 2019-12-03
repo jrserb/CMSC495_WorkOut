@@ -7,7 +7,6 @@ namespace WorkoutGen.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            return;
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -20,20 +19,6 @@ namespace WorkoutGen.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoles1",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    NormalizedName = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles1", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,33 +46,6 @@ namespace WorkoutGen.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers1",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(nullable: true),
-                    NormalizedUserName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    NormalizedEmail = table.Column<string>(nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers1", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,27 +114,6 @@ namespace WorkoutGen.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims1",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(nullable: true),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims1", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims1_AspNetRoles1_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,97 +202,6 @@ namespace WorkoutGen.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims1",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(nullable: true),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims1", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims1_AspNetUsers1_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins1",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LoginProvider = table.Column<string>(nullable: true),
-                    ProviderKey = table.Column<string>(nullable: true),
-                    ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins1", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins1_AspNetUsers1_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles1",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(nullable: true),
-                    RoleId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles1", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles1_AspNetRoles1_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles1_AspNetUsers1_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens1",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(nullable: true),
-                    LoginProvider = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens1", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens1_AspNetUsers1_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers1",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "user_equipment_set",
                 columns: table => new
                 {
@@ -373,7 +219,7 @@ namespace WorkoutGen.Migrations
                     table.ForeignKey(
                         name: "FK_user_equipment_set_AspNetUsers",
                         column: x => x.user_id,
-                        principalTable: "AspNetUsers1",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -397,7 +243,7 @@ namespace WorkoutGen.Migrations
                     table.ForeignKey(
                         name: "FK_user_exercise_AspNetUsers",
                         column: x => x.user_id,
-                        principalTable: "AspNetUsers1",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -418,7 +264,7 @@ namespace WorkoutGen.Migrations
                     table.ForeignKey(
                         name: "FK_user_workout_AspNetUsers",
                         column: x => x.user_id,
-                        principalTable: "AspNetUsers1",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -531,7 +377,7 @@ namespace WorkoutGen.Migrations
                     table.ForeignKey(
                         name: "FK_user_exercise_equipment_AspNetUsers",
                         column: x => x.user_id,
-                        principalTable: "AspNetUsers1",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -566,7 +412,7 @@ namespace WorkoutGen.Migrations
                     table.ForeignKey(
                         name: "FK_user_exercise_muscle_group_AspNetUsers",
                         column: x => x.user_id,
-                        principalTable: "AspNetUsers1",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -642,11 +488,6 @@ namespace WorkoutGen.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims1_RoleId",
-                table: "AspNetRoleClaims1",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
@@ -659,34 +500,14 @@ namespace WorkoutGen.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims1_UserId",
-                table: "AspNetUserClaims1",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins1_UserId",
-                table: "AspNetUserLogins1",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles1_RoleId",
-                table: "AspNetUserRoles1",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles1_UserId",
-                table: "AspNetUserRoles1",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -699,11 +520,6 @@ namespace WorkoutGen.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserTokens1_UserId",
-                table: "AspNetUserTokens1",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_exercise_alternate_equipment_alternate_equipment_id",
@@ -807,31 +623,16 @@ namespace WorkoutGen.Migrations
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims1");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims1");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins1");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles1");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens1");
 
             migrationBuilder.DropTable(
                 name: "exercise_alternate_equipment");
@@ -858,12 +659,6 @@ namespace WorkoutGen.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles1");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "exercise_equipment");
 
             migrationBuilder.DropTable(
@@ -882,7 +677,7 @@ namespace WorkoutGen.Migrations
                 name: "exercise");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers1");
+                name: "AspNetUsers");
         }
     }
 }

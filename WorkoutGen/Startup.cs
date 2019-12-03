@@ -14,6 +14,7 @@ using WorkoutGen.Data.Services.Equipment;
 using WorkoutGen.Data.Services.UserWorkout;
 using WorkoutGen.Data.Services.UserSet;
 using WorkoutGen.Data.Services.UserExercise;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutGen
 {
@@ -40,21 +41,16 @@ namespace WorkoutGen
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-
-            //services.AddDbContext<WorkoutGenContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDefaultIdentity<ApplicationUser>(options => 
+            services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));            
 
             //services.ConfigureApplicationCookie(options =>
             //{
@@ -78,7 +74,6 @@ namespace WorkoutGen
             services.AddMvc().AddRazorPagesOptions(o =>
             {
                 o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 

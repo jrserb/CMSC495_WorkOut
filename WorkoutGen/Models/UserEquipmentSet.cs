@@ -11,6 +11,6 @@ namespace WorkoutGen.Models
         public DateTime DateAdded { get; set; }
         public DateTime? DateDeleted { get; set; }
 
-        public virtual AspNetUsers User { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

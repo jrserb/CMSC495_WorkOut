@@ -13,7 +13,7 @@ namespace WorkoutGen.Models
         public DateTime? DateDeleted { get; set; }
 
         public virtual MuscleGroup MuscleGroup { get; set; }
-        public virtual AspNetUsers User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         public virtual UserExercise UserExercise { get; set; }
     }
 }

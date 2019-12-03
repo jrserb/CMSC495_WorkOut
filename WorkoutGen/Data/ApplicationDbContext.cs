@@ -27,7 +27,9 @@ namespace WorkoutGen.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            //  Explicitly call the OnModelCreating method of IdentityDbContext           
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Equipment>(entity =>
             {
                 entity.ToTable("equipment");
@@ -276,7 +278,6 @@ namespace WorkoutGen.Data
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
-                    .HasMaxLength(250)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Hyperlink)
@@ -458,9 +459,6 @@ namespace WorkoutGen.Data
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_user_workout_AspNetUsers");
             });
-
-            //  Explicitly call the OnModelCreating method of IdentityDbContext           
-            base.OnModelCreating(modelBuilder);
 
             OnModelCreatingPartial(modelBuilder);
         }
