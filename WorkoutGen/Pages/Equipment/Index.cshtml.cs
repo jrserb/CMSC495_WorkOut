@@ -93,21 +93,17 @@ namespace WorkoutGen.Pages.Equipment
 
             GetSessionProperties();
 
-            // If the form was resubmitted
-            // Check to see if equipment ids have already been selected
-            // If they have update the exercise count
-            if (EquipmentIds.Length > 0)
-            {
-                var exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(MuscleGroupIds, EquipmentIds);
-                var userExercises = Enumerable.Empty<UserExercise>();
+            // Here we get the exercise count
+            var exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(MuscleGroupIds, EquipmentIds);
+            var userExercises = Enumerable.Empty<UserExercise>();
 
-                if (_signInManager.IsSignedIn(User))
-                {
-                    var user = await _userManager.GetUserAsync(User);
-                    userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, MuscleGroupIds, EquipmentIds);
-                }
-                ExerciseCount = exercises.Count() + userExercises.Count();
+            // If user is signed in we also grab the user exercises
+            if (_signInManager.IsSignedIn(User))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, MuscleGroupIds, EquipmentIds);
             }
+            ExerciseCount = exercises.Count() + userExercises.Count();
 
             // This was the full body muscle group option
             // I think we have removed this will be doing something different

@@ -1,6 +1,5 @@
 ﻿@page "{handler?}"
 @model WorkoutGen.Pages.Exercises.IndexModel
-
 @{
     ViewData["Title"] = "Index";
 
@@ -227,6 +226,36 @@
 
         return "";
     }
+
+    // We have to leave out the entity properties to prevent multiple cascade paths from breaking JSON serializer
+    // Has to do with foreign keys. Need to look into further
+    public IEnumerable<Models.UserExercise> GetUserExercises(IEnumerable<Models.UserExercise> userExercises) {
+
+        return userExercises.Select(x => new Models.UserExercise
+        {
+            Id = x.Id,
+            UserId = x.UserId,
+            Name = x.Name,
+            Description = x.Description,
+            Hyperlink = x.Hyperlink,
+            DateAdded = x.DateAdded,
+            DateDeleted = x.DateDeleted
+        });
+    }
+    // We have to leave out the entity properties to prevent multiple cascade paths from breaking JSON serializer
+    // Has to do with foreign keys. Need to look into further
+    public IEnumerable<Models.Exercise> GetExercises(IEnumerable<Models.Exercise> exercises) {
+
+        return exercises.Select(x => new Models.Exercise
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Description = x.Description,
+            Hyperlink = x.Hyperlink,
+            DateAdded = x.DateAdded,
+            DateDeleted = x.DateDeleted
+        });
+    }
 }
 
 @section Scripts {
@@ -234,8 +263,8 @@
     <script>
 
          // Store globally
-        let exercises = @Json.Serialize(Model.Exercises);
-        let userExercises = @Json.Serialize(Model.UserExercises);
+        let exercises = @Json.Serialize(GetExercises(Model.Exercises));
+        let userExercises = @Json.Serialize(GetUserExercises(Model.UserExercises));
         const mergedExercises = $.merge($.merge([], exercises), userExercises);
         const muscleGroups = @Json.Serialize(Model.MuscleGroups);
         const equipment = @Json.Serialize(Model.Equipment);

@@ -38,7 +38,6 @@ namespace WorkoutGen.Pages.Exercises
         public int[] MuscleGroupIds { get; set; }
 
         [BindProperty]
-        [Required(ErrorMessage = "At least 1 equipment is required")]
         public int[] EquipmentIds { get; set; }
 
 

@@ -36,16 +36,7 @@ namespace WorkoutGen.Data.Services.Exercise
         public async Task<IEnumerable<Models.Exercise>> GetExercises(int[] ids)
         {
             return await _context.Exercise
-                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
-                        .Select(x => new Models.Exercise
-                        {
-                            Id = x.Id,
-                            Name = x.Name,
-                            Description = x.Description,
-                            Hyperlink = x.Hyperlink,
-                            DateAdded = x.DateAdded,
-                            DateDeleted = x.DateDeleted
-                        })
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)                        
                         .ToListAsync();
         }
 
@@ -69,27 +60,24 @@ namespace WorkoutGen.Data.Services.Exercise
 
         public async Task<IEnumerable<Models.Exercise>> GetExercisesFromRequiredEquipment(int[] muscleGroupIds, int[] equipmentIds)
         {
-            int[] alternateEquipmentIds = { };
-            bool hasRequirement = true;
+            bool hasRequirement;
+            int[] alternateEquipmentIds;
 
             // This list will hold the final list of valid exercise ids based on if the user had the required muscle groups and equipment selected
             List<int> validExerciseIds = new List<int>();
 
-            int[] mgExerciseIds = await GetExerciseIdsFromMuscleGroups(muscleGroupIds);
-            int[] exerciseIds = await GetExerciseIdsFromEquipment(equipmentIds);
-
-            int[] ids = mgExerciseIds.Intersect(exerciseIds).ToArray();
+            // Get all the exercise ids related to the muscle group ids selected
+            int[] muscleGroupExerciseIds = await GetExerciseIdsFromMuscleGroups(muscleGroupIds);
 
             // Loop each exercise id
-            for (int i = 0; i < ids.Count(); i++)
+            for (int i = 0; i < muscleGroupExerciseIds.Count(); i++)
             {
-
                 // Get the equipment objects related to the exercise
                 // This is essentially the requirement. The user has to have selected all of these to get the exercise
-                var requiredEquipment = await _equipmentDb.GetEquipmentFromExercise(ids[i]);
-
+                var requiredEquipment = await _equipmentDb.GetEquipmentFromExercise(muscleGroupExerciseIds[i]);
 
                 // Loop the equipment objects and make sure user has selected them all
+                // If no equipment is required then requirement stays true and they get the exercise
                 hasRequirement = true;
                 foreach (var objEquipment in requiredEquipment)
                 {
@@ -119,7 +107,7 @@ namespace WorkoutGen.Data.Services.Exercise
                 // This exercise should be added to the valid list
                 if (hasRequirement)
                 {
-                    validExerciseIds.Add(ids[i]);
+                    validExerciseIds.Add(muscleGroupExerciseIds[i]);
                 }
             }
 
