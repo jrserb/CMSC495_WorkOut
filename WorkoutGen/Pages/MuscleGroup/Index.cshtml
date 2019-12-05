@@ -3,15 +3,15 @@
 @using WorkoutGen.Data.Session;
 @{
     ViewData["Title"] = "Muscle Groups";
-    var workoutId = HttpContext.Session.Get<int>("WorkoutId");
+    //var workoutId = HttpContext.Session.Get<int>("WorkoutId");
 }
 
 <div class="text-center">
     <h1>Muscle Group selection</h1>
-    @if (workoutId != 0)
+    @*@if (workoutId != 0)
     {
         <a asp-page="/Exercises/Index">Back to workout</a>
-    }
+    }*@
 </div>
 <hr />
 <div class="row">
