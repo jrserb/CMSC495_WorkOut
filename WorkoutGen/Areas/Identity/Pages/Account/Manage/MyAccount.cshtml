@@ -1,16 +1,29 @@
 ﻿@page "/Account/MyAccount"
 @model WorkoutGen.Areas.Identity.Pages.Account.Manage.MyAccountModel
+@using Microsoft.AspNetCore.Http
 @using WorkoutGen.Models;
 @using WorkoutGen.Data.Services.UserExercise;
 @using WorkoutGen.Data.Services.Exercise;
+@using WorkoutGen.Data.Session;
 @inject IUserExerciseService userExerciseDb
 @inject IExerciseService exerciseDb
 @{
     ViewData["Title"] = "My Account";
     ViewData["ActivePage"] = ManageNavPages.MyAccount;
+    var workoutId = HttpContext.Session.Get<int>("WorkoutId");
 }
 
-<h4 class="text-center mb-4">@ViewData["Title"]</h4>
+<div class="text-center mb-4">
+    <h4>@ViewData["Title"]</h4>
+    @if (workoutId != 0)
+    {
+        <a asp-page="/Exercises/Index">Back to workout</a>
+    }
+    else
+    {
+        <a asp-page="/MuscleGroup/Index">Start a workout</a>
+    }
+</div>
 <hr />
 <div class="row mb-4">
 

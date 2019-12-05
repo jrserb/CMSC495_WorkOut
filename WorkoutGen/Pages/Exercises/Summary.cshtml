@@ -2,16 +2,13 @@
 @model WorkoutGen.Pages.Exercises.HistoryModel
 @using Models
 @using WorkoutGen.Data.Session;
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Summary";
 }
 
 <div class="text-center">
     <h1>Summary</h1>
-    <a asp-page="/MuscleGroup/Index">Start a new workout</a>
+    <a asp-page="/MuscleGroup/Index">Start a new workout</a><br/>
 </div>
 <hr />
 <div class="row">
