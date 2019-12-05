@@ -125,7 +125,7 @@
         //RemoveSetsFromSession();
         SetExerciseFields(mergedExercises[0]);      
         SetSetsFromSession(mergedExercises[0].id);
-        GetLastSetForExercise(0);
+        GetLastSetForExercise(mergedExercises[0].id);
         UpdateHowTo(0);
         UpdateExerciseHistory(mergedExercises[0].id);
         sessionExerciseIndex = 0;
