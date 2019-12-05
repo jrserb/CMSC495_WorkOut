@@ -122,10 +122,11 @@
 
         UpdateExerciseProgressBar(0);
         ClearSetFields();
+        //RemoveSetsFromSession();
         SetExerciseFields(mergedExercises[0]);      
         SetSetsFromSession(mergedExercises[0].id);
         GetLastSetForExercise(0);
-        UpdateHowTo(mergedExercises[0].id);
+        UpdateHowTo(0);
         UpdateExerciseHistory(mergedExercises[0].id);
         sessionExerciseIndex = 0;
         UpdateExerciseSessions(0);  
@@ -367,4 +368,15 @@ function GetLastSetForExercise(exerciseId) {
         }
 
     });
+}
+
+function RemoveSetsFromSession() {
+
+    const objRequest = {
+        type: "POST",
+        url: "/Exercises/RemoveSetsFromSession",
+        data: {}
+    };
+
+    CallController(objRequest, function () {});
 }

@@ -172,6 +172,13 @@ namespace WorkoutGen.Pages.Exercises
             return Content(JsonConvert.SerializeObject(exerciseSets));
         }
 
+        public async Task<IActionResult> OnPostRemoveSetsFromSession()
+        {
+            // Grab current sets in the session that are tied to the exercise
+            HttpContext.Session.Remove("Sets");
+            return Content(JsonConvert.SerializeObject("{}"));
+        }
+
         // Responsible for creating sets and saving them in session
         public JsonResult OnPostSaveSet(bool isUserExercise, int workoutId, int exerciseId, string weight, string reps)
         {

@@ -74,11 +74,11 @@
                                 <div class="col-12 col-md-8 text-center">
 
                                     <div class="btn-group w-100" role="group" aria-label="ExerciseButtons">
-                                        <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
-                                        <button id="btnEditExercise" type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Workout</button>
+                                        <button id="btnHowTo" type="button" class="btn btn-lg btn-light w-25 rounded-0 border-secondary">How To</button>
+                                        <button id="btnEditExercise" type="button" class="btn btn-lg btn-light w-25 rounded-0 border-secondary" data-toggle="modal" data-target="#modalEditExercise">Edit Workout</button>
                                         @if (isUser)
                                         {
-                                            <button id="btnExerciseHistory" type="button" class="btn btn-lg btn-info" data-toggle="modal" data-target="#modalExerciseHistory">Exercise History</button>
+                                            <button id="btnExerciseHistory" type="button" class="btn btn-lg btn-light w-25 rounded-0 border-secondary" data-toggle="modal" data-target="#modalExerciseHistory">Exercise History</button>
                                         }
                                     </div>
 
@@ -199,7 +199,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100" id="modalEditExerciseLabel"><span id="modalEditExerciseHeader"></span></h5>
+                <h5 class="modal-title w-100" id="modalEditExerciseLabel"><span id="modalEditExerciseHeader">Change workout</span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
