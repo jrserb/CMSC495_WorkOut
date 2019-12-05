@@ -1,9 +1,19 @@
 ﻿@page "{handler?}"
 @model WorkoutGen.Pages.Equipment.IndexModel
+@using WorkoutGen.Data.Session;
 @{
     ViewData["Title"] = "Equipment";
+    var workoutId = HttpContext.Session.Get<int>("WorkoutId");
 }
 
+<div class="text-center">
+    <h1>Equipment selection</h1>
+    @if (workoutId != 0)
+    {
+        <a asp-page="/Exercises/Index">Back to workout</a>
+    }
+</div>
+<hr />
 <div class="row mb-3">
     <div class="col-2"></div>
     <div class="col-md-8">
