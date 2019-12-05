@@ -313,6 +313,7 @@ namespace WorkoutGen.Pages.Exercises
         {
             var sets = Enumerable.Empty<UserSet>();
             var workouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                workouts = workouts.OrderByDescending(x =>x .Id);
 
             if (isUserExercise)
             {
