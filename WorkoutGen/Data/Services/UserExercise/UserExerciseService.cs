@@ -66,6 +66,7 @@ namespace WorkoutGen.Data.Services.UserExercise
         {
             return await _context.UserExerciseMuscleGroup
                         .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .Distinct()
                         .ToListAsync();
         }
 
@@ -82,6 +83,7 @@ namespace WorkoutGen.Data.Services.UserExercise
         {
             return await _context.UserExerciseEquipment
                         .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .Distinct()
                         .ToListAsync();
         }
 

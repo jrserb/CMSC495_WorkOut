@@ -295,7 +295,7 @@ namespace WorkoutGen.Pages.Exercises
             var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromEquipment(equipment.Select( x => x.Id ).ToArray());
 
             equipment = equipment.Concat(alternateEquipment);
-            equipment = equipment.Where(x => equipmentIds.Contains(x.Id));
+            equipment = equipment.Where(x => equipmentIds.Contains(x.Id)).Distinct();
 
             var muscleGrouquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment };
 
