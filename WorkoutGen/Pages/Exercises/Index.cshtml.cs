@@ -46,6 +46,8 @@ namespace WorkoutGen.Pages.Exercises
             _userManager = userManager;
         }
 
+        public static bool IsUser { get; set; }
+        public static ApplicationUser user { get; set; }
         public IEnumerable<Exercise> Exercises { get; set; }
         public IEnumerable<UserExercise> UserExercises { get; set; }
         public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
@@ -78,14 +80,9 @@ namespace WorkoutGen.Pages.Exercises
 
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
             Equipment = await _equipmentDb.GetEquipment(equipmentIds);
-
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
-            UserExercises = Enumerable.Empty<UserExercise>();
-            if (_signInManager.IsSignedIn(User))
-            {
-                var user = await _userManager.GetUserAsync(User);
-                UserExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, muscleGroupIds, equipmentIds);
-            }
+
+            await SetUserExercises(muscleGroupIds, equipmentIds);
 
             SetModelPropertiesFromSession();
 
@@ -93,7 +90,7 @@ namespace WorkoutGen.Pages.Exercises
         }
 
         public async Task<IActionResult> OnPostAsync(int[] muscleGroupIds, int[] equipmentIds)
-        {
+        {          
             HttpContext.Session.Set("EquipmentIds", equipmentIds);
             HttpContext.Session.Set("MuscleGroupIds", muscleGroupIds);
 
@@ -107,23 +104,23 @@ namespace WorkoutGen.Pages.Exercises
         // Sets initial model properties
         public async Task SetModelProperties(int[] muscleGroupIds, int[] equipmentIds)
         {
+            IsUser = _signInManager.IsSignedIn(User);
+            if (IsUser) {
+                user = await _userManager.GetUserAsync(User);
+            }
 
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(muscleGroupIds);
             Equipment = await _equipmentDb.GetEquipment(equipmentIds);
             Exercises = await _exerciseDb.GetExercisesFromRequiredEquipment(muscleGroupIds, equipmentIds);
-            UserExercises = Enumerable.Empty<UserExercise>();
-            if (_signInManager.IsSignedIn(User))
-            {
-                var user = await _userManager.GetUserAsync(User);
-                UserExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, muscleGroupIds, equipmentIds);
-            }
+            await SetUserExercises(muscleGroupIds, equipmentIds);
             ExerciseIndex = 0;
             IsUserExercise = false;
             WorkoutId = 0;
             Sets = new List<SessionSet>();
 
+            // Set first exercise id
             int firstExerciseId;
-            if (_signInManager.IsSignedIn(User) && Exercises.Count() == 0)
+            if (IsUser && Exercises.Count() == 0)
             {
                 firstExerciseId = UserExercises.FirstOrDefault().Id;
                 IsUserExercise = true;
@@ -135,10 +132,8 @@ namespace WorkoutGen.Pages.Exercises
 
             // If logged in user, save a new workout record to their profile and return the workout  id
             // If logged in user make a call to the DB to grab the last set that was used for the exercise
-            if (_signInManager.IsSignedIn(User))
-            {
-                var user = await _userManager.GetUserAsync(User);
-
+            if (IsUser)
+            {              
                 WorkoutId = await _userWorkoutDb.AddUserWorkout(user.Id);
 
                 var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
@@ -205,9 +200,8 @@ namespace WorkoutGen.Pages.Exercises
             }
 
             // If user is signed in then we make a call to the DB to grab the last set that was used for this exercise
-            if (_signInManager.IsSignedIn(User))
+            if (IsUser)
             {
-                var user = await _userManager.GetUserAsync(User);
                 var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
                 int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
                 var userSet = await _userSetDb.GetLastUserSetForExercise(isUserExercise, exerciseId, workoutIds);
@@ -241,16 +235,19 @@ namespace WorkoutGen.Pages.Exercises
         // Responsible for creating sets and saving them in session
         public JsonResult OnPostSaveSet(bool isUserExercise, int workoutId, int exerciseId, string weight, string reps)
         {
-            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");                  
-            
-            if (_signInManager.IsSignedIn(User))
+            // First get the existing sets in session
+            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");           
+
+            // If the exercise belongs to a user we know a user is signed in
+            // Save user set in db
+            if (IsUser)
             {
+                // Create user set object and fill it
                 UserSet set = new UserSet();
-                set.UserWorkoutId = workoutId;
+                set.UserWorkoutId = workoutId;              
                 set.Repetitions = reps;
                 set.Weight = weight;
 
-                // If existing user then save the set to the database
                 if (isUserExercise)
                 {
                     set.UserExerciseId = exerciseId;
@@ -259,10 +256,12 @@ namespace WorkoutGen.Pages.Exercises
                 {
                     set.ExerciseId = exerciseId;
                 }
+
                 int setId = _userSetDb.AddUserSet(set);
             }
 
 
+            // This object holds set details for guest users
             SessionSet s = new SessionSet();
 
             // If existing user then save the set to the database
@@ -287,33 +286,31 @@ namespace WorkoutGen.Pages.Exercises
         {
             WorkoutId = HttpContext.Session.Get<int>("WorkoutId");
 
-            // Get a new list of sets that are not tied to the exercise we are clearing sets for
-            // This removes the sets we are clearing
-            var sets = HttpContext.Session.Get<List<SessionSet>>("Sets")
-                                          .Where(x => x.exerciseId != exerciseId);
+            IEnumerable<SessionSet> sets;
 
-            if (isUserExercise) {
+            // Get a new list of sets that are not tied to the exercise we are clearing sets for
+            // This removes the sets we are clearing          
+            if (isUserExercise)
+            {
 
                 sets = HttpContext.Session.Get<List<SessionSet>>("Sets")
                                           .Where(x => x.userExerciseId != exerciseId);
+
+                await _userSetDb.DeleteUserSetsFromUserExercise(WorkoutId, exerciseId);
             }
-        
-            // If user is logged in then delete from db
-            if (_signInManager.IsSignedIn(User))
+            else 
             {
-                if (isUserExercise)
-                {
-                    await _userSetDb.DeleteUserSetsFromUserExercise(WorkoutId, exerciseId);
-                }
-                else 
-                {
-                    await _userSetDb.DeleteUserSetsFromExercise(WorkoutId, exerciseId);
-                }
-            }
+
+                sets = HttpContext.Session.Get<List<SessionSet>>("Sets")
+                                          .Where(x => x.exerciseId != exerciseId);
+
+                await _userSetDb.DeleteUserSetsFromExercise(WorkoutId, exerciseId);
+            }    
 
             // Set session with new set list
             HttpContext.Session.Set("Sets", sets);
 
+            // Return nothing
             return new JsonResult("{}");
         }
 
