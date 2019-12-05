@@ -301,10 +301,10 @@ namespace WorkoutGen.Pages.Exercises
 
             var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromEquipment(equipment.Select( x => x.Id ).ToArray());
 
-            equipment = equipment.Concat(alternateEquipment);
-            equipment = equipment.Where(x => equipmentIds.Contains(x.Id)).Distinct();
+            //equipment = equipment.Concat(alternateEquipment);
+            //equipment = equipment.Where(x => equipmentIds.Contains(x.Id)).Distinct();
 
-            var muscleGrouquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment };
+            var muscleGrouquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment, AlternateEquipment = alternateEquipment };
 
             return Content(JsonConvert.SerializeObject(muscleGrouquipment));
         }
@@ -353,6 +353,8 @@ namespace WorkoutGen.Pages.Exercises
     public class ExerciseMuscleGroupEquipment {
         public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
         public IEnumerable<Models.Equipment> Equipment { get; set; }
+
+        public IEnumerable<Models.Equipment> AlternateEquipment { get; set; }
     }
 
     // Simple class to hold these lists to serialize to JSON and return to client

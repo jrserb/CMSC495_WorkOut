@@ -164,6 +164,7 @@
             const obj = JSON.parse(responseData);
             $('#exerciseEditMuscleGroups').html('');
             $('#exerciseEditEquipment').html('');
+            $('#exerciseEditAlternateEquipment').html('');
 
             $.each(obj.MuscleGroups, function (index, value) {
                 $('#exerciseEditMuscleGroups').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
@@ -177,6 +178,17 @@
 
                 $.each(obj.Equipment, function (index, value) {
                     $('#exerciseEditEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+                });
+            }
+
+            if (obj.AlternateEquipment.length === 0) {
+
+                $('#exerciseEditAlternateEquipment').html('No alternate equipment');
+
+            } else {
+
+                $.each(obj.AlternateEquipment, function (index, value) {
+                    $('#exerciseEditAlternateEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
                 });
             }
 
