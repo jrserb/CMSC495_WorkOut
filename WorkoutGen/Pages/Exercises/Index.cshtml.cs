@@ -322,6 +322,17 @@ namespace WorkoutGen.Pages.Exercises
             return new JsonResult("{}");
         }
 
+        public async Task SetUserExercises(int[] muscleGroupIds, int[] equipmentIds)
+        {
+
+            UserExercises = Enumerable.Empty<UserExercise>();
+
+            if (IsUser)
+            {
+                UserExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, muscleGroupIds, equipmentIds);
+            }
+        }
+
         public async Task<ContentResult> OnPostGetMuscleGroupsEquipmentFromExercise(bool isUserExercise, int exerciseId)
         {
             int[] equipmentIds = HttpContext.Session.Get<int[]>("EquipmentIds");
