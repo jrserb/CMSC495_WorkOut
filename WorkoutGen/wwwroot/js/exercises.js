@@ -265,6 +265,8 @@ function UpdateHowTo(exeriseIndex) {
 
 function UpdateExerciseHistory(exerciseId) {
 
+    if (!isUser) return;
+
     const objRequest = {
         type: "POST",
         url: "/Exercises/GetExerciseHistory",
@@ -342,6 +344,8 @@ function SetSetsFromSession(exerciseId) {
 }
 
 function GetLastSetForExercise(exerciseId) {
+
+    if (!isUser) return;
 
     const objRequest = {
         type: "POST",

@@ -326,9 +326,13 @@ namespace WorkoutGen.Pages.Exercises
 
         public async Task<ContentResult> OnPostGetLastSetForExercise(bool isUserExercise, int exerciseId)
         {
-            var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
-            int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
-            var userSet = await _userSetDb.GetLastUserSetForExercise(isUserExercise, exerciseId, workoutIds);
+            var userSet = new UserSet();
+            if (IsUser)
+            {
+                var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+                int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
+                userSet = await _userSetDb.GetLastUserSetForExercise(isUserExercise, exerciseId, workoutIds);
+            }
 
             return Content(JsonConvert.SerializeObject(userSet, Formatting.None, new JsonSerializerSettings()
             {

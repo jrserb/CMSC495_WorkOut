@@ -54,9 +54,12 @@ namespace WorkoutGen.Pages.Exercises
             Exercises = await _exerciseDb.GetExercises(exerciseIds);
             UserExercises = await _userExerciseDb.GetUserExercises(userExerciseIds);
 
-            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");  
-            
-            HttpContext.Session.Clear();
+            Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");
+
+            HttpContext.Session.Remove("ExerciseIndex");
+            HttpContext.Session.Remove("IsUserExercise");
+            HttpContext.Session.Remove("WorkoutId");
+            HttpContext.Session.Remove("Sets");
 
             return Page();
         }

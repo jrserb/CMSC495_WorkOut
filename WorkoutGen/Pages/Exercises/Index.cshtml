@@ -9,6 +9,12 @@
     int exerciseCount = Model.Exercises.Count() + Model.UserExercises.Count();
     int firstExerciseId;
     string firstExerciseName;
+    bool isUser = false;
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        isUser = true;
+    }
 
     if (Model.IsUserExercise)
     {
@@ -70,7 +76,7 @@
                                     <div class="btn-group w-100" role="group" aria-label="ExerciseButtons">
                                         <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
                                         <button id="btnEditExercise" type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Workout</button>
-                                        @if (SignInManager.IsSignedIn(User))
+                                        @if (isUser)
                                         {
                                             <button id="btnExerciseHistory" type="button" class="btn btn-lg btn-info" data-toggle="modal" data-target="#modalExerciseHistory">Exercise History</button>
                                         }
@@ -276,7 +282,7 @@
 
                 <div class="card" style="overflow-y:scroll; height:350px;">
                     <div id="modalExerciseHistoryBody" class="card-body">
-                        
+
                     </div>
                 </div>
 
@@ -357,7 +363,7 @@
 
     <script>
 
-         // Store globally
+         // Store globally        
         let exercises = @Json.Serialize(GetExercises(Model.Exercises));
         let userExercises = @Json.Serialize(GetUserExercises(Model.UserExercises));
         const mergedExercises = $.merge($.merge([], exercises), userExercises);
@@ -365,6 +371,7 @@
         const equipment = @Json.Serialize(Model.Equipment);
         const sets = @Json.Serialize(Model.Sets);
         let sessionExerciseIndex = @Model.ExerciseIndex;
+        const isUser = @Json.Serialize(isUser);
 
     </script>
 
