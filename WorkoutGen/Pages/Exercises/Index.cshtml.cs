@@ -361,11 +361,40 @@ namespace WorkoutGen.Pages.Exercises
 
             return Content(JsonConvert.SerializeObject(muscleGrouquipment));
         }
+
+        public async Task<ContentResult> OnPostGetExerciseHistory(bool isUserExercise, int exerciseId)
+        {
+            var sets = Enumerable.Empty<UserSet>();
+            var workouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+
+            if (isUserExercise)
+            {
+                sets = await _userSetDb.GetUserSetsFromUserExercise(exerciseId);
+            }
+            else
+            {
+                sets = await _userSetDb.GetUserSetsFromExercise(exerciseId);
+            }
+
+            var workoutSets = new WorkoutSets { Workouts = workouts, Sets = sets };
+
+            return Content(JsonConvert.SerializeObject(workoutSets, Formatting.None, new JsonSerializerSettings()
+            { 
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }));
+        }
     }
 
     // Simple class to hold these lists to serialize to JSON and return to client
     public class ExerciseMuscleGroupEquipment {
         public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
         public IEnumerable<Models.Equipment> Equipment { get; set; }
+    }
+
+    // Simple class to hold these lists to serialize to JSON and return to client
+    public class WorkoutSets
+    {
+        public IEnumerable<Models.UserWorkout> Workouts { get; set; }
+        public IEnumerable<Models.UserSet> Sets { get; set; }
     }
 }

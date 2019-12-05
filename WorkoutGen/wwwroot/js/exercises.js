@@ -27,6 +27,7 @@
         SetExerciseFields(nextExercise);     
         SetSetsFromSession(nextExercise.id);
         UpdateHowTo(nextIndex);
+        UpdateExerciseHistory(nextExercise.id);
         UpdateExerciseSessions(nextIndex);
     });
 
@@ -51,6 +52,7 @@
         SetExerciseFields(prevExercise);         
         SetSetsFromSession(prevExercise.id);
         UpdateHowTo(prevIndex);
+        UpdateExerciseHistory(prevExercise.id);
         UpdateExerciseSessions(prevIndex);
     });
 
@@ -121,6 +123,7 @@
         SetExerciseFields(mergedExercises[0]);      
         SetSetsFromSession(mergedExercises[0].id);
         UpdateHowTo(0);
+        UpdateExerciseHistory(0);
         sessionExerciseIndex = 0;
         UpdateExerciseSessions(0);  
     });
@@ -207,6 +210,7 @@ function UpdatePageFromSession() {
     }
 
     UpdateHowTo(sessionExerciseIndex);
+    UpdateExerciseHistory(sessionExerciseIndex);
 }
 
 // Updates the exercise progress bar
@@ -253,6 +257,41 @@ function UpdateHowTo(exeriseIndex) {
     if (!exercise.hyperlink) {
         $('#howToLink').addClass('d-none');
     }
+}
+
+function UpdateExerciseHistory(exerciseId) {
+
+    const objRequest = {
+        type: "POST",
+        url: "/Exercises/GetExerciseHistory",
+        data: {
+            isUserExercise: $('#exerciseName').data("user"),
+            exerciseId: exerciseId
+        }
+    };
+
+    CallController(objRequest, function (responseData) {
+
+        const workoutSets = JSON.parse(responseData);
+        let sets = {};
+
+        $('#modalExerciseHistoryBody').html('');
+        $.each(workoutSets.Workouts, function (index, workout){
+
+            sets = workoutSets.Sets.filter(x => x.UserWorkoutId === workout.Id);
+
+            if (sets.length > 0) {
+
+                let date = new Date(workout.DateAdded);
+                let formatted_date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+                $('#modalExerciseHistoryBody').append(`<h3>${formatted_date}</h3>`);
+                $.each(sets, function (index, set) {
+                    $('#modalExerciseHistoryBody').append(`${set.Weight}lbs x ${set.Repetitions}<br/>`);
+                });
+            }
+        });
+    });
 }
 
 // Updates the session variable for keeping track of the current exercise the user is on

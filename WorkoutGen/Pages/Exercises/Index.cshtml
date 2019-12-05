@@ -1,5 +1,7 @@
 ﻿@page "{handler?}"
 @model WorkoutGen.Pages.Exercises.IndexModel
+@using Models
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Index";
 
@@ -61,17 +63,22 @@
 
                             <div class="row mb-4">
 
-                                <div class="col-4 text-center">
-                                    <button id="btnHowTo" type="button" class="btn btn-lg btn-block btn-info">How To</button>
+                                <div class="col-12 col-md-2"></div>
+
+                                <div class="col-12 col-md-8 text-center">
+
+                                    <div class="btn-group w-100" role="group" aria-label="ExerciseButtons">
+                                        <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
+                                        <button id="btnEditExercise" type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Exercise</button>
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <button id="btnExerciseHistory" type="button" class="btn btn-lg btn-info" data-toggle="modal" data-target="#modalExerciseHistory">Exercise History</button>
+                                        }
+                                    </div>
+
                                 </div>
 
-                                <div class="col-4 text-center">
-                                    <button id="btnEditExercise" type="button" class="btn btn-lg btn-block btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Exercise</button>
-                                </div>
-                                
-                                <div class="col-4 text-center">
-                                    <button id="btnViewExerciseHistory" type="button" class="btn btn-lg btn-block btn-info">Exercise History</button>
-                                </div>
+                                <div class="col-12 col-md-2"></div>
 
                             </div>
 
@@ -238,13 +245,40 @@
                 </div>
 
                 @*<div class="row">
-                    <div class="col-12">
-                        <h5>Instructions</h5>
-                        <p id="howToContent" class="mb-3">
+                        <div class="col-12">
+                            <h5>Instructions</h5>
+                            <p id="howToContent" class="mb-3">
 
-                        </p>
+                            </p>
+                        </div>
+                    </div>*@
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalExerciseHistory" tabindex="-1" role="dialog" aria-labelledby="modalExerciseHistoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="modalExerciseHistoryLabel"><span id="modalExerciseHistoryHeader">Exercise History</span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="card overflow-scroll" style="height:350px;">
+                    <div id="modalExerciseHistoryBody" class="card-body">
+                        
                     </div>
-                </div>*@
+                </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Close</button>

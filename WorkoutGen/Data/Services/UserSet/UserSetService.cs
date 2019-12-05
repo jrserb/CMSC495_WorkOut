@@ -73,6 +73,19 @@ namespace WorkoutGen.Data.Services.UserSet
                         .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int id)
+        {
+            return await _context.UserSet
+                        .Where(x => x.ExerciseId == id && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromUserExercise(int id)
+        {
+            return await _context.UserSet
+                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
+                        .ToListAsync();
+        }
 
         public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
         {
