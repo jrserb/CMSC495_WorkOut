@@ -69,7 +69,7 @@
 
                                     <div class="btn-group w-100" role="group" aria-label="ExerciseButtons">
                                         <button id="btnHowTo" type="button" class="btn btn-lg btn-info">How To</button>
-                                        <button id="btnEditExercise" type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Exercise</button>
+                                        <button id="btnEditExercise" type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#modalEditExercise">Edit Workout</button>
                                         @if (SignInManager.IsSignedIn(User))
                                         {
                                             <button id="btnExerciseHistory" type="button" class="btn btn-lg btn-info" data-toggle="modal" data-target="#modalExerciseHistory">Exercise History</button>
@@ -274,7 +274,7 @@
             </div>
             <div class="modal-body">
 
-                <div class="card overflow-scroll" style="height:350px;">
+                <div class="card" style="overflow-y:scroll; height:350px;">
                     <div id="modalExerciseHistoryBody" class="card-body">
                         
                     </div>

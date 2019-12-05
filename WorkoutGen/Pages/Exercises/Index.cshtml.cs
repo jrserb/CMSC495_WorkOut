@@ -135,31 +135,6 @@ namespace WorkoutGen.Pages.Exercises
             if (IsUser)
             {              
                 WorkoutId = await _userWorkoutDb.AddUserWorkout(user.Id);
-
-                var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
-                int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
-
-                var userSet = await _userSetDb.GetLastUserSetForExercise(IsUserExercise, firstExerciseId, workoutIds);
-
-                if (userSet != null)
-                {                   
-                    UserSet set = new UserSet();
-                            set.UserWorkoutId = WorkoutId;
-                            set.Repetitions = userSet.Repetitions;
-                            set.Weight = userSet.Weight;
-                            set.UserExerciseId = userSet.UserExerciseId;
-                            set.ExerciseId = userSet.ExerciseId;
-
-                    int setId = _userSetDb.AddUserSet(set);
-
-
-                    var s = new SessionSet();
-                        s.userExerciseId = userSet.UserExerciseId;
-                        s.exerciseId = userSet.ExerciseId;
-                        s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
-
-                    Sets.Add(s);
-                }
             }
         }
 
@@ -179,7 +154,7 @@ namespace WorkoutGen.Pages.Exercises
             HttpContext.Session.Set("Sets", Sets);
         }
 
-        public async Task<JsonResult> OnPostGetSets(bool isUserExercise, int exerciseId)
+        public async Task<IActionResult> OnPostGetSets(bool isUserExercise, int exerciseId)
         {
             // Grab current sets in the session that are tied to the exercise
             Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");
@@ -194,42 +169,7 @@ namespace WorkoutGen.Pages.Exercises
                                    .ToList();
             }
 
-            if (exerciseSets.Count > 0)
-            {
-                return new JsonResult(exerciseSets);
-            }
-
-            // If user is signed in then we make a call to the DB to grab the last set that was used for this exercise
-            if (IsUser)
-            {
-                var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
-                int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
-                var userSet = await _userSetDb.GetLastUserSetForExercise(isUserExercise, exerciseId, workoutIds);
-
-                if (userSet != null)
-                {
-
-                    UserSet set = new UserSet();
-                            set.UserWorkoutId = WorkoutId;
-                            set.Repetitions = userSet.Repetitions;
-                            set.Weight = userSet.Weight;
-                            set.UserExerciseId = userSet.UserExerciseId;
-                            set.ExerciseId = userSet.ExerciseId;
-
-                    int setId = _userSetDb.AddUserSet(set);
-
-                    var s = new SessionSet();
-                        s.userExerciseId = userSet.UserExerciseId;
-                        s.exerciseId = userSet.ExerciseId;
-                        s.set = $"{userSet.Weight}lbs x {userSet.Repetitions} reps\n";
-
-                    exerciseSets.Add(s);
-                    Sets.Add(s);
-                    HttpContext.Session.Set("Sets", Sets);
-                }
-            }
-
-            return new JsonResult(exerciseSets);
+            return Content(JsonConvert.SerializeObject(exerciseSets));
         }
 
         // Responsible for creating sets and saving them in session
@@ -380,6 +320,18 @@ namespace WorkoutGen.Pages.Exercises
 
             return Content(JsonConvert.SerializeObject(workoutSets, Formatting.None, new JsonSerializerSettings()
             { 
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }));
+        }
+
+        public async Task<ContentResult> OnPostGetLastSetForExercise(bool isUserExercise, int exerciseId)
+        {
+            var userWorkouts = await _userWorkoutDb.GetUserWorkoutsByUserId(user.Id);
+            int[] workoutIds = userWorkouts.Select(x => x.Id).ToArray();
+            var userSet = await _userSetDb.GetLastUserSetForExercise(isUserExercise, exerciseId, workoutIds);
+
+            return Content(JsonConvert.SerializeObject(userSet, Formatting.None, new JsonSerializerSettings()
+            {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             }));
         }

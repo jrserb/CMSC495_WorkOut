@@ -26,6 +26,7 @@
         //Update page with the details for next exercise       
         SetExerciseFields(nextExercise);     
         SetSetsFromSession(nextExercise.id);
+        GetLastSetForExercise(nextExercise.id);
         UpdateHowTo(nextIndex);
         UpdateExerciseHistory(nextExercise.id);
         UpdateExerciseSessions(nextIndex);
@@ -51,6 +52,7 @@
         ClearSetFields();
         SetExerciseFields(prevExercise);         
         SetSetsFromSession(prevExercise.id);
+        GetLastSetForExercise(prevExercise.id);
         UpdateHowTo(prevIndex);
         UpdateExerciseHistory(prevExercise.id);
         UpdateExerciseSessions(prevIndex);
@@ -122,8 +124,9 @@
         ClearSetFields();
         SetExerciseFields(mergedExercises[0]);      
         SetSetsFromSession(mergedExercises[0].id);
-        UpdateHowTo(0);
-        UpdateExerciseHistory(0);
+        GetLastSetForExercise(0);
+        UpdateHowTo(mergedExercises[0].id);
+        UpdateExerciseHistory(mergedExercises[0].id);
         sessionExerciseIndex = 0;
         UpdateExerciseSessions(0);  
     });
@@ -209,8 +212,9 @@ function UpdatePageFromSession() {
         }
     }
 
+    GetLastSetForExercise(exercise.id);
     UpdateHowTo(sessionExerciseIndex);
-    UpdateExerciseHistory(sessionExerciseIndex);
+    UpdateExerciseHistory(exercise.id);
 }
 
 // Updates the exercise progress bar
@@ -287,7 +291,7 @@ function UpdateExerciseHistory(exerciseId) {
 
                 $('#modalExerciseHistoryBody').append(`<h3>${formatted_date}</h3>`);
                 $.each(sets, function (index, set) {
-                    $('#modalExerciseHistoryBody').append(`${set.Weight}lbs x ${set.Repetitions}<br/>`);
+                    $('#modalExerciseHistoryBody').append(`${set.Weight}lbs x ${set.Repetitions} reps<br/>`);
                 });
             }
         });
@@ -325,11 +329,37 @@ function SetSetsFromSession(exerciseId) {
 
         // Loop the sets object and populate the text area with the sets for the current exercise the user is on
 
+        const sets = JSON.parse(responseData);
+
         $("#txtSets").val("");
 
-        for (var obj in responseData) {
+        for (var obj in sets) {
             const box = $("#txtSets");
-            box.val(box.val() + responseData[obj].set);
+            box.val(box.val() + sets[obj].set);
+        }
+
+    });
+}
+
+function GetLastSetForExercise(exerciseId) {
+
+    const objRequest = {
+        type: "POST",
+        url: "/Exercises/GetLastSetForExercise",
+        data: {
+            isUserExercise: $('#exerciseName').data("user"),
+            exerciseId: exerciseId
+        }
+    };
+
+    CallController(objRequest, function (responseData) {
+
+        const set = JSON.parse(responseData);
+
+        if (set) {
+
+            $('#weight').val(set.Weight);
+            $('#reps').val(set.Repetitions);
         }
 
     });
