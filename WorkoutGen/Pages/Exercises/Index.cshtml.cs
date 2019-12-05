@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using WorkoutGen.Data.Services.UserSet;
 using System.Linq;
 using WorkoutGen.Data.Services.UserExercise;
+using Newtonsoft.Json;
 
 namespace WorkoutGen.Pages.Exercises
 {
@@ -323,5 +324,40 @@ namespace WorkoutGen.Pages.Exercises
 
             return new JsonResult("{}");
         }
+
+        public async Task<ContentResult> OnPostGetMuscleGroupsEquipmentFromExercise(bool isUserExercise, int exerciseId)
+        {
+            int[] equipmentIds = HttpContext.Session.Get<int[]>("EquipmentIds");
+            int[] muscleGroupIds = HttpContext.Session.Get<int[]>("MuscleGroupIds");
+
+            var muscleGroups = Enumerable.Empty<Models.MuscleGroup>();
+            var equipment = Enumerable.Empty<Models.Equipment>();
+
+            if (isUserExercise)
+            {
+                muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromUserExercise(exerciseId);
+                equipment = await _equipmentDb.GetEquipmentFromUserExercise(exerciseId);
+            }
+            else
+            {
+                muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromExercise(exerciseId);
+                equipment = await _equipmentDb.GetEquipmentFromExercise(exerciseId);
+            }
+
+            var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromEquipment(equipment.Select( x => x.Id ).ToArray());
+
+            equipment = equipment.Concat(alternateEquipment);
+            equipment = equipment.Where(x => equipmentIds.Contains(x.Id));
+
+            var muscleGrouquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment };
+
+            return Content(JsonConvert.SerializeObject(muscleGrouquipment));
+        }
+    }
+
+    // Simple class to hold these lists to serialize to JSON and return to client
+    public class ExerciseMuscleGroupEquipment {
+        public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
+        public IEnumerable<Models.Equipment> Equipment { get; set; }
     }
 }

@@ -121,11 +121,9 @@ namespace WorkoutGen.Data.Services.UserExercise
             // Loop each exercise id
             for (int i = 0; i < muscleGroupExerciseIds.Count(); i++)
             {
-
                 // Get the equipment objects related to the exercise
                 // This is essentially the requirement. The user has to have selected all of these to get the exercise
                 var requiredEquipment = await GetEquipmentFromUserExercise(userId, muscleGroupExerciseIds[i]);
-
 
                 // Loop the equipment objects and make sure user has selected them all
                 hasRequirement = true;
@@ -134,19 +132,16 @@ namespace WorkoutGen.Data.Services.UserExercise
                     // If they don't have a required equipment id then we check the alternate table for a matching equipment id
                     if (!equipmentIds.Contains(objEquipment.Id))
                     {
-                        // Get the alternate equipment ids where the exercise equipment id matches
-                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(objEquipment.Id);
-
                         hasRequirement = false;
 
-                        // Loop the alternate equipment ids
-                        foreach (int alternateEquipmentId in alternateEquipmentIds)
+                        // Get the alternate equipment ids where the exercise equipment id matches
+                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(objEquipment.Id);
+                        int[] alternateMatches = equipmentIds.Where(x => alternateEquipmentIds.Contains(x)).ToArray();
+
+                        // If user selected equipment that matches an alternate equipment then we give them the exercise
+                        if (alternateMatches.Count() > 0)
                         {
-                            // If an alternate equipment id matches with what the user has then they get the exercise
-                            if (equipmentIds.Contains(alternateEquipmentId))
-                            {
-                                hasRequirement = true;
-                            }
+                            hasRequirement = true;
                         }
 
                         if (hasRequirement == false) break;

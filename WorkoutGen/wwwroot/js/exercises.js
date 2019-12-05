@@ -139,6 +139,45 @@
         $('#formEndWorkout').submit();
     });
 
+    $('#btnHowTo').on('click', function (e) {
+
+        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
+
+        const objRequest = {
+            type: "POST",
+            url: "/Exercises/GetMuscleGroupsEquipmentFromExercise",
+            data: {
+                isUserExercise: $('#exerciseName').data("user"),
+                exerciseId: currentExerciseId
+            }
+        };
+
+        CallController(objRequest, function (responseData) {
+
+            const obj = JSON.parse(responseData);
+            $('#exerciseEditMuscleGroups').html('');
+            $('#exerciseEditEquipment').html('');
+
+            $.each(obj.MuscleGroups, function (index, value) {
+                $('#exerciseEditMuscleGroups').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+            });
+
+            if (obj.Equipment.length === 0) {
+
+                $('#exerciseEditEquipment').html('No equipment');
+
+            } else {
+
+                $.each(obj.Equipment, function (index, value) {
+                    $('#exerciseEditEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+                });
+            }
+
+            $('#modalHowTo').modal('show');
+           
+        });
+    });
+
 });
 
 function UpdatePageFromSession() {
@@ -206,6 +245,14 @@ function UpdateHowTo(exeriseIndex) {
     $('#howToExercise').text(exercise.name);
     $('#howToContent').html(exercise.description);
     $('#howToLink').attr('href', exercise.hyperlink);
+
+    if ($('#howToLink').hasClass('d-none')) {
+        $('#howToLink').removeClass('d-none');
+    }
+
+    if (!exercise.hyperlink) {
+        $('#howToLink').addClass('d-none');
+    }
 }
 
 // Updates the session variable for keeping track of the current exercise the user is on

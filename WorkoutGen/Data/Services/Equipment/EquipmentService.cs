@@ -47,11 +47,25 @@ namespace WorkoutGen.Data.Services.Equipment
             return await GetEquipment(equipmentIds);
         }
 
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(int id)
+        {
+            int[] equipmentIds = await GetEquipmentIdsFromUserExercise(id);
+            return await GetEquipment(equipmentIds);
+        }
+
         // Returns an array of ids of active equipment objects that are related to an exercise
         public async Task<int[]> GetEquipmentIdsFromExercise(int id)
         {
             return await _context.ExerciseEquipment
                         .Where(x => x.ExerciseId == id && x.DateDeleted == null)
+                        .Select(x => x.EquipmentId)
+                        .ToArrayAsync();
+        }
+
+        public async Task<int[]> GetEquipmentIdsFromUserExercise(int id)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
                         .Select(x => x.EquipmentId)
                         .ToArrayAsync();
         }
@@ -84,6 +98,12 @@ namespace WorkoutGen.Data.Services.Equipment
                         .Select(x => x.AlternateEquipmentId)
                         .Distinct()
                         .ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<Models.Equipment>> GetAlternateEquipmentFromEquipment(int[] ids)
+        {
+            int[] alternateEquipmentIds = await GetAlternateEquipmentIdsFromEquipment(ids);
+            return await GetEquipment(alternateEquipmentIds);
         }
     }
 }

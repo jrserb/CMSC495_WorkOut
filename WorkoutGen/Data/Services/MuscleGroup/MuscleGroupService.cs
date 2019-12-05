@@ -35,5 +35,35 @@ namespace WorkoutGen.Data.Services.MuscleGroup
                         .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
+
+        public async Task<int[]> GetMuscleGroupIdsFromExercise(int id)
+        {
+            return await _context.ExerciseMuscleGroup
+                        .Where(x => x.ExerciseId == id && x.DateDeleted == null)
+                        .Select(x => x.MuscleGroupId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        public async Task<int[]> GetMuscleGroupIdsFromUserExercise(int id)
+        {
+            return await _context.UserExerciseMuscleGroup
+                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
+                        .Select(x => x.MuscleGroupId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromExercise(int id)
+        {
+            int[] muscleGroupIds = await GetMuscleGroupIdsFromExercise(id);
+            return await GetMuscleGroups(muscleGroupIds);
+        }
+
+        public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromUserExercise(int id)
+        {
+            int[] muscleGroupIds = await GetMuscleGroupIdsFromUserExercise(id);
+            return await GetMuscleGroups(muscleGroupIds);
+        }
     }
 }
