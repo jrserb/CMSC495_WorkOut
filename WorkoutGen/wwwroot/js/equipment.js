@@ -23,6 +23,28 @@
             UpdateEquipmentIdsSession($(this).val());
         }
     });
+
+    // Event trigger when clear selection button is clicked
+    $('#btnClearSelection').on('click', function (e) {
+
+        // Clear out and enable all the selected options
+        $('#select2_equipment').val(null).trigger('change');
+        $("#select2_equipment option").prop('disabled', false);
+        $("#btnContinue").addClass("d-none");
+
+        UpdateEquipmentIdsSession($('#select2_equipment').val());
+        UpdateExerciseCount($('#select2_equipment').val());
+    });
+
+    // Event trigger when select all button is clicked
+    $('#btnSelectAll').on('click', function (e) {
+
+        $("#select2_equipment > option").prop("selected", "selected");
+        $("#select2_equipment").trigger("change");
+
+        UpdateEquipmentIdsSession($('#select2_equipment').val());
+        UpdateExerciseCount($('#select2_equipment').val());
+    });
 });
 
 // Hide/Show continue button

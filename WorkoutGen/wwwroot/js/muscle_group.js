@@ -63,6 +63,16 @@
 
     });
 
+    // Event trigger when select all button is clicked
+    $('#btnSelectAll').on('click', function (e) {
+
+        $("#select2_muscle_groups > option").prop("selected", "selected");
+        $("#select2_muscle_groups").trigger("change");
+
+        HideShowContinueButton();
+        UpdateMuscleGroupSession($('#select2_muscle_groups').val());
+    });
+
 });
 
 // Hide/Show continue button

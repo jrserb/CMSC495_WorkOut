@@ -24,20 +24,17 @@
 
             <div class="row mb-2">
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-12">
                     <label class="font-weight-bold" for="select2_muscle_groups">Select muscle group(s)</label>
                     <select id="select2_muscle_groups" asp-for="MuscleGroupIds" name="muscleGroupIds[]" multiple="multiple" asp-items="Model.Options_MuscleGroups" class="form-control"></select>
-                    <button id="btnClearSelection" type="button" class="btn btn-lg btn-danger mt-1">Clear selection</button>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <div class="card mt-4">
-                        <img class="card-img-top" src="" alt="Card image">
-                        <div class="card-body">
-                            <h4 class="card-title">Muscle Groups</h4>
-                            <p class="card-text">Visualize</p>
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <button id="btnSelectAll" type="button" class="btn btn-lg btn-block btn-primary">Select all</button>
                         </div>
-                    </div>
+                        <div class="col-6">
+                            <button id="btnClearSelection" type="button" class="btn btn-lg btn-block btn-danger">Clear selection</button>
+                        </div>
+                    </div>               
                 </div>
 
             </div>
