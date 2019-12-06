@@ -99,6 +99,14 @@ namespace WorkoutGen
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //this is the solution for some of the security errors
+            app.Use(async (context, next) =>
+                {
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Xss-Protection", "1");
+                await next();
+                });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
