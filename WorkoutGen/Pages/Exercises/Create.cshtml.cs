@@ -36,7 +36,7 @@ namespace WorkoutGen.Pages.Exercises
         public SelectList Options_Equipment { get; set; }
 
         [BindProperty]
-        [Required(ErrorMessage = "At least 1 muscle Group is required")]
+        [Required(ErrorMessage = "At least 1 muscle group is required")]
         public int[] MuscleGroupIds { get; set; }
 
         [BindProperty]

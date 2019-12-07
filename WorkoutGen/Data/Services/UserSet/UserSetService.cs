@@ -20,7 +20,56 @@ namespace WorkoutGen.Data.Services.UserSet
             return await _context.UserSet
                         .Where(x => x.Id == id && x.DateDeleted == null)
                         .SingleAsync();
+        }       
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSets()
+        {
+            return await _context.UserSet
+                        .Where(x => x.DateDeleted == null)
+                        .ToListAsync();
         }
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSets(int[] ids)
+        {
+            return await _context.UserSet
+                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int id)
+        {
+            return await _context.UserSet
+                        .Where(x => x.ExerciseId == id && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromUserExercise(int id)
+        {
+            return await _context.UserSet
+                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
+        {
+            return await _context.UserSet
+                        .Where(x => x.UserWorkoutId == workoutId && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkouts(int[] workoutIds)
+        {
+            return await _context.UserSet
+                        .Where(x => workoutIds.Contains( x.UserWorkoutId ) && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
 
         public async Task<Models.UserSet> GetLastUserSetForExercise(bool isUserExercise, int exerciseId, int[] workoutIds)
         {
@@ -60,46 +109,6 @@ namespace WorkoutGen.Data.Services.UserSet
             }
         }
 
-        public async Task<IEnumerable<Models.UserSet>> GetUserSets()
-        {
-            return await _context.UserSet
-                        .Where(x => x.DateDeleted == null)
-                        .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserSet>> GetUserSets(int[] ids)
-        {
-            return await _context.UserSet
-                        .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
-                        .ToListAsync();
-        }
-        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int id)
-        {
-            return await _context.UserSet
-                        .Where(x => x.ExerciseId == id && x.DateDeleted == null)
-                        .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromUserExercise(int id)
-        {
-            return await _context.UserSet
-                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
-                        .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId)
-        {
-            return await _context.UserSet
-                        .Where(x => x.UserWorkoutId == workoutId && x.DateDeleted == null)
-                        .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkouts(int[] workoutIds)
-        {
-            return await _context.UserSet
-                        .Where(x => workoutIds.Contains( x.UserWorkoutId ) && x.DateDeleted == null)
-                        .ToListAsync();
-        }
 
         public int AddUserSet(Models.UserSet userSet)
         {
@@ -108,6 +117,7 @@ namespace WorkoutGen.Data.Services.UserSet
 
             return userSet.Id;
         }
+
 
         public async Task DeleteUserSetsFromExercise(int workoutId, int exerciseId)
         {
@@ -123,6 +133,7 @@ namespace WorkoutGen.Data.Services.UserSet
             _context.UserSet.UpdateRange(exerciseSets);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task DeleteUserSetsFromUserExercise(int workoutId, int exerciseId)
         {

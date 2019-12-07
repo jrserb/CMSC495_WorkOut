@@ -7,9 +7,7 @@ namespace WorkoutGen.Data.Services.UserSet
 {
     public interface IUserSetService
     {
-        public Task<Models.UserSet> GetUserSet(int id);
-
-        public Task<Models.UserSet> GetLastUserSetForExercise(bool isUserExercise, int exerciseId, int[] workoutIds);
+        public Task<Models.UserSet> GetUserSet(int id);        
 
         public Task<IEnumerable<Models.UserSet>> GetUserSets();
 
@@ -22,6 +20,8 @@ namespace WorkoutGen.Data.Services.UserSet
         public Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkout(int workoutId);
 
         public Task<IEnumerable<Models.UserSet>> GetUserSetsFromWorkouts(int[] workoutIds);
+
+        public Task<Models.UserSet> GetLastUserSetForExercise(bool isUserExercise, int exerciseId, int[] workoutIds);
 
         public int AddUserSet(Models.UserSet userSet);
 
