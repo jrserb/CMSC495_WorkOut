@@ -12,8 +12,8 @@
 </div>
 <hr />
 <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
         <form method="post">
 
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -32,26 +32,46 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="UserExercise.Hyperlink" class="control-label"></label>
+                <input asp-for="UserExercise.Hyperlink" class="form-control" />
+                <span asp-validation-for="UserExercise.Hyperlink" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label class="font-weight-bold" for="select2_muscle_groups">Select muscle group(s)</label>
                 <select id="select2_muscle_groups" asp-for="MuscleGroupIds" name="muscleGroupIds[]" multiple="multiple" asp-items="Model.Options_MuscleGroups" class="form-control"></select>
                 <span asp-validation-for="MuscleGroupIds" class="text-danger"></span>
-                <button id="btnClearMuscleGroupSelection" type="button" class="btn btn-lg btn-danger mt-1">Clear selection</button>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-block btn-primary btnSelectAll">Select all</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-block btn-danger btnClearSelection">Clear selection</button>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
                 <label class="font-weight-bold" for="select2_equipment">Select equipment</label>
                 <select id="select2_equipment" asp-for="EquipmentIds" name="equipmentIds[]" multiple="multiple" asp-items="Model.Options_Equipment" class="form-control"></select>
                 <span asp-validation-for="EquipmentIds" class="text-danger"></span>
-                <button id="btnClearEquipmentSelection" type="button" class="btn btn-lg btn-danger mt-1">Clear selection</button>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-block btn-primary btnSelectAll">Select all</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-block btn-danger btnClearSelection">Clear selection</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group mt-2 text-center">
+            <div class="form-group mt-4 text-center">
                 <input type="submit" value="Save" class="btn btn-lg btn-primary" />
             </div>
 
         </form>
     </div>
-    <div class="col-md-4"></div>
+    <div class="col-md-3"></div>
 </div>
 
 @section Scripts {

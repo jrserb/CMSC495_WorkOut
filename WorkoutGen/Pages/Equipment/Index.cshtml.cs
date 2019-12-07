@@ -120,31 +120,38 @@ namespace WorkoutGen.Pages.Equipment
             return Page();
         }
 
+        // Returns subset list of equipment that is related to the list of exercises tied to the selected muscle groups
         public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromMuscleGroupIds(int[] muscleGroupIds)
         {
-
+            // Get our standard sets of ids
             int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
             int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
+            // Used to get list of alternate equipment
             int[] exerciseEquipmentIds = await _equipmentDb.GetExerciseEquipmentIdsFromExercises(exerciseIds);
 
+            // Get our user sets of ids
             int[] userExerciseEquipmentIds = { };
             int[] userEquipmentIds = { };
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
-                int[] userExerciseIds = await _exerciseDb.GetUserExerciseIdsFromUserMuscleGroups(muscleGroupIds);
+                int[] userExerciseIds = await _userExerciseDb.GetUserExerciseIdsFromUserExerciseMuscleGroups(user.Id, muscleGroupIds);
                 userEquipmentIds = await _equipmentDb.GetEquipmentIdsFromUserExercises(user.Id, userExerciseIds);
                 userExerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExercises(exerciseIds);
             }
+            // Join the array of exercise equipment ids with the user array of exercise equipment ids
             exerciseEquipmentIds = exerciseEquipmentIds.Concat(userExerciseEquipmentIds).Distinct().ToArray();
 
+            // Get ids of alternate equipment from the exercise equipment ids
             int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(exerciseEquipmentIds);
 
-            // Join the arrays of equipment and get distinct set
+            // Join the arrays of equipment with user equipment and get distinct set
             int[] fullEquipmentIds = equipmentIds.Concat(userEquipmentIds).Distinct().ToArray();
+
+            // Finally join the alternate equipment ids it the full set
             fullEquipmentIds = fullEquipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
 
-            // Get the equipment
+            // Get all the equipment based on our final array of equipment ids
             return await _equipmentDb.GetEquipment(fullEquipmentIds);
         }
 

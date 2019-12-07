@@ -49,15 +49,6 @@ namespace WorkoutGen.Data.Services.Exercise
                         .ToArrayAsync();
         }
 
-        public async Task<int[]> GetUserExerciseIdsFromUserMuscleGroups(int[] ids)
-        {
-            return await _context.UserExerciseMuscleGroup
-                        .Where(x => ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
-                        .Select(x => x.UserExerciseId)
-                        .Distinct()
-                        .ToArrayAsync();
-        }
-
         public async Task<int[]> GetExerciseIdsFromEquipment(int[] ids)
         {
             return await _context.ExerciseEquipment

@@ -144,59 +144,7 @@
 
         $('#modalEndOfExercise').modal('hide');
         $('#formEndWorkout').submit();
-    });
-
-    $('#btnHowTo').on('click', function (e) {
-
-        const currentExerciseId = parseInt($('#exerciseName').data("exercise"));
-
-        const objRequest = {
-            type: "POST",
-            url: "/Exercises/GetMuscleGroupsEquipmentFromExercise",
-            data: {
-                isUserExercise: $('#exerciseName').data("user"),
-                exerciseId: currentExerciseId
-            }
-        };
-
-        CallController(objRequest, function (responseData) {
-
-            const obj = JSON.parse(responseData);
-            $('#exerciseEditMuscleGroups').html('');
-            $('#exerciseEditEquipment').html('');
-            $('#exerciseEditAlternateEquipment').html('');
-
-            $.each(obj.MuscleGroups, function (index, value) {
-                $('#exerciseEditMuscleGroups').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
-            });
-
-            if (obj.Equipment.length === 0) {
-
-                $('#exerciseEditEquipment').html('No equipment');
-
-            } else {
-
-                $.each(obj.Equipment, function (index, value) {
-                    $('#exerciseEditEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
-                });
-            }
-
-            if (obj.AlternateEquipment.length === 0) {
-
-                $('#exerciseEditAlternateEquipment').html('No alternate equipment');
-
-            } else {
-
-                $.each(obj.AlternateEquipment, function (index, value) {
-                    $('#exerciseEditAlternateEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
-                });
-            }
-
-            $('#modalHowTo').modal('show');
-           
-        });
-    });
-
+    });   
 });
 
 function UpdatePageFromSession() {
@@ -242,6 +190,9 @@ function UpdateExerciseProgressBar(exerciseIndex) {
 // Clears out set input fields
 function ClearSetFields() {
 
+    $('#weight').removeClass("border border-danger");
+    $('#reps').removeClass("border border-danger");
+
     $('#weight').val('');
     $('#reps').val('');
 }
@@ -262,6 +213,8 @@ function SetExerciseFields(exercise) {
 function UpdateHowTo(exeriseIndex) {
 
     const exercise = mergedExercises[exeriseIndex];
+
+    GetExerciseMucleGroupEquipment(exercise.id);
 
     $('#howToExercise').text(exercise.name);
     $('#howToContent').html(exercise.description);
@@ -391,4 +344,51 @@ function RemoveSetsFromSession() {
     };
 
     CallController(objRequest, function () {});
+}
+
+function GetExerciseMucleGroupEquipment(exerciseId) {
+
+    const objRequest = {
+        type: "POST",
+        url: "/Exercises/GetMuscleGroupsEquipmentFromExercise",
+        data: {
+            isUserExercise: $('#exerciseName').data("user"),
+            exerciseId: exerciseId
+        }
+    };
+
+    CallController(objRequest, function (responseData) {
+
+        const obj = JSON.parse(responseData);
+
+        $('#exerciseEditMuscleGroups').html('');
+        $('#exerciseEditEquipment').html('');
+        $('#exerciseEditAlternateEquipment').html('');
+
+        $.each(obj.MuscleGroups, function (index, value) {
+            $('#exerciseEditMuscleGroups').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+        });
+
+        if (obj.Equipment.length === 0) {
+
+            $('#exerciseEditEquipment').html('No equipment');
+
+        } else {
+
+            $.each(obj.Equipment, function (index, value) {
+                $('#exerciseEditEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+            });
+        }
+
+        if (obj.AlternateEquipment.length === 0) {
+
+            $('#exerciseEditAlternateEquipment').html('No alternate equipment');
+
+        } else {
+
+            $.each(obj.AlternateEquipment, function (index, value) {
+                $('#exerciseEditAlternateEquipment').append(`<span class="badge badge-dark p-2 m-1">${value.Name}</span>`);
+            });
+        }
+    });
 }

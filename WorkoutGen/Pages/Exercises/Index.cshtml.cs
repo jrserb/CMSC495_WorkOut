@@ -284,7 +284,8 @@ namespace WorkoutGen.Pages.Exercises
         {
             var muscleGroups = Enumerable.Empty<Models.MuscleGroup>();
             var equipment = Enumerable.Empty<Models.Equipment>();
-
+            var alternateEquipment = Enumerable.Empty<Models.Equipment>();
+            
             if (isUserExercise)
             {
                 muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromUserExercise(user.Id, exerciseId);
@@ -294,16 +295,15 @@ namespace WorkoutGen.Pages.Exercises
             {
                 muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromExercise(exerciseId);
                 equipment = await _equipmentDb.GetEquipmentFromExercise(exerciseId);
+                alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromExerciseEquipment(exerciseId);
             }
-
-            var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromExerciseEquipment(exerciseId);
-
+         
             //equipment = equipment.Concat(alternateEquipment);
             //equipment = equipment.Where(x => equipmentIds.Contains(x.Id)).Distinct();
 
-            var muscleGrouquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment, AlternateEquipment = alternateEquipment };
+            var muscleGroupEquipment = new ExerciseMuscleGroupEquipment { MuscleGroups = muscleGroups, Equipment = equipment, AlternateEquipment = alternateEquipment };
 
-            return Content(JsonConvert.SerializeObject(muscleGrouquipment));
+            return Content(JsonConvert.SerializeObject(muscleGroupEquipment));
         }
 
         public async Task<ContentResult> OnPostGetExerciseHistory(bool isUserExercise, int exerciseId)

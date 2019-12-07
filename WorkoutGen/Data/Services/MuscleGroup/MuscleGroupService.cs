@@ -10,6 +10,7 @@ namespace WorkoutGen.Data.Services.MuscleGroup
     {
         private readonly ApplicationDbContext _context;
 
+
         public MuscleGroupService(ApplicationDbContext context)
         {
             _context = context;
@@ -22,6 +23,7 @@ namespace WorkoutGen.Data.Services.MuscleGroup
                         .SingleAsync();
         }
 
+
         public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroups()
         {
             return await _context.MuscleGroup
@@ -29,12 +31,21 @@ namespace WorkoutGen.Data.Services.MuscleGroup
                         .ToListAsync();
         }
 
+
         public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroups(int[] ids)
         {
             return await _context.MuscleGroup
                         .Where(x => ids.Contains(x.Id) && x.DateDeleted == null)
                         .ToListAsync();
         }
+
+
+        public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromExercise(int id)
+        {
+            int[] muscleGroupIds = await GetMuscleGroupIdsFromExercise(id);
+            return await GetMuscleGroups(muscleGroupIds);
+        }
+
 
         public async Task<int[]> GetMuscleGroupIdsFromExercise(int id)
         {
@@ -45,6 +56,11 @@ namespace WorkoutGen.Data.Services.MuscleGroup
                         .ToArrayAsync();
         }
 
+
+
+
+        //USER METHODS
+
         public async Task<int[]> GetMuscleGroupIdsFromUserExercise(string userId, int id)
         {
             return await _context.UserExerciseMuscleGroup
@@ -54,11 +70,6 @@ namespace WorkoutGen.Data.Services.MuscleGroup
                         .ToArrayAsync();
         }
 
-        public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromExercise(int id)
-        {
-            int[] muscleGroupIds = await GetMuscleGroupIdsFromExercise(id);
-            return await GetMuscleGroups(muscleGroupIds);
-        }
 
         public async Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromUserExercise(string userId, int id)
         {

@@ -12,19 +12,11 @@ namespace WorkoutGen.Data.Services.UserExercise
         private readonly ApplicationDbContext _context;
         private readonly IEquipmentService _equipmentDb;
 
-        public UserExerciseService(ApplicationDbContext context, 
+        public UserExerciseService(ApplicationDbContext context,
             IEquipmentService equipmentDb)
         {
             _context = context;
             _equipmentDb = equipmentDb;
-        }
-
-        // Returns all active UserExercise objects
-        public async Task<IEnumerable<Models.UserExercise>> GetUserExercises()
-        {
-            return await _context.UserExercise
-                        .Where(x => x.DateDeleted == null)
-                        .ToListAsync();
         }
 
         // Returns single active UserExercise object that matches the id
@@ -35,7 +27,17 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .SingleOrDefaultAsync();
         }
 
-        // Returns active UserExercise objects that match the ids
+
+        // Returns all active UserExercise objects
+        public async Task<IEnumerable<Models.UserExercise>> GetUserExercises()
+        {
+            return await _context.UserExercise
+                        .Where(x => x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+        // Returns active UserExercise objects related to exercises
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercises(int[] ids)
         {
             return await _context.UserExercise
@@ -43,57 +45,18 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToListAsync();
         }
 
+
         // Returns active UserExercise objects that are related to the user id
-        public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromUserId(string userId) {
+        public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromUserId(string userId)
+        {
 
             return await _context.UserExercise
                         .Where(x => x.UserId == userId && x.DateDeleted == null)
                         .ToListAsync();
         }
 
-        // Returns array of ids of active UserExercise objects that are related to muscle groups
-        public async Task<int[]> GetUserExerciseIdsFromMuscleGroups(string userId, int[] ids)
-        {
-            return await _context.UserExerciseMuscleGroup
-                        .Where(x => x.UserId == userId && ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
-                        .Select(x => x.UserExerciseId)
-                        .Distinct()
-                        .ToArrayAsync();
-        }
 
-        // Returns active UserExerciseMuscleGroup objects that are related to an exercise
-        public async Task<IEnumerable<Models.UserExerciseMuscleGroup>> GetUserExerciseMuscleGroupsFromExercise(int exerciseId)
-        {
-            return await _context.UserExerciseMuscleGroup
-                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
-                        .Distinct()
-                        .ToListAsync();
-        }
-
-        public async Task<int[]> GetUserExerciseIdsFromEquipment(string userId, int[] ids)
-        {
-            return await _context.UserExerciseEquipment
-                        .Where(x => x.UserId == userId && ids.Contains(x.EquipmentId) && x.DateDeleted == null)
-                        .Select(x => x.UserExerciseId)
-                        .Distinct()
-                        .ToArrayAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserExerciseEquipment>> GetUserExerciseEquipmentFromExercise(int exerciseId)
-        {
-            return await _context.UserExerciseEquipment
-                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
-                        .Distinct()
-                        .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int exerciseId)
-        {
-            return await _context.UserSet
-                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
-                        .ToListAsync();
-        }
-
+        // Returns a list of matching user exercises that meet user selection requirements
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(string userId, int[] muscleGroupIds, int[] equipmentIds)
         {
             int[] alternateEquipmentIds;
@@ -104,7 +67,7 @@ namespace WorkoutGen.Data.Services.UserExercise
             List<int> validExerciseIds = new List<int>();
 
             // Get all the user exercise ids related to the muscle group ids selected
-            int[] muscleGroupExerciseIds = await GetUserExerciseIdsFromMuscleGroups(userId, muscleGroupIds);
+            int[] muscleGroupExerciseIds = await GetUserExerciseIdsFromUserExerciseMuscleGroups(userId, muscleGroupIds);
 
             // Loop each exercise id
             for (int i = 0; i < muscleGroupExerciseIds.Count(); i++)
@@ -153,6 +116,8 @@ namespace WorkoutGen.Data.Services.UserExercise
             return await GetUserExercises(validExerciseIds.ToArray());
         }
 
+
+        // Add a user exercise to the database
         public async Task<int> AddUserExercise(Models.UserExercise userExercise)
         {
             await _context.UserExercise.AddAsync(userExercise);
@@ -161,11 +126,14 @@ namespace WorkoutGen.Data.Services.UserExercise
             return userExercise.Id;
         }
 
+
+        // Updates a user exercise
+        // Updates corresponding muscle groups and equipment
         public async Task UpdateUserExercise(Models.UserExercise userExercise)
         {
 
             //_context.UserExercise.Attach(userExercise).State = EntityState.Modified;
-         
+
             var exerciseMuscleGroups = await GetUserExerciseMuscleGroupsFromExercise(userExercise.Id);
             var exerciseEquipment = await GetUserExerciseEquipmentFromExercise(userExercise.Id);
 
@@ -182,6 +150,8 @@ namespace WorkoutGen.Data.Services.UserExercise
             await _context.SaveChangesAsync();
         }
 
+
+        // Deletes user exercise and corresponding muscle groups, equipment and sets
         public async Task DeleteUserExercise(Models.UserExercise userExercise)
         {
             var exerciseMuscleGroups = await GetUserExerciseMuscleGroupsFromExercise(userExercise.Id);
@@ -207,8 +177,64 @@ namespace WorkoutGen.Data.Services.UserExercise
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> UserExerciseExists(int id) {
-            return await _context.UserExercise.AnyAsync(e => e.Id == id);
+
+        // Returns a list of muscle groups related to a single exercise
+        public async Task<IEnumerable<Models.UserExerciseMuscleGroup>> GetUserExerciseMuscleGroupsFromExercise(int exerciseId)
+        {
+            return await _context.UserExerciseMuscleGroup
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .Distinct()
+                        .ToListAsync();
+        }
+
+
+        // Returns a list of exercise equipment related to a single exercise
+        public async Task<IEnumerable<Models.UserExerciseEquipment>> GetUserExerciseEquipmentFromExercise(int exerciseId)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .Distinct()
+                        .ToListAsync();
+        }
+
+
+        // Returns a list of user sets related to a single exercise
+        public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int exerciseId)
+        {
+            return await _context.UserSet
+                        .Where(x => x.UserExerciseId == exerciseId && x.DateDeleted == null)
+                        .ToListAsync();
+        }
+
+
+
+
+        // Returns array of ids of active UserExercise objects that are related to muscle groups
+        public async Task<int[]> GetUserExerciseIdsFromUserExerciseMuscleGroups(string userId, int[] ids)
+        {
+            return await _context.UserExerciseMuscleGroup
+                        .Where(x => x.UserId == userId && ids.Contains(x.MuscleGroupId) && x.DateDeleted == null)
+                        .Select(x => x.UserExerciseId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        // Returns array of ids of active UserExercise objects that are related to equipment
+        public async Task<int[]> GetUserExerciseIdsFromUserExerciseEquipment(string userId, int[] ids)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserId == userId && ids.Contains(x.EquipmentId) && x.DateDeleted == null)
+                        .Select(x => x.UserExerciseId)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        // Returns true or false if an exercise existst
+        public async Task<bool> UserExerciseExists(int id)
+        {
+            return await _context.UserExercise
+                .Where(x => x.DateDeleted == null)
+                .AnyAsync(e => e.Id == id);
         }
     }
 }
