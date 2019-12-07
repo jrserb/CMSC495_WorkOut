@@ -53,16 +53,16 @@ namespace WorkoutGen
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));            
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.ConfigureApplicationCookie(options =>
+            //services.configureapplicationcookie(options =>
             //{
-            //    options.Cookie.HttpOnly = true;
-            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-            //    options.LoginPath = "/Account/Login";
+            //    options.cookie.httponly = true;
+            //    options.expiretimespan = timespan.fromminutes(30);
+            //    options.loginpath = "/account/login";
             //    //this should set the secure flag
-            //    options.SlidingExpiration = true;
-            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    options.slidingexpiration = true;
+            //    options.cookie.securepolicy = cookiesecurepolicy.always;
             //});
 
             services.AddScoped<IMuscleGroupService, MuscleGroupService>();
@@ -98,7 +98,14 @@ namespace WorkoutGen
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                    context.Context.Response.Headers.Add("Expires", "-1");
+                }
+            });
             app.UseSession();
             app.UseRouting();
             app.UseAuthentication();
