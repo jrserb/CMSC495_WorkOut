@@ -81,7 +81,7 @@ namespace WorkoutGen.Data.Services.Equipment
         }
 
         // Returns active alternate equipment objects related to an equipment id
-        public async Task<int[]> GetAlternateEquipmentIdsFromEquipment(int id)
+        public async Task<int[]> GetAlternateEquipmentIdsFromExerciseEquipment(int id)
         {
             return await _context.ExerciseAlternateEquipment
                         .Where(x => x.ExerciseEquipmentId == id && x.DateDeleted == null)

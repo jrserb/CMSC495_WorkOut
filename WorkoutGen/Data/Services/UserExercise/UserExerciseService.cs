@@ -137,7 +137,7 @@ namespace WorkoutGen.Data.Services.UserExercise
                         hasRequirement = false;
 
                         // Get the alternate equipment ids where the exercise equipment id matches
-                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(objEquipment.Id);
+                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(muscleGroupExerciseIds[i]);
                         int[] alternateMatches = equipmentIds.Where(x => alternateEquipmentIds.Contains(x)).ToArray();
 
                         // If user selected equipment that matches an alternate equipment then we give them the exercise
