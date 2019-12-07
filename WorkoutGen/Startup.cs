@@ -15,6 +15,7 @@ using WorkoutGen.Data.Services.UserWorkout;
 using WorkoutGen.Data.Services.UserSet;
 using WorkoutGen.Data.Services.UserExercise;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace WorkoutGen
 {
@@ -37,6 +38,8 @@ namespace WorkoutGen
                 // Set a short timeout for easy testing.
                 options.IdleTimeout = TimeSpan.FromMinutes(60);
                 options.Cookie.HttpOnly = true;
+                //set the secure flag - not really working as desired
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 // Make the session cookie essential
                 options.Cookie.IsEssential = true;
             });
@@ -57,7 +60,9 @@ namespace WorkoutGen
             //    options.Cookie.HttpOnly = true;
             //    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             //    options.LoginPath = "/Account/Login";
+            //    //this should set the secure flag
             //    options.SlidingExpiration = true;
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             //});
 
             services.AddScoped<IMuscleGroupService, MuscleGroupService>();
@@ -114,4 +119,3 @@ namespace WorkoutGen
         }
     }
 }
-//this was a test from jordan 
