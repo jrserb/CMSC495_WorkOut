@@ -131,8 +131,9 @@ namespace WorkoutGen.Pages.Equipment
             int[] userEquipmentIds = { };
             if (_signInManager.IsSignedIn(User))
             {
-                int[] uerExerciseIds = await _exerciseDb.GetUserExerciseIdsFromUserMuscleGroups(muscleGroupIds);
-                userEquipmentIds = await _equipmentDb.GetEquipmentIdsFromUserExercises(uerExerciseIds);
+                var user = await _userManager.GetUserAsync(User);
+                int[] userExerciseIds = await _exerciseDb.GetUserExerciseIdsFromUserMuscleGroups(muscleGroupIds);
+                userEquipmentIds = await _equipmentDb.GetEquipmentIdsFromUserExercises(user.Id, userExerciseIds);
                 userExerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExercises(exerciseIds);
             }
             exerciseEquipmentIds = exerciseEquipmentIds.Concat(userExerciseEquipmentIds).Distinct().ToArray();

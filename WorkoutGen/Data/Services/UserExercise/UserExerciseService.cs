@@ -87,21 +87,6 @@ namespace WorkoutGen.Data.Services.UserExercise
                         .ToListAsync();
         }
 
-        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(string userId, int id)
-        {
-            int[] equipmentIds = await GetEquipmentIdsFromUserExercise(userId, id);
-            return await _equipmentDb.GetEquipment(equipmentIds);
-        }
-
-        public async Task<int[]> GetEquipmentIdsFromUserExercise(string userId, int id)
-        {
-            return await _context.UserExerciseEquipment
-                        .Where(x => x.UserId == userId && x.UserExerciseId == id && x.DateDeleted == null)
-                        .Select(x => x.EquipmentId)
-                        .Distinct()
-                        .ToArrayAsync();
-        }
-
         public async Task<IEnumerable<Models.UserSet>> GetUserSetsFromExercise(int exerciseId)
         {
             return await _context.UserSet
@@ -126,7 +111,7 @@ namespace WorkoutGen.Data.Services.UserExercise
             {
                 // Get the equipment objects related to the exercise
                 // This is essentially the requirement. The user has to have selected all of these to get the exercise
-                var requiredEquipment = await GetEquipmentFromUserExercise(userId, muscleGroupExerciseIds[i]);
+                var requiredEquipment = await _equipmentDb.GetEquipmentFromUserExercise(userId, muscleGroupExerciseIds[i]);
 
                 // Loop the equipment objects and make sure user has selected them all
                 hasRequirement = true;

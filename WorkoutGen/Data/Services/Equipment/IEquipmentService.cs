@@ -13,15 +13,15 @@ namespace WorkoutGen.Data.Services.Equipment
 
         public Task<IEnumerable<Models.Equipment>> GetEquipmentFromExercise(int id);
 
-        public Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(int id);
+        public Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(string userId, int id);
 
         public Task<int[]> GetEquipmentIdsFromExercise(int id);
 
-        public Task<int[]> GetEquipmentIdsFromUserExercise(int id);
+        public Task<int[]> GetEquipmentIdsFromUserExercise(string userId, int id);
 
         public Task<int[]> GetEquipmentIdsFromExercises(int[] ids);
 
-        public Task<int[]> GetEquipmentIdsFromUserExercises(int[] ids);
+        public Task<int[]> GetEquipmentIdsFromUserExercises(string userId, int[] ids);
 
         public Task<int[]> GetExerciseEquipmentIdsFromExercise(int id);
 

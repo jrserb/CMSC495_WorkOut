@@ -47,9 +47,9 @@ namespace WorkoutGen.Data.Services.Equipment
             return await GetEquipment(equipmentIds);
         }
 
-        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(int id)
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserExercise(string userId, int id)
         {
-            int[] equipmentIds = await GetEquipmentIdsFromUserExercise(id);
+            int[] equipmentIds = await GetEquipmentIdsFromUserExercise(userId, id);
             return await GetEquipment(equipmentIds);
         }
 
@@ -62,10 +62,10 @@ namespace WorkoutGen.Data.Services.Equipment
                         .ToArrayAsync();
         }
 
-        public async Task<int[]> GetEquipmentIdsFromUserExercise(int id)
+        public async Task<int[]> GetEquipmentIdsFromUserExercise(string userId, int id)
         {
             return await _context.UserExerciseEquipment
-                        .Where(x => x.UserExerciseId == id && x.DateDeleted == null)
+                        .Where(x => x.UserId == userId && x.UserExerciseId == id && x.DateDeleted == null)
                         .Select(x => x.EquipmentId)
                         .ToArrayAsync();
         }
@@ -80,10 +80,10 @@ namespace WorkoutGen.Data.Services.Equipment
                         .ToArrayAsync();
         }
 
-        public async Task<int[]> GetEquipmentIdsFromUserExercises(int[] ids)
+        public async Task<int[]> GetEquipmentIdsFromUserExercises(string userId, int[] ids)
         {
             return await _context.UserExerciseEquipment
-                        .Where(x => ids.Contains(x.UserExerciseId) && x.DateDeleted == null)
+                        .Where(x => x.UserId == userId && ids.Contains(x.UserExerciseId) && x.DateDeleted == null)
                         .Select(x => x.EquipmentId)
                         .Distinct()
                         .ToArrayAsync();

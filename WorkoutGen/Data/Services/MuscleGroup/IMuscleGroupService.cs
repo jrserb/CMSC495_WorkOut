@@ -13,10 +13,10 @@ namespace WorkoutGen.Data.Services.MuscleGroup
 
         public Task<int[]> GetMuscleGroupIdsFromExercise(int id);
 
-        public Task<int[]> GetMuscleGroupIdsFromUserExercise(int id);
+        public Task<int[]> GetMuscleGroupIdsFromUserExercise(string userId, int id);
 
         public Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromExercise(int id);
 
-        public Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromUserExercise(int id);
+        public Task<IEnumerable<Models.MuscleGroup>> GetMuscleGroupsFromUserExercise(string userId, int id);
     }
 }

@@ -287,8 +287,8 @@ namespace WorkoutGen.Pages.Exercises
 
             if (isUserExercise)
             {
-                muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromUserExercise(exerciseId);
-                equipment = await _equipmentDb.GetEquipmentFromUserExercise(exerciseId);
+                muscleGroups = await _muscleGroupDb.GetMuscleGroupsFromUserExercise(user.Id, exerciseId);
+                equipment = await _equipmentDb.GetEquipmentFromUserExercise(user.Id, exerciseId);
             }
             else
             {
