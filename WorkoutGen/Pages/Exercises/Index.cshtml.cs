@@ -282,9 +282,6 @@ namespace WorkoutGen.Pages.Exercises
 
         public async Task<ContentResult> OnPostGetMuscleGroupsEquipmentFromExercise(bool isUserExercise, int exerciseId)
         {
-            int[] equipmentIds = HttpContext.Session.Get<int[]>("EquipmentIds");
-            int[] muscleGroupIds = HttpContext.Session.Get<int[]>("MuscleGroupIds");
-
             var muscleGroups = Enumerable.Empty<Models.MuscleGroup>();
             var equipment = Enumerable.Empty<Models.Equipment>();
 
@@ -299,7 +296,7 @@ namespace WorkoutGen.Pages.Exercises
                 equipment = await _equipmentDb.GetEquipmentFromExercise(exerciseId);
             }
 
-            var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromEquipment(equipment.Select( x => x.Id ).ToArray());
+            var alternateEquipment = await _equipmentDb.GetAlternateEquipmentFromExerciseEquipment(exerciseId);
 
             //equipment = equipment.Concat(alternateEquipment);
             //equipment = equipment.Where(x => equipmentIds.Contains(x.Id)).Distinct();

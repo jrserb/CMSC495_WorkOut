@@ -112,6 +112,7 @@ namespace WorkoutGen.Data.Services.UserExercise
         public async Task<IEnumerable<Models.UserExercise>> GetUserExercisesFromRequiredEquipment(string userId, int[] muscleGroupIds, int[] equipmentIds)
         {
             int[] alternateEquipmentIds;
+            int[] exerciseEquipmentIds;
             bool hasRequirement;
 
             // This list will hold the final list of valid exercise ids based on if the user had the required muscle groups and equipment selected
@@ -136,8 +137,12 @@ namespace WorkoutGen.Data.Services.UserExercise
                     {
                         hasRequirement = false;
 
+                        // Get the exercise equipment ids where the exercise id matches
+                        exerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExercise(muscleGroupExerciseIds[i]);
+
                         // Get the alternate equipment ids where the exercise equipment id matches
-                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(muscleGroupExerciseIds[i]);
+                        alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(exerciseEquipmentIds);
+
                         int[] alternateMatches = equipmentIds.Where(x => alternateEquipmentIds.Contains(x)).ToArray();
 
                         // If user selected equipment that matches an alternate equipment then we give them the exercise

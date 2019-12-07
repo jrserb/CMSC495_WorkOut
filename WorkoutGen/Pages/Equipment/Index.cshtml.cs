@@ -125,10 +125,23 @@ namespace WorkoutGen.Pages.Equipment
 
             int[] exerciseIds = await _exerciseDb.GetExerciseIdsFromMuscleGroups(muscleGroupIds);
             int[] equipmentIds = await _equipmentDb.GetEquipmentIdsFromExercises(exerciseIds);
-            int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromEquipment(equipmentIds);
+            int[] exerciseEquipmentIds = await _equipmentDb.GetExerciseEquipmentIdsFromExercises(exerciseIds);
+
+            int[] userExerciseEquipmentIds = { };
+            int[] userEquipmentIds = { };
+            if (_signInManager.IsSignedIn(User))
+            {
+                int[] uerExerciseIds = await _exerciseDb.GetUserExerciseIdsFromUserMuscleGroups(muscleGroupIds);
+                userEquipmentIds = await _equipmentDb.GetEquipmentIdsFromUserExercises(uerExerciseIds);
+                userExerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExercises(exerciseIds);
+            }
+            exerciseEquipmentIds = exerciseEquipmentIds.Concat(userExerciseEquipmentIds).Distinct().ToArray();
+
+            int[] alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(exerciseEquipmentIds);
 
             // Join the arrays of equipment and get distinct set
-            int[] fullEquipmentIds = equipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
+            int[] fullEquipmentIds = equipmentIds.Concat(userEquipmentIds).Distinct().ToArray();
+            fullEquipmentIds = fullEquipmentIds.Concat(alternateEquipmentIds).Distinct().ToArray();
 
             // Get the equipment
             return await _equipmentDb.GetEquipment(fullEquipmentIds);
