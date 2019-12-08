@@ -88,7 +88,7 @@ namespace WorkoutGen.Data.Services.UserExercise
                         //ALTERNATE EQUIPMENT EVALUATION IS COMMENTED OUT FOR USER EXERCISES BECAUSE THERE IS NO ALTERNATE EQUIPMENT FOR USER EXERCISES YET
 
                         // Get the exercise equipment ids where the exercise id matches
-                        //exerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExerciseAndEquipment(objEquipment.Id, muscleGroupExerciseIds[i]);
+                        //exerciseEquipmentIds = await _equipmentDb.GetUserExerciseEquipmentIdsFromExerciseAndEquipment(muscleGroupExerciseIds[i], objEquipment.Id);
 
                         // Get the alternate equipment ids where the exercise equipment id matches
                         //alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(exerciseEquipmentIds);
@@ -98,7 +98,7 @@ namespace WorkoutGen.Data.Services.UserExercise
                         // If user selected equipment that matches an alternate equipment then we give them the exercise
                         //if (alternateMatches.Count() > 0)
                         //{
-                            //hasRequirement = true;
+                        //hasRequirement = true;
                         //}
 
                         if (hasRequirement == false) break;
