@@ -280,6 +280,7 @@ namespace WorkoutGen.Pages.Exercises
             }
         }
 
+        // This method is for displaying the muscle groups, equipment and alternate equipment associated with an exercise
         public async Task<ContentResult> OnPostGetMuscleGroupsEquipmentFromExercise(bool isUserExercise, int exerciseId)
         {
             var muscleGroups = Enumerable.Empty<Models.MuscleGroup>();

@@ -32,6 +32,9 @@ namespace WorkoutGen.Data.Services.Equipment
         public Task<int[]> GetExerciseEquipmentIdsFromExercises(int[] ids);
 
 
+        public Task<int[]> GetExerciseEquipmentIdsFromExerciseAndEquipment(int exerciseId, int equipmentId);
+
+
         public Task<int[]> GetAlternateEquipmentIdsFromExerciseEquipment(int id);
 
 
@@ -55,5 +58,8 @@ namespace WorkoutGen.Data.Services.Equipment
 
 
         public Task<int[]> GetUserExerciseEquipmentIdsFromExercises(int[] ids);
+
+
+        public Task<int[]> GetUserExerciseEquipmentIdsFromExerciseAndEquipment(int exerciseId, int equipmentId);
     }
 }

@@ -87,8 +87,8 @@ namespace WorkoutGen.Data.Services.Exercise
                     {
                         hasRequirement = false;
 
-                        // Get the exercise equipment ids where the exercise id matches
-                        exerciseEquipmentIds = await _equipmentDb.GetExerciseEquipmentIdsFromExercise(muscleGroupExerciseIds[i]);
+                        // Get the exercise equipment ids where the exercise id and the equipment id matches
+                        exerciseEquipmentIds = await _equipmentDb.GetExerciseEquipmentIdsFromExerciseAndEquipment(objEquipment.Id, muscleGroupExerciseIds[i]);
 
                         // Get the alternate equipment ids where the exercise equipment id matches
                         alternateEquipmentIds = await _equipmentDb.GetAlternateEquipmentIdsFromExerciseEquipment(exerciseEquipmentIds);

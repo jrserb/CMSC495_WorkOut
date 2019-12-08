@@ -103,6 +103,16 @@ namespace WorkoutGen.Data.Services.Equipment
                         .ToArrayAsync();
         }
 
+        // NEW
+        public async Task<int[]> GetExerciseEquipmentIdsFromExerciseAndEquipment(int exerciseId, int equipmentId)
+        {
+            return await _context.ExerciseEquipment
+                        .Where(x => x.ExerciseId == exerciseId && x.EquipmentId == equipmentId && x.DateDeleted == null)
+                        .Select(x => x.Id)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
 
         // Returns active alternate equipment objects related to an equipment id
         public async Task<int[]> GetAlternateEquipmentIdsFromExerciseEquipment(int id)
@@ -170,6 +180,16 @@ namespace WorkoutGen.Data.Services.Equipment
         {
             return await _context.UserExerciseEquipment
                         .Where(x => ids.Contains(x.UserExerciseId) && x.DateDeleted == null)
+                        .Select(x => x.Id)
+                        .Distinct()
+                        .ToArrayAsync();
+        }
+
+        // NEW
+        public async Task<int[]> GetUserExerciseEquipmentIdsFromExerciseAndEquipment(int exerciseId, int equipmentId)
+        {
+            return await _context.UserExerciseEquipment
+                        .Where(x => x.UserExerciseId == exerciseId && x.EquipmentId == equipmentId && x.DateDeleted == null)
                         .Select(x => x.Id)
                         .Distinct()
                         .ToArrayAsync();
