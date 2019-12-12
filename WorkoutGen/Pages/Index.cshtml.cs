@@ -11,7 +11,6 @@ namespace WorkoutGen.Pages
         // Triggered on initial page load
         public void OnGet()
         {
-            HttpContext.Session.Clear();
         }
     }
 }

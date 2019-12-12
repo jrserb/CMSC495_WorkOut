@@ -17,5 +17,13 @@ namespace WorkoutGen.Data.Session
             return value == null ? default(T) :
                 JsonConvert.DeserializeObject<T>(value);
         }
+
+        public static void ClearExerciseSession(this ISession session)
+        {
+            session.Remove("ExerciseIndex");
+            session.Remove("IsUserExercise");
+            session.Remove("WorkoutId");
+            session.Remove("Sets");
+        }
     }
 }

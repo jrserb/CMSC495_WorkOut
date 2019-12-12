@@ -1,6 +1,8 @@
 ﻿@page "{handler?}"
 @model WorkoutGen.Pages.Equipment.IndexModel
 @using WorkoutGen.Data.Session;
+@using WorkoutGen.Models;
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Equipment";
     //var workoutId = HttpContext.Session.Get<int>("WorkoutId");
@@ -9,9 +11,9 @@
 <div class="text-center">
     <h1>Equipment selection</h1>
     @*@if (workoutId != 0)
-    {
-        <a asp-page="/Exercises/Index">Back to workout</a>
-    }*@
+        {
+            <a asp-page="/Exercises/Index">Back to workout</a>
+        }*@
 </div>
 <hr />
 <div class="row mb-3">
@@ -49,6 +51,16 @@
 
             <div class="row mb-2">
 
+                @if (SignInManager.IsSignedIn(User) && Model.Options_EquipmentSets.Count() > 0)
+                {
+                    <div class="form-group col-md-12">
+                        <label class="font-weight-bold" for="select_equipment_sets">Select an equipment set</label>
+                        <select id="select_equipment_sets" asp-for="EquipmentSetId" asp-items="Model.Options_EquipmentSets" class="form-control">
+                            <option value="0">Choose Equipment Set</option>
+                        </select>
+                    </div>
+                }
+
                 <div class="form-group col-md-12">
                     <label class="font-weight-bold" for="select2_equipment">Select equipment</label>
                     <select id="select2_equipment" asp-for="EquipmentIds" name="equipmentIds[]" multiple="multiple" asp-items="Model.Options_Equipment" class="form-control"></select>
@@ -59,7 +71,7 @@
                         <div class="col-6">
                             <button id="btnClearSelection" type="button" class="btn btn-lg btn-block btn-danger">Clear selection</button>
                         </div>
-                    </div>                  
+                    </div>
                 </div>
 
             </div>

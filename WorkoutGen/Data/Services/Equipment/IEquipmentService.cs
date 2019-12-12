@@ -61,5 +61,26 @@ namespace WorkoutGen.Data.Services.Equipment
 
 
         public Task<int[]> GetUserExerciseEquipmentIdsFromExerciseAndEquipment(int exerciseId, int equipmentId);
+
+
+        public Task<Models.UserEquipmentSet> GetUserEquipmentSet(int id);
+
+
+        public Task<IEnumerable<Models.UserEquipmentSet>> GetUserEquipmentSets(string userId);
+
+
+        public Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserEquipmentSet(int equipmentSetId);
+
+
+        public Task<int> AddUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds);
+
+
+        public Task UpdateUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds);
+
+
+        public Task DeleteUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds);
+
+
+        public Task<bool> UserEquipmentSetExists(int id);
     }
 }

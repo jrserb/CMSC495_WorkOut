@@ -56,10 +56,7 @@ namespace WorkoutGen.Pages.Exercises
 
             Sets = HttpContext.Session.Get<List<SessionSet>>("Sets");
 
-            HttpContext.Session.Remove("ExerciseIndex");
-            HttpContext.Session.Remove("IsUserExercise");
-            HttpContext.Session.Remove("WorkoutId");
-            HttpContext.Session.Remove("Sets");
+            HttpContext.Session.ClearExerciseSession();
 
             return Page();
         }

@@ -194,5 +194,129 @@ namespace WorkoutGen.Data.Services.Equipment
                         .Distinct()
                         .ToArrayAsync();
         }
+
+        public async Task<Models.UserEquipmentSet> GetUserEquipmentSet(int id)
+        {
+            return await _context.UserEquipmentSet
+                                 .Where(x => x.Id == id && x.DateDeleted == null)
+                                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Models.UserEquipmentSet>> GetUserEquipmentSets(string userId)
+        {
+            return await _context.UserEquipmentSet
+                                 .Where(x => x.UserId == userId && x.DateDeleted == null)
+                                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.Equipment>> GetEquipmentFromUserEquipmentSet(int equipmentSetId)
+        {
+            int[] equipmentIds = await _context.UserEquipmentSetEquipment
+                                               .Where(x => x.UserEquipmentSetId == equipmentSetId && x.DateDeleted == null)
+                                               .Select(x => x.EquipmentId)
+                                               .ToArrayAsync();
+
+            return await GetEquipment(equipmentIds);
+        }
+
+        public async Task<int> AddUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds)
+        {
+            // First create a new set record
+            await _context.UserEquipmentSet.AddAsync(userEquipmentSet);
+            await _context.SaveChangesAsync();
+
+            // Then create the equipment records for the set
+            var equipmentSetEquipment = new List<Models.UserEquipmentSetEquipment>();
+            foreach (int id in equipmentIds)
+            {
+                equipmentSetEquipment.Add(new Models.UserEquipmentSetEquipment { 
+                    UserEquipmentSetId = userEquipmentSet.Id,
+                    EquipmentId = id
+                });
+            }
+
+            await _context.UserEquipmentSetEquipment.AddRangeAsync(equipmentSetEquipment);
+            await _context.SaveChangesAsync();
+
+            // Return the id of the newly created set
+            return userEquipmentSet.Id;
+        }
+
+        public async Task UpdateUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds)
+        {        
+            // First remove the old equipment from the set
+            var equipmentSetEquipment = await _context.UserEquipmentSetEquipment
+                                                      .Where(x => x.UserEquipmentSetId == userEquipmentSet.Id && x.DateDeleted == null)
+                                                      .ToListAsync();
+
+            int[] equipmentSetEquipmentIds = equipmentSetEquipment.Select(x => x.EquipmentId).ToArray();
+
+            if (equipmentSetEquipment.Count > 0)
+            {
+                foreach (Models.UserEquipmentSetEquipment obj in equipmentSetEquipment)
+                {
+                    // Don't remove an existing equipment if it is still in user selection
+                    if (!equipmentIds.Contains(obj.EquipmentId))
+                    {
+                        obj.DateDeleted = DateTime.Now;
+                    }
+                }
+                _context.UserEquipmentSetEquipment.UpdateRange(equipmentSetEquipment);
+                await _context.SaveChangesAsync();
+            }
+
+            // Then add the new equipment for the set
+            equipmentSetEquipment = new List<Models.UserEquipmentSetEquipment>();
+            foreach (int id in equipmentIds)
+            {
+                // Don't remove an existing equipment if it is still in user selection
+                if (!equipmentSetEquipmentIds.Contains(id))
+                {
+                    equipmentSetEquipment.Add(new Models.UserEquipmentSetEquipment
+                    {
+                        UserEquipmentSetId = userEquipmentSet.Id,
+                        EquipmentId = id
+                    });
+                }
+            }
+            if (equipmentSetEquipment.Count > 0)
+            {
+                await _context.UserEquipmentSetEquipment.AddRangeAsync(equipmentSetEquipment);
+                await _context.SaveChangesAsync();
+            }
+
+            // Finally update the equipment set record
+            _context.UserEquipmentSet.Update(userEquipmentSet);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserEquipmentSet(Models.UserEquipmentSet userEquipmentSet, int[] equipmentIds)
+        {
+            // First remove the equipment for the set
+            var equipmentSetEquipment = await _context.UserEquipmentSetEquipment
+                                                      .Where(x => x.UserEquipmentSetId == userEquipmentSet.Id && x.DateDeleted == null)
+                                                      .ToListAsync();
+
+            foreach (Models.UserEquipmentSetEquipment obj in equipmentSetEquipment)
+            {
+                obj.DateDeleted = DateTime.Now;
+            }
+            _context.UserEquipmentSetEquipment.UpdateRange(equipmentSetEquipment);
+            await _context.SaveChangesAsync();
+
+            // Then remove the set
+            userEquipmentSet.DateDeleted = DateTime.Now;
+
+            _context.UserEquipmentSet.Update(userEquipmentSet);
+            await _context.SaveChangesAsync();
+        }
+
+        // Returns true or false if an exercise existst
+        public async Task<bool> UserEquipmentSetExists(int id)
+        {
+            return await _context.UserEquipmentSet
+                        .Where(x => x.DateDeleted == null)
+                        .AnyAsync(e => e.Id == id);
+        }
     }
 }

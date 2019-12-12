@@ -46,8 +46,10 @@ namespace WorkoutGen.Pages.Equipment
         public IEnumerable<Models.MuscleGroup> MuscleGroups { get; set; }
         public int ExerciseCount { get; set; }
         public int[] EquipmentIds { get; set; }
+        public int EquipmentSetId { get; set; }
         public int[] MuscleGroupIds { get; set; }
         public SelectList Options_Equipment { get; set; }
+        public SelectList Options_EquipmentSets { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -56,7 +58,7 @@ namespace WorkoutGen.Pages.Equipment
             MuscleGroupIds = HttpContext.Session.Get<int[]>("MuscleGroupIds");
             MuscleGroups = await _muscleGroupDb.GetMuscleGroups(MuscleGroupIds);
 
-            ClearExerciseSession();
+            HttpContext.Session.ClearExerciseSession();
 
             // If either session is not present then we know the user is trying to access this page directly
             // So we will redirect them
@@ -75,8 +77,14 @@ namespace WorkoutGen.Pages.Equipment
             }
             ExerciseCount = exercises.Count() + userExercises.Count();
 
-            var equipment = await GetEquipmentFromMuscleGroupIds(MuscleGroupIds);
+            var equipment = await _equipmentDb.GetEquipment();
+            //var equipment = await GetEquipmentFromMuscleGroupIds(MuscleGroupIds);
             SetEquipmentDropDown(equipment);
+
+            if (_signInManager.IsSignedIn(User))
+            {
+                await SetEquipmentSetDropDown();
+            }
 
             return Page();
         }
@@ -104,19 +112,16 @@ namespace WorkoutGen.Pages.Equipment
                 userExercises = await _userExerciseDb.GetUserExercisesFromRequiredEquipment(user.Id, MuscleGroupIds, EquipmentIds);
             }
             ExerciseCount = exercises.Count() + userExercises.Count();
-
-            // This was the full body muscle group option
-            // I think we have removed this will be doing something different
-            if (MuscleGroupIds[0] == 6)
-            {
-                equipment = await _equipmentDb.GetEquipment();
-            }
-            else
-            {
-                equipment = await GetEquipmentFromMuscleGroupIds(MuscleGroupIds);
-            }
-
+       
+            equipment = await _equipmentDb.GetEquipment();            
+            //equipment = await GetEquipmentFromMuscleGroupIds(MuscleGroupIds);           
             SetEquipmentDropDown(equipment);
+
+            if (_signInManager.IsSignedIn(User))
+            {
+                await SetEquipmentSetDropDown();
+            }
+
             return Page();
         }
 
@@ -165,7 +170,17 @@ namespace WorkoutGen.Pages.Equipment
             {
                 EquipmentIds = new int[0];
                 HttpContext.Session.Set("EquipmentIds", EquipmentIds);
-            }
+            } 
+        }
+
+        public async Task SetEquipmentSetDropDown() {
+
+            // Attempt to get session variable
+            EquipmentSetId = HttpContext.Session.Get<int>("EquipmentSetId");
+                
+            var user = await _userManager.GetUserAsync(User);
+            var equipmentSets = await _equipmentDb.GetUserEquipmentSets(user.Id);
+            Options_EquipmentSets = new SelectList(equipmentSets, "Id", "Name");     
         }
 
         public async Task<JsonResult> OnPostUpdateExerciseCount(int[] muscleGroupIds, int[] equipmentIds)
@@ -190,17 +205,23 @@ namespace WorkoutGen.Pages.Equipment
         }
 
         // Updates the session object for selected equipment
-        public void OnPostUpdateEquipmentIdsSession(int[] equipmentIds)
+        public async Task<JsonResult> OnPostUpdateEquipmentIdsSession(int[] equipmentIds)
         {
             HttpContext.Session.Set("EquipmentIds", equipmentIds);
+
+            return new JsonResult("{}");
         }
 
-
-        public void ClearExerciseSession()
+        public async Task<JsonResult> OnPostGetEquipmentFromUserEquipmentSet(int equipmentSetId)
         {
-            HttpContext.Session.Remove("sets");
-            HttpContext.Session.Remove("exercise");
-            HttpContext.Session.Remove("workout");
-        }
+            //HttpContext.Session.Set("EquipmentSetId", equipmentSetId);
+
+            var userSetEquipment = await _equipmentDb.GetEquipmentFromUserEquipmentSet(equipmentSetId);
+            EquipmentIds = userSetEquipment.Select(x => x.Id).ToArray();
+
+            HttpContext.Session.Set("EquipmentIds", EquipmentIds);
+
+            return new JsonResult(EquipmentIds);
+        } 
     }
 }

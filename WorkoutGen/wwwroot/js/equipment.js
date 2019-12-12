@@ -45,6 +45,17 @@
         UpdateEquipmentIdsSession($('#select2_equipment').val());
         UpdateExerciseCount($('#select2_equipment').val());
     });
+
+    $('#select_equipment_sets').on({
+
+        // Event trigger when option is selected from the drop down
+        'change': function () {
+
+            if ($(this).val() === 0) return;
+
+            GetEquipmentFromUserEquipmentSet($(this).val());           
+        }
+    });
 });
 
 // Hide/Show continue button
@@ -87,4 +98,26 @@ function UpdateEquipmentIdsSession(arrayEquipmentIds) {
     };
 
     CallController(objRequest, function () {});
+}
+
+// Updates equipment drop down with equipment from selected set
+function GetEquipmentFromUserEquipmentSet(equipmentSetId) {
+
+    const objRequest = {
+        type: "POST",
+        url: "Equipment/GetEquipmentFromUserEquipmentSet",
+        data: {
+            equipmentSetId: equipmentSetId
+        }
+    };
+
+    CallController(objRequest, function (responseData) {
+
+        const equipmentIds = responseData;
+
+        $('#select2_equipment').val(equipmentIds);
+        $('#select2_equipment').trigger('change');
+
+        UpdateExerciseCount($('#select2_equipment').val());
+    });
 }
