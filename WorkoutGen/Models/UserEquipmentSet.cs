@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WorkoutGen.Models
 {
@@ -6,6 +7,9 @@ namespace WorkoutGen.Models
     {
         public int Id { get; set; }
         public string UserId { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string Name { get; set; }
         public bool Enabled { get; set; }
         public DateTime DateAdded { get; set; }
