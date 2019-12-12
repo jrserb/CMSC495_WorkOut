@@ -55,15 +55,14 @@ namespace WorkoutGen
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.configureapplicationcookie(options =>
-            //{
-            //    options.cookie.httponly = true;
-            //    options.expiretimespan = timespan.fromminutes(30);
-            //    options.loginpath = "/account/login";
-            //    //this should set the secure flag
-            //    options.slidingexpiration = true;
-            //    options.cookie.securepolicy = cookiesecurepolicy.always;
-            //});
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.LoginPath = "/account/login";
+                //this should set the secure flag
+                options.SlidingExpiration = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             services.AddScoped<IMuscleGroupService, MuscleGroupService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
