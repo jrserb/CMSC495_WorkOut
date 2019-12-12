@@ -16,7 +16,7 @@
     <div class="col-md-6">
         <form id="formEditExercise" method="post">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger text-center"></div>
 
             <input type="hidden" asp-for="UserExercise.Id" />
             <input type="hidden" asp-for="UserExercise.UserId" value="@UserManager.GetUserAsync(User).Result.Id" />
