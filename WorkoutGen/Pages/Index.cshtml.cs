@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using WorkoutGen.Data.Session;
 
 namespace WorkoutGen.Pages
 {
@@ -11,6 +12,7 @@ namespace WorkoutGen.Pages
         // Triggered on initial page load
         public void OnGet()
         {
+            HttpContext.Session.ClearExerciseSession();
         }
     }
 }
