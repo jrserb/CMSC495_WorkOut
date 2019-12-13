@@ -79,6 +79,8 @@ namespace WorkoutGen
             {
                 o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,8 +103,10 @@ namespace WorkoutGen
             {
                 OnPrepareResponse = context =>
                 {
-                    context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                    context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
                     context.Context.Response.Headers.Add("Expires", "-1");
+                    context.Context.Response.Headers.Add("Pragma", "no-cache");
+                    context.Context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 }
             });
             app.UseSession();
@@ -116,6 +120,8 @@ namespace WorkoutGen
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Xss-Protection", "1");
+                context.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+                context.Response.Headers.Add("Pragma", "no-cache");
                 await next();
                 });
             app.UseEndpoints(endpoints =>
