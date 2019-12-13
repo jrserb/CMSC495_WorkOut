@@ -1,3 +1,10 @@
+/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This is the main configuration page
+*/
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

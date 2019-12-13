@@ -1,4 +1,11 @@
-﻿@page "{id?}"
+﻿@*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This page is where the user edits their equipment sets
+*@
+
+@page "{id?}"
 @model WorkoutGen.Pages.EquipmentSets.EditModel
 @using Models;
 @inject UserManager<ApplicationUser> UserManager
@@ -72,7 +79,7 @@
 </div>
 
 @section Scripts {
-    
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <environment include="Development">

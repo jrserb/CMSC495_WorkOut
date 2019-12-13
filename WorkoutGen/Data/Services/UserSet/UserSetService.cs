@@ -1,4 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This is a data layer service for user set db transactions
+*/
+
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;

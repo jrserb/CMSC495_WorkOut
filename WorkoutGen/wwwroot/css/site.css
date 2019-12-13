@@ -1,4 +1,11 @@
-﻿a.navbar-brand {
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Global style page for master page that all other pages are loaded in
+*/
+
+a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;

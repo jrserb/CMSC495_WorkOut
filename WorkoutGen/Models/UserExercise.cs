@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Model user exercise object
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 

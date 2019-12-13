@@ -1,4 +1,11 @@
-﻿@page "{handler?}"
+﻿@*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This page is where the user performs their exercises
+*@
+
+@page "{handler?}"
 @model WorkoutGen.Pages.Exercises.IndexModel
 @using Models
 @inject SignInManager<ApplicationUser> SignInManager
@@ -390,5 +397,5 @@
 
     <environment exclude="Development">
         <script src="~/js/exercises.min.js"></script>
-    </environment>   
+    </environment>
 }

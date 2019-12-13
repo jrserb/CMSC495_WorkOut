@@ -1,4 +1,11 @@
-﻿$(document).ready(function () {
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Script page for exercises/edit.cshtml
+*/
+
+$(document).ready(function () {
 
     // Initialize the select 2 drop down for equipment selection
     $('#select2_muscle_groups').select2();

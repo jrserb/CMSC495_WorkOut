@@ -1,4 +1,11 @@
-﻿@page "/Account/Login"
+﻿@*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This page is for users to log in to the website
+*@
+
+@page "/Account/Login"
 @model LoginModel
 
 @{
@@ -36,8 +43,8 @@
                 </div>
                 <div class="form-group text-center">
                     @*<p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>*@
+                            <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        </p>*@
                     <p>
                         <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
                     </p>

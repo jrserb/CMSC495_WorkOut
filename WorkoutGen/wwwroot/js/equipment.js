@@ -1,4 +1,11 @@
-﻿$(document).ready(function () {
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Script page for equipment selection equipment/index.cshtml
+*/
+
+$(document).ready(function () {
 
     // First loop the muscle group ids and append hidden fields to the form
     // These will need to get passed when the form is posted to the exercises page

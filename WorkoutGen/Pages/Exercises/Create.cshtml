@@ -1,4 +1,11 @@
-﻿@page
+﻿@*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This page is where the user creates their exercises
+*@
+
+@page
 @model WorkoutGen.Pages.Exercises.CreateModel
 @using Models;
 @inject UserManager<ApplicationUser> UserManager
@@ -75,7 +82,7 @@
 </div>
 
 @section Scripts {
-    
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <environment include="Development">

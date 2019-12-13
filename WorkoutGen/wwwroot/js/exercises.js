@@ -1,4 +1,11 @@
-﻿$(document).ready(function () {
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Script page for exercises/index.cshtml
+*/
+
+$(document).ready(function () {
 
     // First thing we do is update the page if needed form session values  
     UpdatePageFromSession();

@@ -1,5 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: Model exercise equipment object
+*/
+
+using System;
 
 namespace WorkoutGen.Models
 {

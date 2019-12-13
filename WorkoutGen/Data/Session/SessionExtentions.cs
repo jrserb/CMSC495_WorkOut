@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*
+    Name: Brett Snyder
+    Date: 12/12/2019
+    Course: CMSC 495 - Current Trends And Projects in Computer Science
+    Desc: This extends session object and abstracts some of the functionality into methods
+*/
+
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace WorkoutGen.Data.Session
