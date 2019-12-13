@@ -372,7 +372,7 @@
 
     <script>
 
-         // Store globally        
+         // Store globally
         let exercises = @Json.Serialize(GetExercises(Model.Exercises));
         let userExercises = @Json.Serialize(GetUserExercises(Model.UserExercises));
         const mergedExercises = $.merge($.merge([], exercises), userExercises);
@@ -384,7 +384,11 @@
 
     </script>
 
-    <script src="~/js/exercises.js"></script>
+    <environment include="Development">
+        <script src="~/js/exercises.js"></script>
+    </environment>
 
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <environment exclude="Development">
+        <script src="~/js/exercises.min.js"></script>
+    </environment>   
 }

@@ -51,9 +51,11 @@
         // Event trigger when option is selected from the drop down
         'change': function () {
 
-            if ($(this).val() === 0) return;
+            const equipmentSetId = parseInt($(this).val());           
 
-            GetEquipmentFromUserEquipmentSet($(this).val());           
+            if (equipmentSetId === -1) return;
+
+            GetEquipmentFromUserEquipmentSet(equipmentSetId);           
         }
     });
 });

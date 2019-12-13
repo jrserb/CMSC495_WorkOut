@@ -56,7 +56,7 @@
                     <div class="form-group col-md-12">
                         <label class="font-weight-bold" for="select_equipment_sets">Select an equipment set</label>
                         <select id="select_equipment_sets" asp-for="EquipmentSetId" asp-items="Model.Options_EquipmentSets" class="form-control">
-                            <option value="0">Choose Equipment Set</option>
+                            <option value="-1">Choose Equipment Set</option>
                         </select>
                     </div>
                 }
@@ -77,8 +77,8 @@
             </div>
 
             <div class="form-group text-center">
-                <p class="text-center"><span id="eCount" class="font-weight-bold">@Model.ExerciseCount</span> exercises available with this set</p>
-                <input id="btnGenerateExercise" type="submit" value="Generate exercise" class="btn btn-lg btn-primary btn-lg @ClassDisplay()" />
+                <p class="text-center"><span id="eCount" class="font-weight-bold">@Model.ExerciseCount</span> exercise(s) available with this set</p>
+                <input id="btnGenerateExercise" type="submit" value="Generate workout" class="btn btn-lg btn-primary btn-lg @ClassDisplay()" />
             </div>
 
         </form>
@@ -90,11 +90,20 @@
 @section Scripts
 {
 
-    <partial name="_ValidationScriptsPartial" />
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
     <script>
-        const muscleGroupIds = @Json.Serialize(Model.MuscleGroupIds);
+            const muscleGroupIds = @Json.Serialize(Model.MuscleGroupIds);
     </script>
-    <script src="~/js/equipment.js"></script>
+
+    <environment include="Development">
+        <script src="~/js/equipment.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <script src="~/js/equipment.min.js"></script>
+    </environment>
+
 }
 @functions{
 
