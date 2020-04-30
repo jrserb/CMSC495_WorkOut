@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-WorkoutGen-F187C973-36B2-44D3-B062-59B907D03EF5</UserSecretsId>
   </PropertyGroup>
 
